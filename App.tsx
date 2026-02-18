@@ -1,0 +1,151 @@
+import React, { useState, useEffect } from 'react';
+import { supabase, isSupabaseConfigured } from './lib/supabase';
+import { THEMES, SCHEDULE_DATA } from './data';
+import { ContentCard, Speaker, ScheduleItem } from './types';
+import { AdminPanel } from './components/AdminPanel';
+import { 
+  Navbar, 
+  Hero, 
+  AboutSection, 
+  ThemesSection, 
+  SpeakersSection, 
+  ScheduleSection, 
+  SubmissionsSection, 
+  RegistrationSection, 
+  GallerySection,
+  TeamSection, 
+  SponsorsSection, 
+  Footer 
+} from './components/LandingPage';
+
+const ConfigWarning = () => {
+  if (isSupabaseConfigured()) return null;
+  return (
+    <div className="fixed bottom-4 right-4 z-[100] bg-amber-50 border-l-4 border-amber-500 p-4 rounded shadow-lg max-w-md animate-fade-in-up">
+      <div className="flex items-start">
+        <div className="flex-shrink-0">
+          <svg className="h-5 w-5 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+        </div>
+        <div className="ml-3">
+          <h3 className="text-sm font-medium text-amber-800">Conexão Necessária</h3>
+          <div className="mt-2 text-sm text-amber-700">
+            <p>Para ver o conteúdo dinâmico e usar o painel admin, edite <code>lib/supabase.ts</code> com suas chaves do Supabase. Rode o SQL no painel do Supabase.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const App = () => {
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [cards, setCards] = useState<ContentCard[]>([]);
+  const [speakers, setSpeakers] = useState<Speaker[]>([]);
+  const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
+  const [heroImages, setHeroImages] = useState<string[]>([]);
+  const [aboutImage, setAboutImage] = useState<string>('');
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+
+  const loadData = async () => {
+    if (!isSupabaseConfigured()) {
+        // Fallbacks
+        setCards(THEMES.map(t => ({ id: t.id.toString(), title: t.title, description: t.description, icon_name: t.icon, display_order: t.id })));
+        setScheduleItems(SCHEDULE_DATA.flatMap(d => d.items));
+        return;
+    }
+
+    // 1. Cards
+    const { data: cardsData } = await supabase.from('content_cards').select('*').order('display_order');
+    if (cardsData && cardsData.length > 0) setCards(cardsData);
+    else setCards(THEMES.map(t => ({ id: t.id.toString(), title: t.title, description: t.description, icon_name: t.icon, display_order: t.id })));
+
+    // 2. Speakers
+    const { data: speakersData } = await supabase.from('speakers').select('*').order('display_order');
+    if (speakersData) setSpeakers(speakersData);
+
+    // 3. Schedule
+    const { data: scheduleData } = await supabase.from('schedule_items').select('*, speaker:speakers(*)').order('date').order('start_time');
+    if (scheduleData && scheduleData.length > 0) setScheduleItems(scheduleData as any);
+    else setScheduleItems(SCHEDULE_DATA.flatMap(d => d.items));
+
+    // 4. Site Content
+    const { data: contentData } = await supabase.from('site_content').select('*');
+    if (contentData) {
+        const contentMap = contentData.reduce((acc, item) => {
+          acc[item.key] = item.value;
+          return acc;
+        }, {} as Record<string, string>);
+        
+        if (contentMap.hero_image_url) {
+          setHeroImages(contentMap.hero_image_url.split('\n').filter(Boolean));
+        } else {
+          setHeroImages([]); // Reset if empty
+        }
+        
+        if (contentMap.about_image_url) {
+          setAboutImage(contentMap.about_image_url);
+        }
+    }
+
+    // 5. Gallery Images (Fetch directly from Storage)
+    const { data: files } = await supabase.storage.from('images').list();
+    if (files) {
+      const urls = files
+        .filter(f => f.name !== '.emptyFolderPlaceholder')
+        .sort((a, b) => b.name.localeCompare(a.name)) // Newest first
+        .map(file => {
+          const { data } = supabase.storage.from('images').getPublicUrl(file.name);
+          return data.publicUrl;
+        });
+      setGalleryImages(urls);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+
+    // Set up Realtime subscription for immediate updates
+    if (isSupabaseConfigured()) {
+      const channel = supabase.channel('public_updates')
+        .on('postgres_changes', { event: '*', schema: 'public' }, () => {
+          loadData();
+        })
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
+      <ConfigWarning />
+      
+      {isAdminOpen ? (
+        <AdminPanel onClose={() => setIsAdminOpen(false)} />
+      ) : (
+        <>
+          <Navbar onOpenAdmin={() => setIsAdminOpen(true)} />
+          <main>
+            <Hero imageUrls={heroImages} />
+            <AboutSection imageUrl={aboutImage} />
+            <ThemesSection cards={cards} />
+            <SpeakersSection speakers={speakers} />
+            <ScheduleSection scheduleItems={scheduleItems} />
+            <RegistrationSection />
+            <SubmissionsSection />
+            <GallerySection images={galleryImages} />
+            <TeamSection />
+            <SponsorsSection />
+          </main>
+          <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+        </>
+      )}
+    </div>
+  );
+};
+
+export default App;

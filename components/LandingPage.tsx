@@ -1,0 +1,1496 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { 
+  EVENT_DETAILS, 
+  ORGANIZATION_GENERAL, 
+  ORGANIZATION_LOCAL, 
+  SCIENTIFIC_COMMITTEE 
+} from '../data';
+import { 
+  CalendarIcon, 
+  MapPinIcon, 
+  UsersIcon, 
+  LeafIcon, 
+  CogIcon, 
+  ZapIcon, 
+  CheckCircleIcon,
+  MenuIcon,
+  XIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  AlertTriangleIcon,
+  HeartPulseIcon,
+  DownloadIcon,
+  UploadCloudIcon,
+  ClockIcon,
+  ImageIcon
+} from './Icons';
+import { ContentCard, Speaker, ScheduleItem } from '../types';
+
+// --- Icon Mapper ---
+const IconMap: Record<string, React.ElementType> = {
+  HeartPulse: HeartPulseIcon,
+  Leaf: LeafIcon,
+  Cog: CogIcon,
+  Zap: ZapIcon,
+  Users: UsersIcon,
+  Calendar: CalendarIcon,
+  MapPin: MapPinIcon
+};
+
+const getIconComponent = (iconName: string) => {
+  const Icon = IconMap[iconName] || LeafIcon;
+  return Icon;
+};
+
+// --- Helper Functions ---
+const smoothScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, selector: string) => {
+  e.preventDefault();
+  const element = document.querySelector(selector);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+};
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString + 'T12:00:00');
+  return {
+    dayOfWeek: date.toLocaleDateString('pt-BR', { weekday: 'long' }),
+    day: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+    full: date.toLocaleDateString('pt-BR')
+  };
+};
+
+const getEventColor = (type: string) => {
+  switch(type) {
+    case 'ceremony': return 'border-mec-yellow bg-mec-yellow/10'; // Yellow
+    case 'break': return 'border-slate-300 bg-slate-50 opacity-80';
+    case 'social': return 'border-mec-salmon bg-mec-salmon/10'; // Salmon
+    default: return 'border-mec-teal bg-mec-teal/10'; // Teal (lecture)
+  }
+};
+
+const getThemeStyles = (index: number) => {
+  const styles = [
+    { bg: 'bg-mec-salmon/10', border: 'border-mec-salmon/30', hover: 'hover:border-mec-salmon', icon: 'text-mec-salmon', iconBg: 'bg-white' }, // Salmon
+    { bg: 'bg-mec-green/10', border: 'border-mec-green/30', hover: 'hover:border-mec-green', icon: 'text-mec-green', iconBg: 'bg-white' }, // Green
+    { bg: 'bg-mec-teal/10', border: 'border-mec-teal/30', hover: 'hover:border-mec-teal', icon: 'text-mec-teal', iconBg: 'bg-white' }, // Teal
+    { bg: 'bg-mec-yellow/10', border: 'border-mec-yellow/30', hover: 'hover:border-mec-yellow', icon: 'text-mec-yellow', iconBg: 'bg-white' }, // Yellow
+  ];
+  return styles[index % styles.length];
+};
+
+export const Navbar = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show navbar after scrolling 100px
+      if (window.scrollY > 100) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: 'Sobre', href: '#about' },
+    { name: 'Temáticas', href: '#themes' },
+    { name: 'Palestrantes', href: '#speakers' },
+    { name: 'Programação', href: '#schedule' },
+    { name: 'Inscrições', href: '#registration' },
+    { name: 'Submissões', href: '#submissions' },
+    { name: 'Galeria', href: '#gallery' },
+    { name: 'Equipe', href: '#team' },
+  ];
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setIsOpen(false);
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  return (
+    <nav className={`fixed w-full bg-white/95 backdrop-blur-md shadow-sm z-50 top-0 transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+      <div className="gradient-border-bottom">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-20 items-center">
+            <div className="flex-shrink-0 flex items-center cursor-pointer group gap-3" onDoubleClick={onOpenAdmin}>
+              <img src="/logomec3f.png" alt="MEC3F Logo" className="h-12 w-auto object-contain" />
+              <div className="hidden sm:flex flex-col">
+                  <span className="font-bold text-xl tracking-tight text-slate-800 group-hover:text-mec-teal transition-colors leading-none">
+                  {EVENT_DETAILS.acronym}
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium leading-none tracking-widest mt-0.5">{EVENT_DETAILS.year}</span>
+              </div>
+            </div>
+            
+            <div className="hidden md:flex space-x-8 items-center">
+              {navLinks.map((link) => (
+                <a 
+                  key={link.name} 
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className="text-slate-600 hover:text-mec-teal font-medium transition-colors text-sm uppercase tracking-wide cursor-pointer py-2"
+                >
+                  {link.name}
+                </a>
+              ))}
+              <a 
+                href="#registration"
+                onClick={(e) => handleNavClick(e, '#registration')}
+                className="bg-mec-teal text-white px-6 py-2.5 rounded-full font-medium hover:bg-teal-500 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 duration-200"
+              >
+                Inscreva-se
+              </a>
+            </div>
+
+            <div className="md:hidden flex items-center">
+              <button onClick={() => setIsOpen(!isOpen)} className="text-slate-600 hover:text-mec-teal p-2">
+                {isOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg h-screen">
+          <div className="px-4 pt-4 pb-3 space-y-2">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className="block px-4 py-3 rounded-lg text-lg font-medium text-slate-700 hover:text-mec-teal hover:bg-slate-50 border border-transparent"
+                onClick={(e) => handleNavClick(e, link.href)}
+              >
+                {link.name}
+              </a>
+            ))}
+            <a 
+              href="#registration"
+              onClick={(e) => handleNavClick(e, '#registration')}
+              className="block mt-6 text-center bg-mec-salmon text-white px-5 py-4 rounded-xl font-bold text-lg shadow-lg"
+            >
+              Inscreva-se Agora
+            </a>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+const Countdown = ({ hasImages }: { hasImages: boolean }) => {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    // Target date: August 25, 2026 
+    const targetDate = new Date("2026-08-25T09:00:00").getTime(); 
+
+    const calculateTime = () => {
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((difference % (1000 * 60)) / 1000),
+        });
+      }
+    };
+
+    calculateTime();
+    const interval = setInterval(calculateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const TimeUnit = ({ value, label }: { value: number, label: string }) => (
+    <div className={`flex flex-col items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-xl backdrop-blur-md border ${hasImages ? 'bg-black/40 border-white/20 text-white' : 'bg-white border-slate-100 text-slate-800 shadow-lg'}`}>
+      <span className="text-3xl sm:text-4xl font-bold leading-none">{value}</span>
+      <span className={`text-[10px] sm:text-xs font-medium uppercase tracking-wider mt-1 ${hasImages ? 'text-mec-teal' : 'text-mec-teal'}`}>{label}</span>
+    </div>
+  );
+
+  return (
+    <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mt-8 mb-4">
+      <TimeUnit value={timeLeft.days} label="Dias" />
+      <TimeUnit value={timeLeft.hours} label="Horas" />
+      <TimeUnit value={timeLeft.minutes} label="Min" />
+      <TimeUnit value={timeLeft.seconds} label="Seg" />
+    </div>
+  );
+};
+
+export const Hero = ({ imageUrls }: { imageUrls: string[] }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (imageUrls && imageUrls.length > 1) {
+      const timer = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % imageUrls.length);
+      }, 7000); 
+      return () => clearInterval(timer);
+    }
+  }, [imageUrls]);
+
+  const hasImages = imageUrls && imageUrls.length > 0;
+
+  const textContent = (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+      <div className="text-center max-w-4xl mx-auto">
+        <div className={`inline-block mb-4 px-4 py-1.5 rounded-full ${hasImages ? 'bg-black/30 border border-white/20 backdrop-blur-sm' : 'bg-mec-teal/10 border border-mec-teal/20'}`}>
+          <span className={`font-semibold text-sm tracking-wide uppercase ${hasImages ? 'text-white' : 'text-mec-teal'}`}>
+            {EVENT_DETAILS.dateRange}
+          </span>
+        </div>
+        <h1 className={`text-4xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight ${hasImages ? 'text-white drop-shadow-lg' : 'text-slate-900'}`}>
+          <span className="block">6º Congresso de Engenharias</span>
+          {hasImages ? 
+              <span className="text-mec-teal">e Ciências Aplicadas</span> 
+            : <span className="gradient-text">e Ciências Aplicadas</span>
+          }
+          <span className={`block text-2xl md:text-4xl mt-2 font-normal ${hasImages ? 'text-slate-200' : 'text-slate-600'}`}>das Três Fronteiras</span>
+        </h1>
+
+        <Countdown hasImages={hasImages} />
+
+        <p className={`mt-4 text-xl max-w-2xl mx-auto ${hasImages ? 'text-slate-100 drop-shadow-md' : 'text-slate-600'}`}>
+          Promovendo a integração científica e tecnológica na Tríplice Fronteira.
+          Um evento gratuito para impulsionar o desenvolvimento sustentável.
+        </p>
+        
+        <div className={`mt-8 flex flex-col sm:flex-row justify-center gap-4 text-sm font-medium ${hasImages ? 'text-slate-200' : 'text-slate-500'}`}>
+          <div className="flex items-center justify-center gap-2">
+            <CalendarIcon className={`h-5 w-5 ${hasImages ? 'text-mec-teal' : 'text-mec-teal'}`} />
+            <span className={hasImages ? 'drop-shadow-sm' : ''}>{EVENT_DETAILS.dateRange}</span>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <MapPinIcon className={`h-5 w-5 ${hasImages ? 'text-mec-salmon' : 'text-mec-salmon'}`} />
+            <span className={hasImages ? 'drop-shadow-sm' : ''}>{EVENT_DETAILS.location}</span>
+          </div>
+        </div>
+
+        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="#registration" onClick={(e) => smoothScrollTo(e, '#registration')} className="inline-flex justify-center items-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-mec-salmon hover:bg-[#c4755d] md:text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+            Realizar Inscrição
+          </a>
+          <a href="#schedule" onClick={(e) => smoothScrollTo(e, '#schedule')} className={`inline-flex justify-center items-center px-8 py-3 border text-base font-medium rounded-lg md:text-lg transition-all ${hasImages ? 'border-white/30 text-white bg-black/20 hover:bg-black/30 backdrop-blur-sm' : 'border-slate-200 text-slate-700 bg-white hover:bg-slate-50'}`}>
+            Ver Programação
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="relative h-screen flex items-center justify-center overflow-hidden bg-slate-900">
+      {!hasImages && (
+        <>
+          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-mec-green opacity-10 blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-mec-teal opacity-10 blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full bg-white opacity-95"></div>
+        </>
+      )}
+      {hasImages && (
+        <div className="absolute inset-0 z-0">
+          {imageUrls.map((url, index) => (
+            <img
+              key={index}
+              src={url}
+              alt={`Event background ${index + 1}`}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${index === currentIndex ? 'opacity-100' : 'opacity-0'}`}
+            />
+          ))}
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+      )}
+      {textContent}
+    </div>
+  );
+};
+
+export const AboutSection = ({ imageUrl }: { imageUrl?: string }) => {
+  return (
+    <section id="about" className="py-20 bg-slate-50 scroll-mt-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">Sobre o MEC3F</h2>
+            <div className="prose prose-lg text-slate-600">
+              <p className="mb-4">
+                O Congresso de Engenharias e Ciências Aplicadas das Três Fronteiras (MEC3F) é um evento gratuito que tem como propósito promover a integração da comunidade científica, tecnológica e acadêmica em torno dos desafios e oportunidades da região trinacional (Argentina, Brasil e Paraguai).
+              </p>
+              <p className="mb-4">
+                Seu principal objetivo é impulsionar o desenvolvimento social e sustentável por meio da cooperação em ciência, tecnologia e inovação. Buscamos superar barreiras de interconectividade, fortalecendo a colaboração entre instituições e pesquisadores.
+              </p>
+              <p>
+                A 6ª edição (2026) será realizada presencialmente, focando em fortalecer relações construídas e abrir novas frentes de atuação para ampliar o impacto regional das iniciativas conjuntas.
+              </p>
+            </div>
+            
+            <div className="mt-8 grid grid-cols-2 gap-4">
+              <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100 text-center">
+                <span className="block text-3xl font-bold text-mec-green">700+</span>
+                <span className="text-sm text-slate-500">Participantes em 2024</span>
+              </div>
+              <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100 text-center">
+                <span className="block text-3xl font-bold text-mec-teal">226</span>
+                <span className="text-sm text-slate-500">Trabalhos Apresentados</span>
+              </div>
+            </div>
+          </div>
+          <div className="relative">
+             <div className="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 rounded-2xl shadow-xl overflow-hidden flex items-center justify-center relative">
+                <img 
+                  src={imageUrl || "https://picsum.photos/800/600"} 
+                  alt="Students at conference" 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-mec-teal/60 to-transparent"></div>
+                <div className="relative z-10 text-white text-center p-6">
+                   <p className="text-lg font-semibold tracking-wider uppercase opacity-90">Conectando Saberes</p>
+                   <p className="text-4xl font-bold mt-2">Tríplice Fronteira</p>
+                </div>
+             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export const ThemesSection = ({ cards }: { cards: ContentCard[] }) => {
+  return (
+    <section id="themes" className="py-20 bg-white scroll-mt-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-slate-900">Eixos Temáticos & Destaques</h2>
+          <p className="mt-4 text-xl text-slate-600">As áreas de conhecimento que guiarão nossas discussões</p>
+        </div>
+
+        {cards.length === 0 ? (
+          <div className="text-center py-10">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-mec-teal border-t-transparent mb-4"></div>
+            <p className="text-slate-500">Carregando temáticas...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {cards.map((card, index) => {
+              const Icon = getIconComponent(card.icon_name);
+              const styles = getThemeStyles(index);
+              
+              return (
+                <div key={card.id} className={`group p-6 rounded-2xl border shadow-sm hover:shadow-xl transition-all duration-300 ${styles.bg} ${styles.border} ${styles.hover}`}>
+                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 ${styles.iconBg}`}>
+                    <Icon className={`w-8 h-8 ${styles.icon}`} />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-3">{card.title}</h3>
+                  <p className="text-slate-600 leading-relaxed text-sm">{card.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
+export const SpeakersSection = ({ speakers }: { speakers: Speaker[] }) => {
+  const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
+
+  return (
+    <section id="speakers" className="py-20 bg-slate-50 scroll-mt-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-slate-900">Palestrantes e Convidados</h2>
+          <p className="mt-4 text-xl text-slate-600">Grandes nomes que compartilharão conhecimento</p>
+        </div>
+
+        {speakers.length === 0 ? (
+          <div className="text-center py-10 bg-slate-100 rounded-lg border border-slate-200">
+            <p className="text-slate-500 py-8">Aguardando confirmação de palestrantes...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-12">
+            {speakers.map((speaker) => (
+              <div 
+                key={speaker.id} 
+                onClick={() => setSelectedSpeaker(speaker)}
+                className="flex flex-col items-center text-center group cursor-pointer"
+              >
+                <div className="relative mb-4">
+                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-white shadow-lg group-hover:scale-105 transition-transform duration-300 bg-slate-200">
+                    <img 
+                      src={speaker.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(speaker.name)}&background=6fc4c7&color=fff`} 
+                      alt={speaker.name} 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(speaker.name)}&background=random`;
+                      }}
+                    />
+                  </div>
+                  <div className="absolute bottom-1 right-1 bg-mec-teal w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-white shadow-sm">
+                    <UsersIcon className="w-4 h-4" />
+                  </div>
+                </div>
+                <h3 className="text-lg md:text-xl font-bold text-slate-800 mb-1 group-hover:text-mec-teal transition-colors">{speaker.name}</h3>
+                <p className="text-sm text-slate-600 max-w-[200px] leading-snug">{speaker.institution}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Speaker Modal */}
+      {selectedSpeaker && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+          onClick={() => setSelectedSpeaker(null)}
+        >
+          <div 
+            className="bg-white rounded-2xl max-w-2xl w-full p-6 relative shadow-2xl overflow-hidden"
+            onClick={e => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setSelectedSpeaker(null)} 
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 z-10 p-1 bg-white/50 rounded-full transition-colors"
+            >
+              <XIcon className="w-6 h-6" />
+            </button>
+            
+            <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
+              <div className="flex-shrink-0">
+                 <div className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-mec-teal/20 shadow-lg">
+                   <img 
+                     src={selectedSpeaker.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedSpeaker.name)}&background=6fc4c7&color=fff`} 
+                     alt={selectedSpeaker.name} 
+                     className="w-full h-full object-cover"
+                   />
+                 </div>
+              </div>
+              
+              <div className="flex-grow text-center md:text-left w-full">
+                <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1">{selectedSpeaker.name}</h3>
+                <p className="text-mec-teal font-medium text-lg mb-4">{selectedSpeaker.institution}</p>
+                
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 prose prose-sm max-w-none text-slate-600 text-justify max-h-[40vh] overflow-y-auto">
+                   {selectedSpeaker.description ? (
+                     <p>{selectedSpeaker.description}</p>
+                   ) : (
+                     <p className="text-slate-400 italic">Nenhuma biografia disponível.</p>
+                   )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+};
+
+export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem[] }) => {
+  const dates = Array.from(new Set(scheduleItems.map(i => i.date))).sort();
+  const [activeDate, setActiveDate] = useState<string>(dates[0] || '');
+
+  useEffect(() => {
+    if (dates.length > 0 && !activeDate) {
+      setActiveDate(dates[0]);
+    }
+  }, [scheduleItems, activeDate]);
+
+  const activeItems = scheduleItems
+    .filter(item => item.date === activeDate)
+    .sort((a, b) => a.start_time.localeCompare(b.start_time));
+
+  return (
+    <section id="schedule" className="py-20 bg-white scroll-mt-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-slate-900">Programação</h2>
+          <p className="mt-2 text-slate-600">Confira o cronograma completo das atividades</p>
+        </div>
+
+        {dates.length > 0 ? (
+          <>
+            {/* Tabs */}
+            <div className="flex flex-wrap justify-center gap-2 mb-12">
+              {dates.map((dateStr) => {
+                const { dayOfWeek, day } = formatDate(dateStr);
+                return (
+                  <button
+                    key={dateStr}
+                    onClick={() => setActiveDate(dateStr)}
+                    className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 border-2 ${
+                      activeDate === dateStr
+                        ? 'bg-slate-50 border-mec-teal text-mec-teal shadow-md'
+                        : 'bg-transparent border-transparent text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                    }`}
+                  >
+                    <span className="block text-xs uppercase opacity-70 mb-1">{dayOfWeek}</span>
+                    <span className="text-lg">{day}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Timeline View */}
+            <div className="max-w-4xl mx-auto">
+              {activeItems.map((item, idx) => {
+                const isLast = idx === activeItems.length - 1;
+                return (
+                  <div key={item.id} className="flex gap-4 md:gap-8 group">
+                    <div className="flex-shrink-0 w-20 md:w-24 text-right pt-2">
+                       <span className="block font-bold text-slate-700">{item.start_time}</span>
+                       <span className="block text-xs text-slate-400">{item.end_time}</span>
+                    </div>
+
+                    <div className="relative flex flex-col items-center">
+                       <div className="w-3 h-3 rounded-full bg-mec-teal ring-4 ring-white shadow-sm z-10"></div>
+                       {!isLast && <div className="flex-grow w-0.5 bg-slate-200 my-2"></div>}
+                    </div>
+
+                    <div className={`flex-grow pb-8 ${isLast ? '' : ''}`}>
+                       <div className={`rounded-xl p-5 border-l-4 shadow-sm hover:shadow-md transition-all duration-300 ${getEventColor(item.type)}`}>
+                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                            <div>
+                               <div className="flex items-center gap-2 mb-1">
+                                  <span className={`text-xs font-bold px-2 py-0.5 rounded uppercase tracking-wide ${
+                                    item.type === 'ceremony' ? 'bg-mec-yellow text-slate-800' : 
+                                    item.type === 'break' ? 'bg-slate-200 text-slate-700' :
+                                    item.type === 'social' ? 'bg-mec-salmon text-white' :
+                                    'bg-mec-teal text-white'
+                                  }`}>
+                                    {item.type === 'social' ? 'Social' : item.type === 'ceremony' ? 'Cerimônia' : item.type === 'break' ? 'Intervalo' : 'Acadêmico'}
+                                  </span>
+                               </div>
+                               <h4 className="text-lg md:text-xl font-bold text-slate-800">{item.title}</h4>
+                               {item.description && <p className="text-slate-600 mt-2 text-sm">{item.description}</p>}
+                               
+                               {item.speaker && (
+                                 <div className="mt-4 flex items-center gap-3 bg-white/60 p-2 rounded-lg border border-slate-100/50 w-fit">
+                                    <img 
+                                      src={item.speaker.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.speaker.name)}`} 
+                                      alt={item.speaker.name}
+                                      className="w-10 h-10 rounded-full object-cover" 
+                                    />
+                                    <div>
+                                       <div className="text-xs text-slate-500 font-semibold uppercase">Palestrante</div>
+                                       <div className="text-sm font-bold text-slate-800">{item.speaker.name}</div>
+                                    </div>
+                                 </div>
+                               )}
+                            </div>
+                         </div>
+                       </div>
+                    </div>
+                  </div>
+                );
+              })}
+              
+              {activeItems.length === 0 && (
+                <div className="text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                   <p className="text-slate-500">Nenhuma atividade cadastrada para este dia.</p>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-mec-teal border-t-transparent mb-4"></div>
+            <p className="text-slate-500">Carregando programação...</p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
+export const SubmissionsSection = () => {
+  const [lang, setLang] = useState<'pt' | 'es'>('pt');
+  
+  const content = {
+    pt: {
+      title: "Submissão de Trabalhos",
+      subtitle: "Siga as etapas abaixo para submeter seu resumo expandido",
+      step1: {
+        title: "1. Realizar Inscrição",
+        description: "O(a) apresentador(a) do trabalho deve obrigatoriamente realizar sua inscrição na página oficial do evento antes de submeter.",
+        action: "Inscrever-se Agora",
+      },
+      step2: {
+        title: "2. Enviar Resumo",
+        description: "Os Resumos devem ser baixados, redigidos e submetidos pelo formulário abaixo. As normas e regras de formatação estão descritas no próprio modelo.",
+        file_label: "Nome do arquivo (PDF/DOCX):",
+        file_example: "AbreviaturaDaTematica_IniciaisSobrenome.pdf",
+        action_model: "Baixar Modelo",
+        action_form: "Formulário de Envio",
+      },
+      attention: {
+        title: "Gratuidade",
+        text: "O evento é totalmente gratuito. Não há qualquer cobrança de taxa de inscrição ou de submissão de trabalhos."
+      }
+    },
+    es: {
+      title: "Envío de Trabajos",
+      subtitle: "Siga los pasos a continuación para enviar su resumen ampliado",
+      step1: {
+        title: "1. Realizar Inscripción",
+        description: "El/la presentador(a) debe realizar obligatoriamente su inscripción en la página oficial del evento antes de enviar.",
+        action: "Inscribirse Ahora",
+      },
+      step2: {
+        title: "2. Enviar Resumen",
+        description: "Los resúmenes deben ser descargados, redactados y enviados a través del siguiente formulario. Las normas y reglas de formato están descritas en el propio modelo.",
+        file_label: "Nombre del archivo (PDF/DOCX):",
+        file_example: "AbreviaturaDeLaTemática_InicialesApellido.pdf",
+        action_model: "Descargar Modelo",
+        action_form: "Formulario de Envío",
+      },
+      attention: {
+        title: "Gratuidad",
+        text: "El evento es totalmente gratuito. No hay cobro de ninguna tasa de inscripción o envío de trabajos."
+      }
+    }
+  };
+
+  const current = content[lang];
+  const modelUrl = "https://drive.google.com/file/d/1v7FblhhVcbc-AkVyIB7Mr2QsAgp00n-D/view";
+  const formUrl = "https://forms.gle/2ZDWXP23KNYox5hN8";
+
+  return (
+    <section id="submissions" className="py-24 bg-slate-50 scroll-mt-20 relative overflow-hidden">
+       {/* Background accents */}
+       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl"></div>
+       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6 border-b border-slate-200 pb-8">
+          <div className="max-w-2xl">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{current.title}</h2>
+            <p className="text-lg text-slate-600">{current.subtitle}</p>
+          </div>
+          
+          {/* Language Switcher */}
+          <div className="flex bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+             <button 
+               onClick={() => setLang('pt')} 
+               className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 ${lang === 'pt' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'}`}
+             >
+               PT
+             </button>
+             <button 
+               onClick={() => setLang('es')}
+               className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 ${lang === 'es' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'}`}
+             >
+               ES
+             </button>
+          </div>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
+          
+          {/* Card 1: Registration */}
+          <div className="bg-white rounded-2xl p-8 shadow-lg border border-slate-100 hover:border-emerald-500/30 hover:shadow-xl transition-all group relative overflow-hidden flex flex-col">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+             
+             <div className="relative z-10 flex-grow">
+               <div className="w-14 h-14 bg-emerald-500/10 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                 <UsersIcon className="w-7 h-7" />
+               </div>
+               
+               <h3 className="text-xl font-bold text-slate-900 mb-3">{current.step1.title}</h3>
+               <p className="text-slate-600 mb-8 leading-relaxed">
+                 {current.step1.description}
+               </p>
+             </div>
+             
+             <div className="relative z-10 mt-auto">
+               <a 
+                 href="#registration" 
+                 onClick={(e) => smoothScrollTo(e, '#registration')}
+                 className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg gap-2"
+               >
+                 {current.step1.action}
+                 <ChevronDownIcon className="w-4 h-4 transform -rotate-90" />
+               </a>
+             </div>
+          </div>
+
+          {/* Card 2: Submission */}
+          <div className="bg-white rounded-2xl p-8 shadow-lg border border-slate-100 hover:border-blue-500/30 hover:shadow-xl transition-all group relative overflow-hidden flex flex-col">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+             
+             <div className="relative z-10 flex-grow">
+               <div className="w-14 h-14 bg-blue-500/10 text-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                 <UploadCloudIcon className="w-7 h-7" />
+               </div>
+               
+               <h3 className="text-xl font-bold text-slate-900 mb-3">{current.step2.title}</h3>
+               <p className="text-slate-600 mb-6 leading-relaxed">
+                 {current.step2.description}
+               </p>
+
+               <div className="mb-8 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                 <p className="font-semibold text-slate-700 mb-1 text-sm">{current.step2.file_label}</p>
+                 <code className="block bg-white p-2 rounded border border-slate-300 text-slate-600 font-mono text-xs break-all shadow-sm">
+                    {current.step2.file_example}
+                 </code>
+               </div>
+             </div>
+             
+             <div className="relative z-10 mt-auto flex flex-col sm:flex-row gap-3">
+               <a 
+                 href={modelUrl} 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors gap-2"
+               >
+                 <DownloadIcon className="w-4 h-4" />
+                 {current.step2.action_model}
+               </a>
+               <a 
+                 href={formUrl} 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg gap-2"
+               >
+                 {current.step2.action_form}
+               </a>
+             </div>
+          </div>
+        </div>
+
+        {/* Attention Footer */}
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-6 flex items-start gap-4">
+          <div className="bg-amber-500 text-white p-2 rounded-lg shrink-0 mt-1">
+            <AlertTriangleIcon className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="font-bold text-slate-900 mb-1">{current.attention.title}</h4>
+            <p className="text-slate-700 text-sm md:text-base leading-relaxed">
+              {current.attention.text}
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
+export const GallerySection = ({ images }: { images: string[] }) => {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  if (!images || images.length === 0) return null;
+
+  return (
+    <section id="gallery" className="py-20 bg-white scroll-mt-20 border-t border-slate-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
+          <div className="max-w-2xl">
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">Memórias do MEC3F</h2>
+            <p className="text-lg text-slate-600">Registros da última edição em 2024 e momentos históricos.</p>
+          </div>
+          <div className="text-sm text-slate-400 flex items-center gap-2">
+            <ImageIcon className="w-4 h-4" />
+            <span>Deslize para ver mais</span>
+          </div>
+        </div>
+
+        {/* Horizontal Scroll Container */}
+        <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
+          <style>{`
+            .gallery-scroll::-webkit-scrollbar {
+              height: 8px;
+            }
+            .gallery-scroll::-webkit-scrollbar-track {
+              background: transparent;
+            }
+            .gallery-scroll::-webkit-scrollbar-thumb {
+              background-color: #cbd5e1;
+              border-radius: 20px;
+            }
+          `}</style>
+          <div 
+            className="gallery-scroll flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory" 
+            style={{ 
+              scrollbarWidth: 'thin', 
+              scrollbarColor: '#cbd5e1 transparent' 
+            }}
+          >
+             {images.map((url, index) => (
+               <div 
+                 key={index} 
+                 className="flex-shrink-0 snap-center cursor-pointer group relative rounded-xl overflow-hidden h-64 w-80 md:w-96 shadow-md hover:shadow-xl transition-all duration-300"
+                 onClick={() => setSelectedImage(url)}
+               >
+                 <img 
+                   src={url} 
+                   alt={`Gallery image ${index + 1}`} 
+                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                   loading="lazy"
+                 />
+                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="bg-white/90 text-slate-900 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                      Ampliar
+                    </span>
+                 </div>
+               </div>
+             ))}
+          </div>
+          {/* Gradient indicators for scrolling */}
+          <div className="absolute top-0 right-0 bottom-6 w-12 bg-gradient-to-l from-white to-transparent pointer-events-none md:hidden"></div>
+          <div className="absolute top-0 left-0 bottom-6 w-4 bg-gradient-to-r from-white to-transparent pointer-events-none md:hidden"></div>
+        </div>
+      </div>
+
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button 
+            className="absolute top-4 right-4 text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full p-2 transition-colors z-50"
+            onClick={() => setSelectedImage(null)}
+          >
+            <XIcon className="w-8 h-8" />
+          </button>
+          
+          <img 
+            src={selectedImage} 
+            alt="Full view" 
+            className="max-w-full max-h-[90vh] object-contain rounded shadow-2xl animate-fade-in-up"
+            onClick={(e) => e.stopPropagation()} 
+          />
+        </div>
+      )}
+    </section>
+  );
+};
+
+export const RegistrationSection = () => {
+  const [inscriptionType, setInscriptionType] = useState<'attendee' | 'participant'>('attendee');
+  const [formData, setFormData] = useState({
+    full_name: '',
+    email: '',
+    institution: '',
+    role: 'Ouvinte'
+  });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [msg, setMsg] = useState('');
+  const [ticketData, setTicketData] = useState<{number: number, name: string, role: string} | null>(null);
+
+  // Update role when toggling type
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      role: inscriptionType === 'attendee' ? 'Ouvinte' : 'Estudante'
+    }));
+  }, [inscriptionType]);
+
+  const sendConfirmationEmail = (email: string, ticket: number, name: string) => {
+    // Safely use EmailJS from the global window object (loaded via CDN)
+    const emailjsGlobal = (window as any).emailjs;
+    
+    // We attempt to send it for administrative records, but the UI won't promise it
+    if (emailjsGlobal) {
+      emailjsGlobal.send(
+        'YOUR_SERVICE_ID', 
+        'YOUR_TEMPLATE_ID', 
+        {
+          to_email: email,
+          full_name: name,
+          ticket_number: ticket,
+        },
+        'YOUR_PUBLIC_KEY'
+      ).catch((err: any) => console.log('Email logging failed:', err));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!isSupabaseConfigured()) {
+       setStatus('error');
+       setMsg('Supabase não configurado. Edite lib/supabase.ts');
+       return;
+    }
+
+    setStatus('loading');
+    
+    try {
+      const { data, error } = await supabase
+        .from('registrations')
+        .insert([formData])
+        .select() 
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setTicketData({
+          number: data.ticket_number,
+          name: data.full_name,
+          role: data.role || 'Participante'
+        });
+        sendConfirmationEmail(data.email, data.ticket_number, data.full_name);
+      }
+
+      setStatus('success');
+      setFormData({ full_name: '', email: '', institution: '', role: inscriptionType === 'attendee' ? 'Ouvinte' : 'Estudante' });
+    } catch (error) {
+      console.error('Error registering:', error);
+      setStatus('error');
+      let message = 'Erro ao realizar inscrição.';
+      if (error instanceof Error) {
+        message = error.message;
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        message = String((error as { message: unknown }).message);
+      }
+      setMsg(message);
+    }
+  };
+
+  const handleDownloadTicket = () => {
+    if (!ticketData) return;
+
+    const ticketWindow = window.open('', '_blank');
+    if (!ticketWindow) {
+      alert('Por favor, permita popups para visualizar o ticket.');
+      return;
+    }
+
+    // Construct the HTML for the ticket in the new window
+    // We include Tailwind via CDN for consistent styling in the popup
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Ticket MEC3F - #${ticketData.number}</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+          tailwind.config = {
+            theme: {
+              extend: {
+                colors: {
+                  mec: {
+                    salmon: '#d9856d',
+                    green: '#87c270',
+                    teal: '#6fc4c7',
+                    yellow: '#dcd476',
+                  }
+                }
+              }
+            }
+          }
+        </script>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <style>
+          body { font-family: 'Poppins', sans-serif; }
+          @media print {
+            .no-print { display: none; }
+            body { background: white; }
+            .ticket-container { box-shadow: none; border: 1px solid #ccc; }
+          }
+        </style>
+      </head>
+      <body class="bg-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+        <div class="ticket-container bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 rounded-2xl overflow-hidden shadow-xl relative max-w-md w-full mx-auto my-8">
+            <div class="h-4 bg-gradient-to-r from-mec-salmon via-mec-green to-mec-teal w-full"></div>
+            <div class="p-8">
+                <div class="flex justify-between items-start mb-6">
+                  <div class="flex gap-3 items-center">
+                    <img src="${window.location.origin}/logomec3f.png" alt="MEC3F" class="h-12 w-12 object-contain" />
+                    <div>
+                        <span class="text-xs font-bold text-mec-teal tracking-wider uppercase">Evento Oficial</span>
+                        <h4 class="text-xl font-black text-slate-900 leading-tight">MEC3F 2026</h4>
+                        <p class="text-xs text-slate-500 mt-1">25-28 Ago • Foz do Iguaçu</p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <span class="block text-xs text-slate-400 uppercase tracking-wide">Ticket</span>
+                    <span class="block text-2xl font-mono font-bold text-slate-800">#${ticketData.number.toString().padStart(4, '0')}</span>
+                  </div>
+                </div>
+                
+                <div class="border-t border-dashed border-slate-300 my-6 relative">
+                  <div class="absolute -left-10 -top-3 w-6 h-6 bg-slate-100 rounded-full border-r border-slate-200"></div>
+                  <div class="absolute -right-10 -top-3 w-6 h-6 bg-slate-100 rounded-full border-l border-slate-200"></div>
+                </div>
+
+                <div class="flex gap-4 items-center">
+                  <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
+                      <span class="text-4xl font-bold text-slate-800">#${ticketData.number}</span>
+                  </div>
+                  <div>
+                      <p class="text-xs text-slate-400 uppercase font-bold">Participante</p>
+                      <p class="text-lg font-bold text-slate-900 leading-tight">${ticketData.name}</p>
+                      <span class="inline-block bg-mec-teal/10 text-mec-teal text-xs px-2 py-0.5 rounded mt-1 font-medium border border-mec-teal/20">
+                        ${ticketData.role}
+                      </span>
+                  </div>
+                </div>
+            </div>
+            <div class="bg-slate-50 p-4 text-center border-t border-slate-200">
+                <p class="text-xs text-slate-400">Apresente este ticket (digital ou impresso) no dia do evento.</p>
+            </div>
+        </div>
+
+        <div class="text-center mt-8 no-print">
+          <button onclick="window.print()" class="bg-mec-teal text-white font-bold py-3 px-8 rounded-lg hover:bg-teal-600 transition shadow-lg cursor-pointer">
+            Imprimir / Salvar PDF
+          </button>
+          <p class="mt-4 text-sm text-slate-500">Pressione Ctrl+P ou Cmd+P se o botão não funcionar.</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    ticketWindow.document.write(htmlContent);
+    ticketWindow.document.close();
+  };
+
+  return (
+    <section id="registration" className="py-20 bg-slate-900 text-white relative overflow-hidden scroll-mt-32">
+      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-3xl mx-auto text-center no-print">
+          <h2 className="text-3xl font-bold mb-6">Credenciamento Gratuito</h2>
+          <p className="text-slate-300 mb-10 text-lg">
+            Garanta sua vaga no MEC3F 2026. Gere sua credencial digital agora mesmo.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {status === 'success' && ticketData ? (
+             <div className="bg-white rounded-xl p-8 text-slate-800 shadow-2xl md:col-span-2 max-w-2xl mx-auto w-full animate-fade-in-up">
+                 <div className="text-center mb-6 no-print">
+                    <div className="w-16 h-16 bg-mec-green/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <CheckCircleIcon className="w-8 h-8 text-mec-green" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-mec-green">Inscrição Confirmada!</h3>
+                    <p className="text-slate-600 mt-2">A organização do evento enviará um email posteriormente com mais informações.</p>
+                 </div>
+
+                 {/* Inline Preview - Simplified as it is just a preview now */}
+                 <div className="bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 rounded-2xl overflow-hidden shadow-lg relative max-w-md mx-auto">
+                    <div className="h-4 bg-gradient-to-r from-mec-salmon via-mec-green to-mec-teal w-full"></div>
+                    <div className="p-6">
+                       <div className="flex justify-between items-start mb-6">
+                          <div className="flex gap-3 items-center">
+                            <img src="/logomec3f.png" alt="MEC3F" className="h-12 w-12 object-contain" />
+                            <div>
+                                <span className="text-xs font-bold text-mec-teal tracking-wider uppercase">Evento Oficial</span>
+                                <h4 className="text-xl font-black text-slate-900 leading-tight">MEC3F 2026</h4>
+                                <p className="text-xs text-slate-500 mt-1">25-28 Ago • Foz do Iguaçu</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className="block text-xs text-slate-400 uppercase tracking-wide">Ticket</span>
+                            <span className="block text-2xl font-mono font-bold text-slate-800">#{ticketData.number.toString().padStart(4, '0')}</span>
+                          </div>
+                       </div>
+                       
+                       <div className="border-t border-dashed border-slate-300 my-6 relative">
+                          <div className="absolute -left-8 -top-3 w-6 h-6 bg-white rounded-full border-r border-slate-200"></div>
+                          <div className="absolute -right-8 -top-3 w-6 h-6 bg-white rounded-full border-l border-slate-200"></div>
+                       </div>
+
+                       <div className="flex gap-4 items-center">
+                          <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
+                             <span className="text-4xl font-bold text-slate-800">#{ticketData.number}</span>
+                          </div>
+                          <div>
+                             <p className="text-xs text-slate-400 uppercase font-bold">Participante</p>
+                             <p className="text-lg font-bold text-slate-900">{ticketData.name}</p>
+                             <span className="inline-block bg-mec-teal/10 text-mec-teal text-xs px-2 py-0.5 rounded mt-1 font-medium border border-mec-teal/20">
+                               {ticketData.role}
+                             </span>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+
+                 <div className="text-center mt-8 space-y-3 no-print">
+                   <button 
+                     onClick={handleDownloadTicket}
+                     className="bg-mec-teal text-white font-bold py-2 px-6 rounded-lg hover:bg-teal-500 transition flex items-center justify-center gap-2 mx-auto shadow-md"
+                   >
+                     <DownloadIcon className="w-4 h-4" />
+                     Imprimir / Baixar Ticket (PDF)
+                   </button>
+                   
+                   <button 
+                     onClick={() => { setStatus('idle'); setTicketData(null); }}
+                     className="text-mec-teal font-semibold hover:text-teal-600 hover:underline block w-full mt-4"
+                   >
+                     Realizar nova inscrição
+                   </button>
+                 </div>
+             </div>
+          ) : (
+             <>
+                <div className="bg-white rounded-xl p-8 text-slate-800 shadow-2xl">
+                  <h3 className="text-xl font-bold mb-6 text-mec-teal border-b pb-2">Dados do Participante</h3>
+                  
+                  {/* Toggle Switch */}
+                  <div className="flex bg-slate-100 p-1 rounded-lg mb-6">
+                    <button
+                      type="button"
+                      onClick={() => setInscriptionType('attendee')}
+                      className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${inscriptionType === 'attendee' ? 'bg-white text-mec-salmon shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                      Ouvinte
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setInscriptionType('participant')}
+                      className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${inscriptionType === 'participant' ? 'bg-white text-mec-salmon shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    >
+                      Participante
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Nome Completo</label>
+                      <input 
+                        type="text" 
+                        required
+                        value={formData.full_name}
+                        onChange={e => setFormData({...formData, full_name: e.target.value})}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-mec-teal focus:border-mec-teal bg-slate-50"
+                        placeholder="Como deseja que apareça no certificado"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Email Principal</label>
+                      <input 
+                        type="email" 
+                        required
+                        value={formData.email}
+                        onChange={e => setFormData({...formData, email: e.target.value})}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-mec-teal focus:border-mec-teal bg-slate-50"
+                        placeholder="Para contato da organização"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className={inscriptionType === 'attendee' ? 'col-span-2' : ''}>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Instituição</label>
+                        <input 
+                          type="text" 
+                          required
+                          value={formData.institution}
+                          onChange={e => setFormData({...formData, institution: e.target.value})}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-mec-teal focus:border-mec-teal bg-slate-50"
+                          placeholder="Sigla ou Nome"
+                        />
+                      </div>
+                      
+                      {/* Show category select only for Participants */}
+                      {inscriptionType === 'participant' && (
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">Categoria</label>
+                          <select
+                            value={formData.role}
+                            onChange={e => setFormData({...formData, role: e.target.value})}
+                            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-mec-teal focus:border-mec-teal bg-slate-50"
+                          >
+                            <option value="Estudante">Estudante</option>
+                            <option value="Profissional">Profissional</option>
+                            <option value="Pesquisador">Pesquisador</option>
+                            <option value="Professor">Professor</option>
+                            <option value="Outro">Outro</option>
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-start gap-2 pt-2">
+                      <input type="checkbox" required id="terms" className="mt-1" />
+                      <label htmlFor="terms" className="text-xs text-slate-500">
+                        Concordo com o processamento dos meus dados para fins de organização do evento e emissão de certificado.
+                      </label>
+                    </div>
+
+                    {status === 'error' && <p className="text-red-500 text-sm">{msg}</p>}
+
+                    <button 
+                      type="submit" 
+                      disabled={status === 'loading'}
+                      className="w-full bg-mec-salmon text-white font-bold py-3 rounded-lg hover:bg-[#c4755d] transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none shadow-lg mt-2"
+                    >
+                      {status === 'loading' ? 'Processando...' : `Inscrever-se como ${inscriptionType === 'attendee' ? 'Ouvinte' : 'Participante'}`}
+                    </button>
+                  </form>
+                </div>
+
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 flex flex-col justify-center">
+                  <div className="mb-6">
+                    <h3 className="text-xl font-bold mb-2">Instruções</h3>
+                    <p className="text-slate-300 text-sm">
+                      Este cadastro funciona como sua conta para o evento. Você não precisa criar senha.
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-6">
+                     <div className="flex items-start gap-4">
+                       <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg text-mec-yellow">1</div>
+                       <div>
+                         <h4 className="font-bold">Escolha sua modalidade</h4>
+                         <p className="text-xs text-slate-300 opacity-80">
+                            <strong>Ouvinte:</strong> Apenas assiste às palestras.<br/>
+                            <strong>Participante:</strong> Apresenta trabalhos ou participa ativamente.
+                         </p>
+                       </div>
+                     </div>
+                     <div className="flex items-start gap-4">
+                       <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg text-mec-yellow">2</div>
+                       <div>
+                         <h4 className="font-bold">Gere seu Ticket</h4>
+                         <p className="text-xs text-slate-300 opacity-80">Sua credencial será gerada na tela. Salve o PDF.</p>
+                       </div>
+                     </div>
+                     <div className="flex items-start gap-4">
+                       <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg text-mec-yellow">3</div>
+                       <div>
+                         <h4 className="font-bold">Aguarde contato</h4>
+                         <p className="text-xs text-slate-300 opacity-80">A organização enviará detalhes adicionais por email posteriormente.</p>
+                       </div>
+                     </div>
+                  </div>
+                </div>
+             </>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export const TeamSection = () => {
+  const [showAllGeneral, setShowAllGeneral] = useState(false);
+  const [showAllScience, setShowAllScience] = useState(false);
+
+  const ToggleButton = ({ isOpen, onClick, label }: { isOpen: boolean, onClick: () => void, label: string }) => (
+    <button 
+      onClick={onClick}
+      className="mt-6 flex items-center justify-center w-full sm:w-auto mx-auto gap-2 text-mec-teal font-medium hover:text-teal-600 transition-colors"
+    >
+      {label} {isOpen ? <ChevronUpIcon className="w-4 h-4"/> : <ChevronDownIcon className="w-4 h-4"/>}
+    </button>
+  );
+
+  return (
+    <section id="team" className="py-20 bg-white scroll-mt-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-slate-900">Comissão Organizadora</h2>
+          <p className="mt-2 text-slate-600">Conheça a equipe que faz o MEC3F acontecer</p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* General Org */}
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Organização Geral</h3>
+            <ul className="space-y-3">
+              {(showAllGeneral ? ORGANIZATION_GENERAL : ORGANIZATION_GENERAL.slice(0, 6)).map((person, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-mec-green flex-shrink-0"></div>
+                  <div>
+                    <span className="font-semibold text-slate-800">{person.name}</span>
+                    <span className="text-slate-500 block text-xs">{person.institution}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {ORGANIZATION_GENERAL.length > 6 && (
+              <ToggleButton 
+                isOpen={showAllGeneral} 
+                onClick={() => setShowAllGeneral(!showAllGeneral)} 
+                label={showAllGeneral ? "Ver menos" : `Ver mais (${ORGANIZATION_GENERAL.length - 6})`}
+              />
+            )}
+          </div>
+
+          {/* Local Org & Scientific */}
+          <div className="space-y-12">
+            <div>
+              <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Organização Local</h3>
+              <ul className="grid sm:grid-cols-2 gap-3">
+                {ORGANIZATION_LOCAL.map((person, i) => (
+                  <li key={i} className="text-sm text-slate-700">
+                    {person.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Comitê Científico</h3>
+              <ul className="space-y-3">
+              {(showAllScience ? SCIENTIFIC_COMMITTEE : SCIENTIFIC_COMMITTEE.slice(0, 4)).map((person, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-mec-teal flex-shrink-0"></div>
+                  <div>
+                    <span className="font-semibold text-slate-800">{person.name}</span>
+                    <span className="text-slate-500 block text-xs">{person.institution}</span>
+                  </div>
+                </li>
+              ))}
+              </ul>
+              {SCIENTIFIC_COMMITTEE.length > 4 && (
+                <ToggleButton 
+                  isOpen={showAllScience} 
+                  onClick={() => setShowAllScience(!showAllScience)} 
+                  label={showAllScience ? "Ver menos" : `Ver mais (${SCIENTIFIC_COMMITTEE.length - 4})`}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export const SponsorsSection = () => {
+  const realizationLogos = [
+    { name: "UNILA", url: "https://upload.wikimedia.org/wikipedia/commons/0/07/Unila.jpg" },
+    { name: "IBS UNaM", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Logo_IBS_1.jpg/1200px-Logo_IBS_1.jpg" },
+    { name: "IFPR", url: "https://portal.unila.edu.br/eventos/siepe-2019/arquivo/ifpr.jpg/ifpr.jpg" },
+    { name: "IFSP", url: "https://blog-static.infra.grancursosonline.com.br/wp-content/uploads/2014/02/03144911/IFSP-Inscri%C3%A7%C3%B5es-abertas-para-217-vagas.png" },
+    { name: "UNM", url: "https://ccint.fflch.usp.br/sites/ccint.fflch.usp.br/files/inline-images/%C3%ADndice.png" },
+    { name: "FACEN", url: "https://upload.wikimedia.org/wikipedia/commons/8/8c/LogoFacenUNA.png" },
+    { name: "ITAI", url: "https://itai.org.br/noticias/wp-content/themes/noticiasitai/logo.png" }
+  ];
+
+  const sponsorsLogos = [
+    { name: "PAEP CAPES", url: "https://ciencia.ufpr.br/portal/wp-content/uploads/2024/09/paep-capes.jpg" }
+  ];
+
+  const supportLogos = [
+    { name: "Support 1", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/d6defe63-2083-43aa-b1df-7ed3245fd110/@@images/c2809b40-2b1f-4826-bc02-824403f840d4.png" },
+    { name: "Support 2", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/da263c70-5785-4e55-b297-ddc98f18074f/@@images/9e5514ef-f428-4b0d-be11-2454b1c1c0fd.png" },
+    { name: "Support 3", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/df6895cd-8626-44cc-8678-88ccdfeb7c10/@@images/12b68d3f-3bb0-4c27-8d2a-2bfcb9e3d009.png" },
+    { name: "Support 4", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/adbc4f63-3552-4c47-a811-82939d3645c4/@@images/e0187b0c-1d12-4fe2-8e9e-cea9e155a7ba.png" },
+    { name: "Support 5", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/fda55db0-f934-44d5-bc17-7671b4cfd4bc/@@images/aee61eae-1214-4fc4-aba5-2bd8e828b2d0.png" }
+  ];
+
+  return (
+    <section id="partners" className="py-20 bg-slate-50 border-t border-slate-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div className="mb-20 text-center">
+          <h2 className="text-3xl font-bold text-slate-900 mb-12">Realização & Instituições Envolvidas</h2>
+          <div className="flex flex-wrap justify-center items-center gap-x-12 sm:gap-x-16 gap-y-10">
+            {realizationLogos.map((logo) => (
+              <div key={logo.name} className="flex-shrink-0">
+                <img
+                  src={logo.url}
+                  alt={logo.name}
+                  className="h-20 max-w-[220px] object-contain transform transition-transform duration-300 hover:scale-110"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-20 text-center">
+          <h2 className="text-3xl font-bold text-slate-900 mb-12">Patrocinadores</h2>
+          <div className="flex justify-center items-center">
+             {sponsorsLogos.map((logo) => (
+              <div key={logo.name}>
+                <img
+                  src={logo.url}
+                  alt={logo.name}
+                  className="h-28 max-w-xs object-contain transform transition-transform duration-300 hover:scale-110"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-slate-900 mb-12">Apoio</h2>
+          <div className="flex flex-wrap justify-center items-center gap-x-12 sm:gap-x-16 gap-y-10">
+             {supportLogos.map((logo) => (
+              <div key={logo.url} className="flex-shrink-0">
+                <img
+                  src={logo.url}
+                  alt="Apoio Institucional"
+                  className="h-24 max-w-[200px] object-contain transform transition-transform duration-300 hover:scale-110 grayscale hover:grayscale-0 opacity-80 hover:opacity-100"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
+export const Footer = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
+  return (
+    <footer className="bg-slate-900 text-slate-300 py-12 border-t-4 border-mec-teal">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid md:grid-cols-3 gap-8 mb-8">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+               <img src="/logomec3f.png" alt="MEC3F Logo" className="h-10 w-auto bg-white rounded p-0.5" />
+               <h3 className="text-white text-lg font-bold">{EVENT_DETAILS.name}</h3>
+            </div>
+            <p className="text-sm mb-4">Promovendo o desenvolvimento sustentável na tríplice fronteira através da ciência e tecnologia.</p>
+          </div>
+          <div>
+            <h4 className="text-white font-semibold mb-4">Contato</h4>
+            <ul className="text-sm space-y-2">
+              <li>{EVENT_DETAILS.location}</li>
+              <li>{EVENT_DETAILS.city}</li>
+              <li><a href={EVENT_DETAILS.instagram} className="hover:text-mec-teal transition-colors">Instagram @mec3f</a></li>
+            </ul>
+          </div>
+          <div>
+             <h4 className="text-white font-semibold mb-4">Links Rápidos</h4>
+             <ul className="text-sm space-y-2">
+               <li><a href="#registration" className="hover:text-white">Inscrições</a></li>
+               <li><a href="#schedule" className="hover:text-white">Programação</a></li>
+               <li><a href="https://portal.unila.edu.br" className="hover:text-white" target="_blank" rel="noreferrer">UNILA</a></li>
+             </ul>
+          </div>
+        </div>
+        <div className="border-t border-slate-800 pt-8 flex justify-between items-center text-xs text-slate-500 flex-col md:flex-row gap-4">
+          <p>&copy; {new Date().getFullYear()} MEC3F. Todos os direitos reservados.</p>
+          <button 
+            onClick={onOpenAdmin} 
+            className="border border-slate-700 hover:border-mec-green hover:text-mec-green transition-all px-3 py-1 rounded text-xs uppercase tracking-wider"
+          >
+            Área do Organizador (Login)
+          </button>
+        </div>
+      </div>
+    </footer>
+  );
+};
