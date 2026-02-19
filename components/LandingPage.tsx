@@ -637,6 +637,7 @@ export const SubmissionsSection = () => {
         file_label: "Nome do arquivo (PDF/DOCX):",
         file_example: "AbreviaturaDaTematica_IniciaisSobrenome.pdf",
         action_model: "Baixar Modelo",
+        action_example: "Ver Exemplo (PDF)",
         action_form: "Formulário de Envio",
       },
       attention: {
@@ -658,6 +659,7 @@ export const SubmissionsSection = () => {
         file_label: "Nombre del archivo (PDF/DOCX):",
         file_example: "AbreviaturaDeLaTemática_InicialesApellido.pdf",
         action_model: "Descargar Modelo",
+        action_example: "Ver Ejemplo (PDF)",
         action_form: "Formulario de Envío",
       },
       attention: {
@@ -668,7 +670,8 @@ export const SubmissionsSection = () => {
   };
 
   const current = content[lang];
-  const modelUrl = "https://drive.google.com/file/d/1v7FblhhVcbc-AkVyIB7Mr2QsAgp00n-D/view";
+  const exampleUrl = "https://drive.google.com/file/d/1v7FblhhVcbc-AkVyIB7Mr2QsAgp00n-D/view";
+  const modelUrl = "https://docs.google.com/document/d/1tix6OHmASMxWoARDTEgAxTAsJeTZ-BSVB7VJ8S51NAA/edit?usp=sharing";
   const formUrl = "https://forms.gle/2ZDWXP23KNYox5hN8";
 
   return (
@@ -755,21 +758,32 @@ export const SubmissionsSection = () => {
                </div>
              </div>
              
-             <div className="relative z-10 mt-auto flex flex-col sm:flex-row gap-3">
-               <a 
-                 href={modelUrl} 
-                 target="_blank" 
-                 rel="noopener noreferrer"
-                 className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors gap-2"
-               >
-                 <DownloadIcon className="w-4 h-4" />
-                 {current.step2.action_model}
-               </a>
+             <div className="relative z-10 mt-auto flex flex-col gap-3">
+               <div className="flex flex-col sm:flex-row gap-3">
+                 <a 
+                   href={modelUrl} 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors gap-2 text-sm text-center"
+                 >
+                   <DownloadIcon className="w-4 h-4" />
+                   {current.step2.action_model}
+                 </a>
+                 <a 
+                   href={exampleUrl} 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors gap-2 text-sm text-center"
+                 >
+                   <DownloadIcon className="w-4 h-4" />
+                   {current.step2.action_example}
+                 </a>
+               </div>
                <a 
                  href={formUrl} 
                  target="_blank" 
                  rel="noopener noreferrer"
-                 className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg gap-2"
+                 className="w-full inline-flex items-center justify-center px-4 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg gap-2"
                >
                  {current.step2.action_form}
                </a>
@@ -1161,14 +1175,14 @@ export const RegistrationSection = () => {
                       onClick={() => setInscriptionType('attendee')}
                       className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${inscriptionType === 'attendee' ? 'bg-white text-mec-salmon shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                     >
-                      Ouvinte
+                      Participante (apenas ouvinte)
                     </button>
                     <button
                       type="button"
                       onClick={() => setInscriptionType('participant')}
                       className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${inscriptionType === 'participant' ? 'bg-white text-mec-salmon shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                     >
-                      Participante
+                      Participante (c/ apresentação de trabalho)
                     </button>
                   </div>
 
@@ -1290,85 +1304,73 @@ export const RegistrationSection = () => {
 };
 
 export const TeamSection = () => {
-  const [showAllGeneral, setShowAllGeneral] = useState(false);
-  const [showAllScience, setShowAllScience] = useState(false);
-
-  const ToggleButton = ({ isOpen, onClick, label }: { isOpen: boolean, onClick: () => void, label: string }) => (
-    <button 
-      onClick={onClick}
-      className="mt-6 flex items-center justify-center w-full sm:w-auto mx-auto gap-2 text-mec-teal font-medium hover:text-teal-600 transition-colors"
-    >
-      {label} {isOpen ? <ChevronUpIcon className="w-4 h-4"/> : <ChevronDownIcon className="w-4 h-4"/>}
-    </button>
-  );
+  const [activeTab, setActiveTab] = useState<'general' | 'local' | 'scientific'>('general');
 
   return (
-    <section id="team" className="py-20 bg-white scroll-mt-32">
+    <section id="team" className="py-20 bg-slate-50 scroll-mt-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-slate-900">Comissão Organizadora</h2>
-          <p className="mt-2 text-slate-600">Conheça a equipe que faz o MEC3F acontecer</p>
+          <p className="mt-4 text-xl text-slate-600">A equipe que faz o MEC3F acontecer</p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* General Org */}
-          <div>
-            <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Organização Geral</h3>
-            <ul className="space-y-3">
-              {(showAllGeneral ? ORGANIZATION_GENERAL : ORGANIZATION_GENERAL.slice(0, 6)).map((person, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm">
-                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-mec-green flex-shrink-0"></div>
-                  <div>
-                    <span className="font-semibold text-slate-800">{person.name}</span>
-                    <span className="text-slate-500 block text-xs">{person.institution}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            {ORGANIZATION_GENERAL.length > 6 && (
-              <ToggleButton 
-                isOpen={showAllGeneral} 
-                onClick={() => setShowAllGeneral(!showAllGeneral)} 
-                label={showAllGeneral ? "Ver menos" : `Ver mais (${ORGANIZATION_GENERAL.length - 6})`}
-              />
-            )}
+        <div className="flex justify-center mb-10">
+          <div className="bg-white p-1 rounded-xl shadow-sm border border-slate-200 inline-flex flex-wrap justify-center">
+            <button
+              onClick={() => setActiveTab('general')}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'general' ? 'bg-mec-teal text-white shadow' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Organização Geral
+            </button>
+            <button
+              onClick={() => setActiveTab('local')}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'local' ? 'bg-mec-teal text-white shadow' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Organização Local
+            </button>
+            <button
+              onClick={() => setActiveTab('scientific')}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'scientific' ? 'bg-mec-teal text-white shadow' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              Comitê Científico
+            </button>
           </div>
+        </div>
 
-          {/* Local Org & Scientific */}
-          <div className="space-y-12">
-            <div>
-              <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Organização Local</h3>
-              <ul className="grid sm:grid-cols-2 gap-3">
-                {ORGANIZATION_LOCAL.map((person, i) => (
-                  <li key={i} className="text-sm text-slate-700">
-                    {person.name}
-                  </li>
-                ))}
-              </ul>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {activeTab === 'general' && ORGANIZATION_GENERAL.map((member, idx) => (
+            <div key={idx} className="bg-white p-4 rounded-lg shadow-sm border border-slate-100 flex items-center gap-4 animate-fade-in">
+              <div className="w-10 h-10 rounded-full bg-mec-teal/10 flex items-center justify-center text-mec-teal font-bold text-lg shrink-0">
+                {member.name.charAt(0)}
+              </div>
+              <div>
+                <h4 className="font-bold text-slate-800 text-sm">{member.name}</h4>
+                <p className="text-xs text-slate-500">{member.institution}</p>
+              </div>
             </div>
-
-            <div>
-              <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Comitê Científico</h3>
-              <ul className="space-y-3">
-              {(showAllScience ? SCIENTIFIC_COMMITTEE : SCIENTIFIC_COMMITTEE.slice(0, 4)).map((person, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm">
-                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-mec-teal flex-shrink-0"></div>
-                  <div>
-                    <span className="font-semibold text-slate-800">{person.name}</span>
-                    <span className="text-slate-500 block text-xs">{person.institution}</span>
-                  </div>
-                </li>
-              ))}
-              </ul>
-              {SCIENTIFIC_COMMITTEE.length > 4 && (
-                <ToggleButton 
-                  isOpen={showAllScience} 
-                  onClick={() => setShowAllScience(!showAllScience)} 
-                  label={showAllScience ? "Ver menos" : `Ver mais (${SCIENTIFIC_COMMITTEE.length - 4})`}
-                />
-              )}
+          ))}
+          {activeTab === 'local' && ORGANIZATION_LOCAL.map((member, idx) => (
+            <div key={idx} className="bg-white p-4 rounded-lg shadow-sm border border-slate-100 flex items-center gap-4 animate-fade-in">
+              <div className="w-10 h-10 rounded-full bg-mec-salmon/10 flex items-center justify-center text-mec-salmon font-bold text-lg shrink-0">
+                {member.name.charAt(0)}
+              </div>
+              <div>
+                <h4 className="font-bold text-slate-800 text-sm">{member.name}</h4>
+                <p className="text-xs text-slate-500">{member.institution}</p>
+              </div>
             </div>
-          </div>
+          ))}
+          {activeTab === 'scientific' && SCIENTIFIC_COMMITTEE.map((member, idx) => (
+            <div key={idx} className="bg-white p-4 rounded-lg shadow-sm border border-slate-100 flex items-center gap-4 animate-fade-in">
+              <div className="w-10 h-10 rounded-full bg-mec-yellow/10 flex items-center justify-center text-yellow-600 font-bold text-lg shrink-0">
+                {member.name.charAt(0)}
+              </div>
+              <div>
+                <h4 className="font-bold text-slate-800 text-sm">{member.name}</h4>
+                <p className="text-xs text-slate-500">{member.institution}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -1376,77 +1378,29 @@ export const TeamSection = () => {
 };
 
 export const SponsorsSection = () => {
-  const realizationLogos = [
-    { name: "UNILA", url: "https://upload.wikimedia.org/wikipedia/commons/0/07/Unila.jpg" },
-    { name: "IBS UNaM", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Logo_IBS_1.jpg/1200px-Logo_IBS_1.jpg" },
-    { name: "IFPR", url: "https://portal.unila.edu.br/eventos/siepe-2019/arquivo/ifpr.jpg/ifpr.jpg" },
-    { name: "IFSP", url: "https://blog-static.infra.grancursosonline.com.br/wp-content/uploads/2014/02/03144911/IFSP-Inscri%C3%A7%C3%B5es-abertas-para-217-vagas.png" },
-    { name: "UNM", url: "https://ccint.fflch.usp.br/sites/ccint.fflch.usp.br/files/inline-images/%C3%ADndice.png" },
-    { name: "FACEN", url: "https://upload.wikimedia.org/wikipedia/commons/8/8c/LogoFacenUNA.png" },
-    { name: "ITAI", url: "https://itai.org.br/noticias/wp-content/themes/noticiasitai/logo.png" }
-  ];
-
-  const sponsorsLogos = [
-    { name: "PAEP CAPES", url: "https://ciencia.ufpr.br/portal/wp-content/uploads/2024/09/paep-capes.jpg" }
-  ];
-
-  const supportLogos = [
-    { name: "Support 1", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/d6defe63-2083-43aa-b1df-7ed3245fd110/@@images/c2809b40-2b1f-4826-bc02-824403f840d4.png" },
-    { name: "Support 2", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/da263c70-5785-4e55-b297-ddc98f18074f/@@images/9e5514ef-f428-4b0d-be11-2454b1c1c0fd.png" },
-    { name: "Support 3", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/df6895cd-8626-44cc-8678-88ccdfeb7c10/@@images/12b68d3f-3bb0-4c27-8d2a-2bfcb9e3d009.png" },
-    { name: "Support 4", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/adbc4f63-3552-4c47-a811-82939d3645c4/@@images/e0187b0c-1d12-4fe2-8e9e-cea9e155a7ba.png" },
-    { name: "Support 5", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/fda55db0-f934-44d5-bc17-7671b4cfd4bc/@@images/aee61eae-1214-4fc4-aba5-2bd8e828b2d0.png" }
-  ];
-
   return (
-    <section id="partners" className="py-20 bg-slate-50 border-t border-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-2xl font-bold text-slate-900 mb-12 uppercase tracking-wide opacity-80">Realização e Apoio</h2>
         
-        <div className="mb-20 text-center">
-          <h2 className="text-3xl font-bold text-slate-900 mb-12">Realização & Instituições Envolvidas</h2>
-          <div className="flex flex-wrap justify-center items-center gap-x-12 sm:gap-x-16 gap-y-10">
-            {realizationLogos.map((logo) => (
-              <div key={logo.name} className="flex-shrink-0">
-                <img
-                  src={logo.url}
-                  alt={logo.name}
-                  className="h-20 max-w-[220px] object-contain transform transition-transform duration-300 hover:scale-110"
-                />
-              </div>
-            ))}
-          </div>
+        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
+           {/* Placeholders for logos */}
+           <div className="h-16 flex items-center justify-center">
+              <span className="text-2xl font-black text-slate-400">UNILA</span>
+           </div>
+           <div className="h-16 flex items-center justify-center">
+              <span className="text-2xl font-black text-slate-400">UNaM</span>
+           </div>
+           <div className="h-16 flex items-center justify-center">
+              <span className="text-2xl font-black text-slate-400">UNA</span>
+           </div>
+           <div className="h-16 flex items-center justify-center">
+              <span className="text-2xl font-black text-slate-400">IFPR</span>
+           </div>
+           <div className="h-16 flex items-center justify-center">
+              <span className="text-2xl font-black text-slate-400">PTI</span>
+           </div>
         </div>
-
-        <div className="mb-20 text-center">
-          <h2 className="text-3xl font-bold text-slate-900 mb-12">Patrocinadores</h2>
-          <div className="flex justify-center items-center">
-             {sponsorsLogos.map((logo) => (
-              <div key={logo.name}>
-                <img
-                  src={logo.url}
-                  alt={logo.name}
-                  className="h-28 max-w-xs object-contain transform transition-transform duration-300 hover:scale-110"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-slate-900 mb-12">Apoio</h2>
-          <div className="flex flex-wrap justify-center items-center gap-x-12 sm:gap-x-16 gap-y-10">
-             {supportLogos.map((logo) => (
-              <div key={logo.url} className="flex-shrink-0">
-                <img
-                  src={logo.url}
-                  alt="Apoio Institucional"
-                  className="h-24 max-w-[200px] object-contain transform transition-transform duration-300 hover:scale-110 grayscale hover:grayscale-0 opacity-80 hover:opacity-100"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
       </div>
     </section>
   );
@@ -1454,41 +1408,59 @@ export const SponsorsSection = () => {
 
 export const Footer = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
   return (
-    <footer className="bg-slate-900 text-slate-300 py-12 border-t-4 border-mec-teal">
+    <footer className="bg-slate-900 text-white py-12 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-3 gap-8 mb-8">
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-               <img src="/logomec3f.png" alt="MEC3F Logo" className="h-10 w-auto bg-white rounded p-0.5" />
-               <h3 className="text-white text-lg font-bold">{EVENT_DETAILS.name}</h3>
+              <img src="/logomec3f.png" alt="MEC3F" className="h-10 w-auto brightness-0 invert opacity-80" />
+              <div className="flex flex-col">
+                <span className="font-bold text-xl tracking-tight">{EVENT_DETAILS.acronym}</span>
+                <span className="text-xs text-slate-400">{EVENT_DETAILS.year}</span>
+              </div>
             </div>
-            <p className="text-sm mb-4">Promovendo o desenvolvimento sustentável na tríplice fronteira através da ciência e tecnologia.</p>
+            <p className="text-slate-400 text-sm max-w-sm">
+              Congresso de Engenharias e Ciências Aplicadas das Três Fronteiras.
+              Promovendo a integração científica e tecnológica na região trinacional.
+            </p>
           </div>
+          
           <div>
-            <h4 className="text-white font-semibold mb-4">Contato</h4>
-            <ul className="text-sm space-y-2">
-              <li>{EVENT_DETAILS.location}</li>
-              <li>{EVENT_DETAILS.city}</li>
-              <li><a href={EVENT_DETAILS.instagram} className="hover:text-mec-teal transition-colors">Instagram @mec3f</a></li>
+            <h4 className="font-bold text-lg mb-4 text-mec-teal">Links Rápidos</h4>
+            <ul className="space-y-2 text-sm text-slate-400">
+              <li><a href="#about" className="hover:text-white transition">Sobre</a></li>
+              <li><a href="#schedule" className="hover:text-white transition">Programação</a></li>
+              <li><a href="#registration" className="hover:text-white transition">Inscrições</a></li>
+              <li><a href="#submissions" className="hover:text-white transition">Submissões</a></li>
             </ul>
           </div>
+
           <div>
-             <h4 className="text-white font-semibold mb-4">Links Rápidos</h4>
-             <ul className="text-sm space-y-2">
-               <li><a href="#registration" className="hover:text-white">Inscrições</a></li>
-               <li><a href="#schedule" className="hover:text-white">Programação</a></li>
-               <li><a href="https://portal.unila.edu.br" className="hover:text-white" target="_blank" rel="noreferrer">UNILA</a></li>
-             </ul>
+            <h4 className="font-bold text-lg mb-4 text-mec-teal">Contato</h4>
+            <ul className="space-y-2 text-sm text-slate-400">
+              <li className="flex items-start gap-2">
+                <MapPinIcon className="w-4 h-4 mt-0.5 shrink-0" />
+                <span>{EVENT_DETAILS.location}<br/>{EVENT_DETAILS.city}</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <a href={EVENT_DETAILS.instagram} target="_blank" rel="noreferrer" className="hover:text-white transition flex items-center gap-2">
+                   <span>Instagram Oficial</span>
+                </a>
+              </li>
+              <li>
+                <a href="mailto:contato@mec3f.com" className="hover:text-white transition">contato@mec3f.com</a>
+              </li>
+            </ul>
           </div>
         </div>
-        <div className="border-t border-slate-800 pt-8 flex justify-between items-center text-xs text-slate-500 flex-col md:flex-row gap-4">
-          <p>&copy; {new Date().getFullYear()} MEC3F. Todos os direitos reservados.</p>
-          <button 
-            onClick={onOpenAdmin} 
-            className="border border-slate-700 hover:border-mec-green hover:text-mec-green transition-all px-3 py-1 rounded text-xs uppercase tracking-wider"
-          >
-            Área do Organizador (Login)
-          </button>
+        
+        <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+          <p>&copy; 2026 MEC3F. Todos os direitos reservados.</p>
+          <div className="flex gap-4 mt-4 md:mt-0">
+            <button onClick={onOpenAdmin} className="hover:text-slate-300 transition">Área do Organizador</button>
+            <a href="#" className="hover:text-slate-300 transition">Privacidade</a>
+            <a href="#" className="hover:text-slate-300 transition">Termos</a>
+          </div>
         </div>
       </div>
     </footer>
