@@ -1508,7 +1508,7 @@ export const Footer = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
                 </a>
               </li>
               <li>
-                <a href="mailto:contato@mec3f.com" className="hover:text-white transition">contato@mec3f.com</a>
+                <a href="mailto:mec3fronteiras@gmail.com" className="hover:text-white transition">contato@mec3f.com</a>
               </li>
             </ul>
           </div>
