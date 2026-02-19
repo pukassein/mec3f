@@ -58,6 +58,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
   const [editSchedule, setEditSchedule] = useState<Partial<ScheduleItem> | null>(null);
   const [editHeroUrl, setEditHeroUrl] = useState('');
   const [editAboutUrl, setEditAboutUrl] = useState('');
+  const [editGalleryUrls, setEditGalleryUrls] = useState('');
 
   // Upload & Gallery State
   const [uploading, setUploading] = useState(false);
@@ -110,6 +111,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
       }, {} as Record<string, string>);
       setEditHeroUrl(contentMap.hero_image_url || '');
       setEditAboutUrl(contentMap.about_image_url || '');
+      setEditGalleryUrls(contentMap.gallery_image_urls || '');
     }
   };
 
@@ -216,6 +218,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
       const updates = [
         { key: 'hero_image_url', value: editHeroUrl },
         { key: 'about_image_url', value: editAboutUrl },
+        { key: 'gallery_image_urls', value: editGalleryUrls },
       ];
       const { error } = await supabase.from('site_content').upsert(updates, { onConflict: 'key' });
       if (error) {
@@ -699,7 +702,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                   className="w-full border p-3 rounded-lg h-32 font-mono text-sm"
                   value={editHeroUrl}
                   onChange={e => setEditHeroUrl(e.target.value)}
-                  placeholder="https://exemplo.com/imagem1.jpg&#10;https://exemplo.com/imagem2.jpg"
+                  placeholder="https://live.staticflickr.com/65535/54007664478...jpg&#10;https://live.staticflickr.com/65535/54007664479...jpg"
                 />
               </div>
               
@@ -711,13 +714,26 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                         className="w-full border p-2 rounded-lg"
                         value={editAboutUrl}
                         onChange={e => setEditAboutUrl(e.target.value)}
-                        placeholder="https://exemplo.com/sobre.jpg"
+                        placeholder="https://live.staticflickr.com/65535/54007664478...jpg"
                       />
                    </div>
                    {editAboutUrl && (
                      <img src={editAboutUrl} className="w-20 h-14 object-cover rounded border bg-gray-100" alt="Preview" />
                    )}
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Galeria de Imagens (URLs)</label>
+                <p className="text-xs text-slate-500 mb-2">
+                   Cole uma URL por linha (ex: Flickr). Se preenchido, o site usará estas imagens em vez das imagens do banco de dados (economizando banda).
+                </p>
+                <textarea 
+                  className="w-full border p-3 rounded-lg h-32 font-mono text-sm"
+                  value={editGalleryUrls}
+                  onChange={e => setEditGalleryUrls(e.target.value)}
+                  placeholder="https://live.staticflickr.com/65535/54007664478...jpg&#10;https://live.staticflickr.com/65535/54007664479...jpg"
+                />
               </div>
 
               <div className="pt-4 border-t">

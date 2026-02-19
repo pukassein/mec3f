@@ -1304,73 +1304,85 @@ export const RegistrationSection = () => {
 };
 
 export const TeamSection = () => {
-  const [activeTab, setActiveTab] = useState<'general' | 'local' | 'scientific'>('general');
+  const [showAllGeneral, setShowAllGeneral] = useState(false);
+  const [showAllScience, setShowAllScience] = useState(false);
+
+  const ToggleButton = ({ isOpen, onClick, label }: { isOpen: boolean, onClick: () => void, label: string }) => (
+    <button 
+      onClick={onClick}
+      className="mt-6 flex items-center justify-center w-full sm:w-auto mx-auto gap-2 text-mec-teal font-medium hover:text-teal-600 transition-colors"
+    >
+      {label} {isOpen ? <ChevronUpIcon className="w-4 h-4"/> : <ChevronDownIcon className="w-4 h-4"/>}
+    </button>
+  );
 
   return (
-    <section id="team" className="py-20 bg-slate-50 scroll-mt-32">
+    <section id="team" className="py-20 bg-white scroll-mt-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-slate-900">Comissão Organizadora</h2>
-          <p className="mt-4 text-xl text-slate-600">A equipe que faz o MEC3F acontecer</p>
+          <p className="mt-2 text-slate-600">Conheça a equipe que faz o MEC3F acontecer</p>
         </div>
 
-        <div className="flex justify-center mb-10">
-          <div className="bg-white p-1 rounded-xl shadow-sm border border-slate-200 inline-flex flex-wrap justify-center">
-            <button
-              onClick={() => setActiveTab('general')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'general' ? 'bg-mec-teal text-white shadow' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Organização Geral
-            </button>
-            <button
-              onClick={() => setActiveTab('local')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'local' ? 'bg-mec-teal text-white shadow' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Organização Local
-            </button>
-            <button
-              onClick={() => setActiveTab('scientific')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'scientific' ? 'bg-mec-teal text-white shadow' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Comitê Científico
-            </button>
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* General Org */}
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Organização Geral</h3>
+            <ul className="space-y-3">
+              {(showAllGeneral ? ORGANIZATION_GENERAL : ORGANIZATION_GENERAL.slice(0, 6)).map((person, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-mec-green flex-shrink-0"></div>
+                  <div>
+                    <span className="font-semibold text-slate-800">{person.name}</span>
+                    <span className="text-slate-500 block text-xs">{person.institution}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {ORGANIZATION_GENERAL.length > 6 && (
+              <ToggleButton 
+                isOpen={showAllGeneral} 
+                onClick={() => setShowAllGeneral(!showAllGeneral)} 
+                label={showAllGeneral ? "Ver menos" : `Ver mais (${ORGANIZATION_GENERAL.length - 6})`}
+              />
+            )}
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {activeTab === 'general' && ORGANIZATION_GENERAL.map((member, idx) => (
-            <div key={idx} className="bg-white p-4 rounded-lg shadow-sm border border-slate-100 flex items-center gap-4 animate-fade-in">
-              <div className="w-10 h-10 rounded-full bg-mec-teal/10 flex items-center justify-center text-mec-teal font-bold text-lg shrink-0">
-                {member.name.charAt(0)}
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-800 text-sm">{member.name}</h4>
-                <p className="text-xs text-slate-500">{member.institution}</p>
-              </div>
+          {/* Local Org & Scientific */}
+          <div className="space-y-12">
+            <div>
+              <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Organização Local</h3>
+              <ul className="grid sm:grid-cols-2 gap-3">
+                {ORGANIZATION_LOCAL.map((person, i) => (
+                  <li key={i} className="text-sm text-slate-700">
+                    {person.name}
+                  </li>
+                ))}
+              </ul>
             </div>
-          ))}
-          {activeTab === 'local' && ORGANIZATION_LOCAL.map((member, idx) => (
-            <div key={idx} className="bg-white p-4 rounded-lg shadow-sm border border-slate-100 flex items-center gap-4 animate-fade-in">
-              <div className="w-10 h-10 rounded-full bg-mec-salmon/10 flex items-center justify-center text-mec-salmon font-bold text-lg shrink-0">
-                {member.name.charAt(0)}
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-800 text-sm">{member.name}</h4>
-                <p className="text-xs text-slate-500">{member.institution}</p>
-              </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Comitê Científico</h3>
+              <ul className="space-y-3">
+              {(showAllScience ? SCIENTIFIC_COMMITTEE : SCIENTIFIC_COMMITTEE.slice(0, 4)).map((person, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm">
+                  <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-mec-teal flex-shrink-0"></div>
+                  <div>
+                    <span className="font-semibold text-slate-800">{person.name}</span>
+                    <span className="text-slate-500 block text-xs">{person.institution}</span>
+                  </div>
+                </li>
+              ))}
+              </ul>
+              {SCIENTIFIC_COMMITTEE.length > 4 && (
+                <ToggleButton 
+                  isOpen={showAllScience} 
+                  onClick={() => setShowAllScience(!showAllScience)} 
+                  label={showAllScience ? "Ver menos" : `Ver mais (${SCIENTIFIC_COMMITTEE.length - 4})`}
+                />
+              )}
             </div>
-          ))}
-          {activeTab === 'scientific' && SCIENTIFIC_COMMITTEE.map((member, idx) => (
-            <div key={idx} className="bg-white p-4 rounded-lg shadow-sm border border-slate-100 flex items-center gap-4 animate-fade-in">
-              <div className="w-10 h-10 rounded-full bg-mec-yellow/10 flex items-center justify-center text-yellow-600 font-bold text-lg shrink-0">
-                {member.name.charAt(0)}
-              </div>
-              <div>
-                <h4 className="font-bold text-slate-800 text-sm">{member.name}</h4>
-                <p className="text-xs text-slate-500">{member.institution}</p>
-              </div>
-            </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>
@@ -1378,29 +1390,77 @@ export const TeamSection = () => {
 };
 
 export const SponsorsSection = () => {
+  const realizationLogos = [
+    { name: "UNILA", url: "https://upload.wikimedia.org/wikipedia/commons/0/07/Unila.jpg" },
+    { name: "IBS UNaM", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Logo_IBS_1.jpg/1200px-Logo_IBS_1.jpg" },
+    { name: "IFPR", url: "https://portal.unila.edu.br/eventos/siepe-2019/arquivo/ifpr.jpg/ifpr.jpg" },
+    { name: "IFSP", url: "https://blog-static.infra.grancursosonline.com.br/wp-content/uploads/2014/02/03144911/IFSP-Inscri%C3%A7%C3%B5es-abertas-para-217-vagas.png" },
+    { name: "UNM", url: "https://ccint.fflch.usp.br/sites/ccint.fflch.usp.br/files/inline-images/%C3%ADndice.png" },
+    { name: "FACEN", url: "https://upload.wikimedia.org/wikipedia/commons/8/8c/LogoFacenUNA.png" },
+    { name: "ITAI", url: "https://itai.org.br/noticias/wp-content/themes/noticiasitai/logo.png" }
+  ];
+
+  const sponsorsLogos = [
+    { name: "PAEP CAPES", url: "https://ciencia.ufpr.br/portal/wp-content/uploads/2024/09/paep-capes.jpg" }
+  ];
+
+  const supportLogos = [
+    { name: "Support 1", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/d6defe63-2083-43aa-b1df-7ed3245fd110/@@images/c2809b40-2b1f-4826-bc02-824403f840d4.png" },
+    { name: "Support 2", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/da263c70-5785-4e55-b297-ddc98f18074f/@@images/9e5514ef-f428-4b0d-be11-2454b1c1c0fd.png" },
+    { name: "Support 3", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/df6895cd-8626-44cc-8678-88ccdfeb7c10/@@images/12b68d3f-3bb0-4c27-8d2a-2bfcb9e3d009.png" },
+    { name: "Support 4", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/adbc4f63-3552-4c47-a811-82939d3645c4/@@images/e0187b0c-1d12-4fe2-8e9e-cea9e155a7ba.png" },
+    { name: "Support 5", url: "https://portal.unila.edu.br/programas-pos-graduacao/programas-pos/@@collective.cover.banner/fda55db0-f934-44d5-bc17-7671b4cfd4bc/@@images/aee61eae-1214-4fc4-aba5-2bd8e828b2d0.png" }
+  ];
+
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-2xl font-bold text-slate-900 mb-12 uppercase tracking-wide opacity-80">Realização e Apoio</h2>
+    <section id="partners" className="py-20 bg-slate-50 border-t border-slate-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
-           {/* Placeholders for logos */}
-           <div className="h-16 flex items-center justify-center">
-              <span className="text-2xl font-black text-slate-400">UNILA</span>
-           </div>
-           <div className="h-16 flex items-center justify-center">
-              <span className="text-2xl font-black text-slate-400">UNaM</span>
-           </div>
-           <div className="h-16 flex items-center justify-center">
-              <span className="text-2xl font-black text-slate-400">UNA</span>
-           </div>
-           <div className="h-16 flex items-center justify-center">
-              <span className="text-2xl font-black text-slate-400">IFPR</span>
-           </div>
-           <div className="h-16 flex items-center justify-center">
-              <span className="text-2xl font-black text-slate-400">PTI</span>
-           </div>
+        <div className="mb-20 text-center">
+          <h2 className="text-3xl font-bold text-slate-900 mb-12">Realização & Instituições Envolvidas</h2>
+          <div className="flex flex-wrap justify-center items-center gap-x-12 sm:gap-x-16 gap-y-10">
+            {realizationLogos.map((logo) => (
+              <div key={logo.name} className="flex-shrink-0">
+                <img
+                  src={logo.url}
+                  alt={logo.name}
+                  className="h-20 max-w-[220px] object-contain transform transition-transform duration-300 hover:scale-110"
+                />
+              </div>
+            ))}
+          </div>
         </div>
+
+        <div className="mb-20 text-center">
+          <h2 className="text-3xl font-bold text-slate-900 mb-12">Patrocinadores</h2>
+          <div className="flex justify-center items-center">
+             {sponsorsLogos.map((logo) => (
+              <div key={logo.name}>
+                <img
+                  src={logo.url}
+                  alt={logo.name}
+                  className="h-28 max-w-xs object-contain transform transition-transform duration-300 hover:scale-110"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-slate-900 mb-12">Apoio</h2>
+          <div className="flex flex-wrap justify-center items-center gap-x-12 sm:gap-x-16 gap-y-10">
+             {supportLogos.map((logo) => (
+              <div key={logo.url} className="flex-shrink-0">
+                <img
+                  src={logo.url}
+                  alt="Apoio Institucional"
+                  className="h-24 max-w-[200px] object-contain transform transition-transform duration-300 hover:scale-110 grayscale hover:grayscale-0 opacity-80 hover:opacity-100"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </section>
   );

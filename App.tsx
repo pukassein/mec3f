@@ -70,7 +70,7 @@ const App = () => {
     if (scheduleData && scheduleData.length > 0) setScheduleItems(scheduleData as any);
     else setScheduleItems(SCHEDULE_DATA.flatMap(d => d.items));
 
-    // 4. Site Content
+    // 4. Site Content (Hero, About, AND Gallery)
     const { data: contentData } = await supabase.from('site_content').select('*');
     if (contentData) {
         const contentMap = contentData.reduce((acc, item) => {
@@ -78,28 +78,35 @@ const App = () => {
           return acc;
         }, {} as Record<string, string>);
         
+        // Hero Images
         if (contentMap.hero_image_url) {
           setHeroImages(contentMap.hero_image_url.split('\n').filter(Boolean));
         } else {
-          setHeroImages([]); // Reset if empty
+          setHeroImages([]); 
         }
         
+        // About Image
         if (contentMap.about_image_url) {
           setAboutImage(contentMap.about_image_url);
         }
-    }
 
-    // 5. Gallery Images (Fetch directly from Storage)
-    const { data: files } = await supabase.storage.from('images').list();
-    if (files) {
-      const urls = files
-        .filter(f => f.name !== '.emptyFolderPlaceholder')
-        .sort((a, b) => b.name.localeCompare(a.name)) // Newest first
-        .map(file => {
-          const { data } = supabase.storage.from('images').getPublicUrl(file.name);
-          return data.publicUrl;
-        });
-      setGalleryImages(urls);
+        // Gallery Images (From URL list)
+        if (contentMap.gallery_image_urls) {
+          setGalleryImages(contentMap.gallery_image_urls.split('\n').filter(Boolean));
+        } else {
+          // Fallback: If no URLs in DB, try loading from Storage bucket as legacy method
+          const { data: files } = await supabase.storage.from('images').list();
+          if (files && files.length > 0) {
+            const urls = files
+              .filter(f => f.name !== '.emptyFolderPlaceholder')
+              .sort((a, b) => b.name.localeCompare(a.name)) 
+              .map(file => {
+                const { data } = supabase.storage.from('images').getPublicUrl(file.name);
+                return data.publicUrl;
+              });
+            setGalleryImages(urls);
+          }
+        }
     }
   };
 
