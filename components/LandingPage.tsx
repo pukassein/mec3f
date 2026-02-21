@@ -926,22 +926,22 @@ export const RegistrationSection = () => {
     }));
   }, [inscriptionType]);
 
-  const sendConfirmationEmail = (email: string, ticket: number, name: string) => {
-    // Safely use EmailJS from the global window object (loaded via CDN)
-    const emailjsGlobal = (window as any).emailjs;
-    
-    // We attempt to send it for administrative records, but the UI won't promise it
-    if (emailjsGlobal) {
-      emailjsGlobal.send(
-        'YOUR_SERVICE_ID', 
-        'YOUR_TEMPLATE_ID', 
-        {
-          to_email: email,
-          full_name: name,
-          ticket_number: ticket,
+  const sendConfirmationEmail = async (email: string, ticket: number, name: string, role: string) => {
+    try {
+      await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        'YOUR_PUBLIC_KEY'
-      ).catch((err: any) => console.log('Email logging failed:', err));
+        body: JSON.stringify({
+          email,
+          ticketNumber: ticket,
+          name,
+          role
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to send email:', error);
     }
   };
 
@@ -971,7 +971,7 @@ export const RegistrationSection = () => {
           name: data.full_name,
           role: data.role || 'Participante'
         });
-        sendConfirmationEmail(data.email, data.ticket_number, data.full_name);
+        sendConfirmationEmail(data.email, data.ticket_number, data.full_name, data.role || 'Participante');
       }
 
       setStatus('success');
