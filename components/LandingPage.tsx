@@ -902,11 +902,17 @@ export const GallerySection = ({ images }: { images: string[] }) => {
 
 export const RegistrationSection = () => {
   const [inscriptionType, setInscriptionType] = useState<'attendee' | 'participant'>('attendee');
+  const [isForeigner, setIsForeigner] = useState(false);
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
     institution: '',
-    role: 'Ouvinte'
+    role: 'Ouvinte',
+    cpf: '',
+    document_type: 'RG',
+    document_number: '',
+    phone: '',
+    is_foreigner: false
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [msg, setMsg] = useState('');
@@ -969,7 +975,18 @@ export const RegistrationSection = () => {
       }
 
       setStatus('success');
-      setFormData({ full_name: '', email: '', institution: '', role: inscriptionType === 'attendee' ? 'Ouvinte' : 'Estudante' });
+      setFormData({ 
+        full_name: '', 
+        email: '', 
+        institution: '', 
+        role: inscriptionType === 'attendee' ? 'Ouvinte' : 'Estudante',
+        cpf: '',
+        document_type: 'RG',
+        document_number: '',
+        phone: '',
+        is_foreigner: false
+      });
+      setIsForeigner(false);
     } catch (error) {
       console.error('Error registering:', error);
       setStatus('error');
@@ -1209,6 +1226,84 @@ export const RegistrationSection = () => {
                         placeholder="Para contato da organização"
                       />
                     </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Telefone / WhatsApp</label>
+                        <input 
+                          type="tel" 
+                          required
+                          value={formData.phone}
+                          onChange={e => setFormData({...formData, phone: e.target.value})}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-mec-teal focus:border-mec-teal bg-slate-50"
+                          placeholder="+55 (00) 00000-0000"
+                        />
+                      </div>
+                      
+                      <div className="flex items-center pt-6">
+                        <label className="flex items-center cursor-pointer select-none">
+                          <input 
+                            type="checkbox" 
+                            checked={isForeigner}
+                            onChange={e => {
+                              setIsForeigner(e.target.checked);
+                              setFormData(prev => ({ 
+                                ...prev, 
+                                is_foreigner: e.target.checked,
+                                cpf: e.target.checked ? '' : prev.cpf,
+                                document_type: e.target.checked ? 'DNI' : 'RG'
+                              }));
+                            }}
+                            className="w-4 h-4 text-mec-teal border-gray-300 rounded focus:ring-mec-teal"
+                          />
+                          <span className="ml-2 text-sm text-slate-700 font-medium">Sou estrangeiro / I am a foreigner</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {!isForeigner && (
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">CPF</label>
+                          <input 
+                            type="text" 
+                            required={!isForeigner}
+                            value={formData.cpf}
+                            onChange={e => setFormData({...formData, cpf: e.target.value})}
+                            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-mec-teal focus:border-mec-teal bg-slate-50"
+                            placeholder="000.000.000-00"
+                          />
+                        </div>
+                      )}
+                      
+                      <div className={isForeigner ? "col-span-2" : ""}>
+                         <label className="block text-sm font-medium text-slate-700 mb-1">
+                           {isForeigner ? 'Documento (DNI / Pasaporte)' : 'RG'}
+                         </label>
+                         <div className="flex">
+                           {!isForeigner && (
+                             <select
+                               value={formData.document_type}
+                               onChange={e => setFormData({...formData, document_type: e.target.value})}
+                               className="w-24 px-2 py-2 border border-r-0 border-slate-300 rounded-l-lg focus:ring-2 focus:ring-mec-teal focus:border-mec-teal bg-slate-100 text-sm"
+                             >
+                               <option value="RG">RG</option>
+                               <option value="CNH">CNH</option>
+                               <option value="Outro">Outro</option>
+                             </select>
+                           )}
+                           <input 
+                             type="text" 
+                             required
+                             value={formData.document_number}
+                             onChange={e => setFormData({...formData, document_number: e.target.value})}
+                             className={`w-full px-4 py-2 border border-slate-300 ${!isForeigner ? 'rounded-r-lg' : 'rounded-lg'} focus:ring-2 focus:ring-mec-teal focus:border-mec-teal bg-slate-50`}
+                             placeholder="Número do documento"
+                           />
+                         </div>
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className={inscriptionType === 'attendee' ? 'col-span-2' : ''}>
                         <label className="block text-sm font-medium text-slate-700 mb-1">Instituição</label>
@@ -1508,7 +1603,7 @@ export const Footer = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
                 </a>
               </li>
               <li>
-                <a href="mailto:mec3fronteiras@gmail.com" className="hover:text-white transition">mec3fronteiras@gmail.com</a>
+                <a href="mailto:contato@mec3f.com" className="hover:text-white transition">contato@mec3f.com</a>
               </li>
             </ul>
           </div>

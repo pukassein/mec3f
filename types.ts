@@ -49,6 +49,11 @@ export interface Registration {
   institution: string;
   role?: string;
   created_at?: string;
+  document_type?: string;
+  document_number?: string;
+  cpf?: string;
+  phone?: string;
+  is_foreigner?: boolean;
 }
 
 export interface Speaker {

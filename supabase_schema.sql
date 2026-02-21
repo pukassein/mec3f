@@ -18,7 +18,12 @@ create table if not exists registrations (
   full_name text not null,
   email text not null,
   institution text,
-  role text
+  role text,
+  document_type text,
+  document_number text,
+  cpf text,
+  phone text,
+  is_foreigner boolean default false
 );
 
 -- Ensure ticket_number exists if table already existed without it
@@ -26,6 +31,21 @@ do $$
 begin
   if not exists (select 1 from information_schema.columns where table_name = 'registrations' and column_name = 'ticket_number') then
     alter table registrations add column ticket_number serial;
+  end if;
+  if not exists (select 1 from information_schema.columns where table_name = 'registrations' and column_name = 'document_type') then
+    alter table registrations add column document_type text;
+  end if;
+  if not exists (select 1 from information_schema.columns where table_name = 'registrations' and column_name = 'document_number') then
+    alter table registrations add column document_number text;
+  end if;
+  if not exists (select 1 from information_schema.columns where table_name = 'registrations' and column_name = 'cpf') then
+    alter table registrations add column cpf text;
+  end if;
+  if not exists (select 1 from information_schema.columns where table_name = 'registrations' and column_name = 'phone') then
+    alter table registrations add column phone text;
+  end if;
+  if not exists (select 1 from information_schema.columns where table_name = 'registrations' and column_name = 'is_foreigner') then
+    alter table registrations add column is_foreigner boolean default false;
   end if;
 end $$;
 

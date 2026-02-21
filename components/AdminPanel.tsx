@@ -315,8 +315,8 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
       return;
     }
 
-    const headers = ["Ticket", "Nome Completo", "Email", "Instituição", "Categoria/Função", "Data de Inscrição"];
-    const escapeCsv = (str: string | number | null | undefined): string => {
+    const headers = ["Ticket", "Nome Completo", "Email", "Telefone", "CPF", "Documento", "Instituição", "Categoria/Função", "Estrangeiro", "Data de Inscrição"];
+    const escapeCsv = (str: string | number | null | undefined | boolean): string => {
       if (str === null || str === undefined) return '""';
       let result = String(str);
       if (result.includes('"') || result.includes(',') || result.includes('\n')) {
@@ -332,8 +332,12 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
         escapeCsv(r.ticket_number),
         escapeCsv(r.full_name),
         escapeCsv(r.email),
+        escapeCsv(r.phone),
+        escapeCsv(r.cpf),
+        escapeCsv(`${r.document_type || ''} ${r.document_number || ''}`.trim()),
         escapeCsv(r.institution),
         escapeCsv(r.role),
+        escapeCsv(r.is_foreigner ? 'Sim' : 'Não'),
         escapeCsv(r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '')
       ].join(','))
     ].join('\n');
@@ -506,7 +510,8 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                   <tr>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticket</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contato</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documento</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Instituição</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoria</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
@@ -516,8 +521,26 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                   {filteredRegistrations.map(reg => (
                     <tr key={reg.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-slate-500">#{reg.ticket_number}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{reg.full_name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{reg.email}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {reg.full_name}
+                        {reg.is_foreigner && <span className="ml-2 text-[10px] bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded border border-blue-200">Estrangeiro</span>}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div className="flex flex-col">
+                          <span>{reg.email}</span>
+                          <span className="text-xs text-slate-400">{reg.phone}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                         {reg.cpf ? (
+                           <div className="flex flex-col">
+                             <span>CPF: {reg.cpf}</span>
+                             <span className="text-xs text-slate-400">{reg.document_type}: {reg.document_number}</span>
+                           </div>
+                         ) : (
+                           <span>{reg.document_type}: {reg.document_number}</span>
+                         )}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{reg.institution}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${reg.role === 'Ouvinte' ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-100'}`}>
