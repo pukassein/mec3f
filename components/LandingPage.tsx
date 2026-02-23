@@ -1120,8 +1120,12 @@ export const RegistrationSection = () => {
                     <div className="w-16 h-16 bg-mec-green/20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <CheckCircleIcon className="w-8 h-8 text-mec-green" />
                     </div>
-                    <h3 className="text-2xl font-bold text-mec-green">Inscrição Confirmada!</h3>
-                    <p className="text-slate-600 mt-2">A organização do evento enviará um email posteriormente com mais informações.</p>
+                    <h3 className="text-2xl font-bold text-mec-green">Inscrição Recebida!</h3>
+                    <p className="text-slate-600 mt-2">
+                      Olá <strong>{ticketData.name}</strong>, recebemos sua inscrição.
+                      <br/>
+                      Fique atento, pois a comissão organizadora entrará em contato para confirmar sua vaga.
+                    </p>
                  </div>
 
                  {/* Inline Preview - Simplified as it is just a preview now */}
@@ -1138,7 +1142,7 @@ export const RegistrationSection = () => {
                             </div>
                           </div>
                           <div className="text-right">
-                            <span className="block text-xs text-slate-400 uppercase tracking-wide">Ticket</span>
+                            <span className="block text-xs text-slate-400 uppercase tracking-wide">Protocolo</span>
                             <span className="block text-2xl font-mono font-bold text-slate-800">#{ticketData.number.toString().padStart(4, '0')}</span>
                           </div>
                        </div>
@@ -1377,15 +1381,15 @@ export const RegistrationSection = () => {
                      <div className="flex items-start gap-4">
                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg text-mec-yellow">2</div>
                        <div>
-                         <h4 className="font-bold">Gere seu Ticket</h4>
-                         <p className="text-xs text-slate-300 opacity-80">Sua credencial será gerada na tela. Salve o PDF.</p>
+                         <h4 className="font-bold">Gere seu Protocolo</h4>
+                         <p className="text-xs text-slate-300 opacity-80">Seu número de protocolo será gerado na tela.</p>
                        </div>
                      </div>
                      <div className="flex items-start gap-4">
                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg text-mec-yellow">3</div>
                        <div>
-                         <h4 className="font-bold">Aguarde contato</h4>
-                         <p className="text-xs text-slate-300 opacity-80">A organização enviará detalhes adicionais por email posteriormente.</p>
+                         <h4 className="font-bold">Aguarde confirmação</h4>
+                         <p className="text-xs text-slate-300 opacity-80">A organização analisará sua inscrição e confirmará sua vaga por email.</p>
                        </div>
                      </div>
                   </div>

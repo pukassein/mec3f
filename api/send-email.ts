@@ -35,7 +35,7 @@ export default async function handler(
     const { data, error } = await resend.emails.send({
       from: 'MEC3F <confirmacao@mail.mec3f.com>',
       to: [email],
-      subject: `Sua Inscrição no MEC3F 2026 - Ticket #${ticketNumber}`,
+      subject: `Inscrição Recebida - MEC3F 2026`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -60,10 +60,15 @@ export default async function handler(
             <div class="header"></div>
             <div class="content">
               <img src="https://mec3f.com/logomec3f.png" alt="MEC3F Logo" class="logo" style="max-width: 100px;">
-              <h1 style="color: #0f172a; margin-bottom: 10px;">Inscrição Confirmada!</h1>
-              <p style="color: #475569; font-size: 16px; line-height: 1.5;">Olá, <strong>${name}</strong>! Sua vaga no 6º Congresso de Engenharias e Ciências Aplicadas das Três Fronteiras está garantida.</p>
+              <h1 style="color: #0f172a; margin-bottom: 10px;">Inscrição Recebida!</h1>
+              <p style="color: #475569; font-size: 16px; line-height: 1.5;">Olá, <strong>${name}</strong>! Recebemos sua inscrição para o 6º Congresso de Engenharias e Ciências Aplicadas das Três Fronteiras.</p>
               
-              <div class="ticket-number">#${String(ticketNumber).padStart(4, '0')}</div>
+              <div class="details">
+                <p style="color: #d97706; font-weight: bold; margin-bottom: 20px;">⚠️ Atenção: Sua vaga ainda não está confirmada.</p>
+                <p style="margin-bottom: 10px;">Devido à alta demanda, a comissão organizadora analisará sua inscrição e entrará em contato em breve para confirmar sua participação.</p>
+              </div>
+
+              <div class="ticket-number">Protocolo #${String(ticketNumber).padStart(4, '0')}</div>
               
               <div class="details">
                 <div class="detail-row">
@@ -78,13 +83,9 @@ export default async function handler(
                   <span class="label">Data do Evento</span>
                   <div class="value">25 a 28 de Agosto de 2026</div>
                 </div>
-                <div class="detail-row">
-                  <span class="label">Local</span>
-                  <div class="value">Foz do Iguaçu, PR</div>
-                </div>
               </div>
 
-              <p style="color: #475569; font-size: 14px;">Apresente este email ou o número do seu ticket no dia do evento para realizar o check-in.</p>
+              <p style="color: #475569; font-size: 14px;">Fique atento ao seu email para mais informações.</p>
               
               <a href="https://mec3f.com" class="button">Acessar Site do Evento</a>
             </div>
