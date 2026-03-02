@@ -495,6 +495,50 @@ export const SpeakersSection = ({ speakers }: { speakers: Speaker[] }) => {
   );
 };
 
+// --- Schedule Card Component ---
+const ScheduleCard = ({ item, trackInfo }: { item: ScheduleItem, trackInfo: any }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div 
+      onClick={() => setIsExpanded(!isExpanded)}
+      className={`rounded-lg p-3 border shadow-sm hover:shadow-md transition-all cursor-pointer ${trackInfo.color} ${isExpanded ? 'row-span-2' : ''}`}
+    >
+      <div className="flex justify-between items-start gap-2">
+        <div className="flex-grow min-w-0">
+           <div className="md:hidden text-[10px] font-bold uppercase mb-1 opacity-70 truncate">
+             {trackInfo.name}
+           </div>
+           <h4 className="font-bold text-sm leading-tight truncate">{item.title}</h4>
+           {!isExpanded && item.speaker && (
+             <p className="text-[10px] mt-1 opacity-80 truncate">{item.speaker.name}</p>
+           )}
+        </div>
+        <div className="opacity-50 shrink-0 mt-0.5">
+          {isExpanded ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />}
+        </div>
+      </div>
+      
+      {isExpanded && (
+        <div className="mt-3 text-xs opacity-90 border-t border-black/10 pt-2 animate-fade-in">
+           {item.description && <p className="mb-2">{item.description}</p>}
+           {item.speaker && (
+              <div className="flex items-center gap-2">
+                 <div className="w-8 h-8 rounded-full bg-white/50 overflow-hidden shrink-0">
+                   <img src={item.speaker.image_url} className="w-full h-full object-cover" />
+                 </div>
+                 <div className="min-w-0">
+                    <span className="font-bold block truncate">{item.speaker.name}</span>
+                    <span className="block text-[10px] opacity-80 truncate">{item.speaker.institution}</span>
+                 </div>
+              </div>
+           )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem[] }) => {
   const dates = Array.from(new Set(scheduleItems.map(i => i.date))).sort();
   const [activeDate, setActiveDate] = useState<string>(dates[0] || '');
@@ -578,7 +622,7 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
                 </div>
               )}
 
-              <div className="space-y-8">
+              <div className="space-y-3">
                 {sortedTimes.map((startTime, idx) => {
                   const items = groupedItems[startTime];
                   const firstItem = items[0];
@@ -586,56 +630,42 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
                   const isTrackSlot = items.some(i => i.track);
 
                   return (
-                    <div key={startTime} className="relative">
-                      {/* Time Marker */}
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className="bg-slate-900 text-white px-3 py-1 rounded text-sm font-bold shadow-sm">
+                    <div key={startTime} className="relative group">
+                      {/* Time Marker - Compact */}
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs font-bold border border-slate-200">
                           {startTime} - {firstItem.end_time}
                         </div>
-                        <div className="h-px bg-slate-200 flex-grow"></div>
+                        <div className="h-px bg-slate-100 flex-grow group-hover:bg-slate-200 transition-colors"></div>
                       </div>
 
                       {isTrackSlot ? (
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
                           {[1, 2, 3, 4].map(trackId => {
                             const trackItem = items.find(i => i.track === trackId);
-                            if (!trackItem) return <div key={trackId} className="hidden md:block"></div>;
+                            if (!trackItem) return <div key={trackId} className="hidden md:block bg-slate-50/50 rounded-lg border border-transparent border-dashed"></div>;
                             
                             const trackInfo = TRACKS[trackId as 1|2|3|4];
                             
                             return (
-                              <div key={trackId} className={`rounded-xl p-4 border shadow-sm hover:shadow-md transition-all ${trackInfo.color}`}>
-                                <div className="md:hidden text-xs font-bold uppercase mb-2 text-slate-500">
-                                  {trackInfo.name}
-                                </div>
-                                <h4 className="font-bold text-sm md:text-base mb-1">{trackItem.title}</h4>
-                                {trackItem.description && <p className="text-xs opacity-80">{trackItem.description}</p>}
-                                {trackItem.speaker && (
-                                   <div className="mt-2 flex items-center gap-2">
-                                      <div className="w-6 h-6 rounded-full bg-white/50 overflow-hidden">
-                                        <img src={trackItem.speaker.image_url} className="w-full h-full object-cover" />
-                                      </div>
-                                      <span className="text-xs font-medium">{trackItem.speaker.name}</span>
-                                   </div>
-                                )}
-                              </div>
+                              <ScheduleCard key={trackId} item={trackItem} trackInfo={trackInfo} />
                             );
                           })}
                         </div>
                       ) : (
                         // General Event (Full Width)
-                        <div className={`rounded-xl p-6 border-l-4 shadow-sm hover:shadow-md transition-all ${
+                        <div className={`rounded-lg p-3 border-l-4 shadow-sm hover:shadow transition-all ${
                           firstItem.type === 'break' ? 'bg-slate-50 border-slate-300' :
                           firstItem.type === 'social' ? 'bg-orange-50 border-orange-400' :
                           firstItem.type === 'ceremony' ? 'bg-purple-50 border-purple-400' :
                           'bg-white border-mec-teal'
                         }`}>
-                           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                              <div className="text-center md:text-left">
-                                <h4 className="text-xl font-bold text-slate-800">{firstItem.title}</h4>
-                                {firstItem.description && <p className="text-slate-600 mt-1">{firstItem.description}</p>}
+                           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+                              <div className="text-center md:text-left flex-grow">
+                                <h4 className="text-base font-bold text-slate-800">{firstItem.title}</h4>
+                                {firstItem.description && <p className="text-slate-600 text-xs mt-0.5">{firstItem.description}</p>}
                               </div>
-                              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase whitespace-nowrap ${
                                 firstItem.type === 'break' ? 'bg-slate-200 text-slate-700' :
                                 firstItem.type === 'social' ? 'bg-orange-100 text-orange-800' :
                                 firstItem.type === 'ceremony' ? 'bg-purple-100 text-purple-800' :

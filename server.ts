@@ -17,7 +17,10 @@ app.use(cors());
 app.use(express.json());
 
 // Initialize Resend with API Key from environment variables
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Use conditional initialization to prevent crash if key is missing
+const resend = process.env.RESEND_API_KEY 
+  ? new Resend(process.env.RESEND_API_KEY) 
+  : null;
 
 // API Routes
 app.get('/api/health', (req, res) => {
@@ -25,6 +28,11 @@ app.get('/api/health', (req, res) => {
 });
 
 app.post('/api/send-email', async (req, res) => {
+  if (!resend) {
+    console.error('RESEND_API_KEY is missing');
+    return res.status(500).json({ error: 'Email service not configured properly' });
+  }
+
   const { email, name, ticketNumber, role } = req.body;
 
   if (!email || !name || !ticketNumber) {
