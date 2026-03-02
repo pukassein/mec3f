@@ -654,6 +654,11 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                             item.type === 'social' ? 'bg-orange-50 text-orange-700 border-orange-200' :
                             'bg-blue-50 text-blue-700 border-blue-200'
                         }`}>{item.type}</span>
+                        {item.track && (
+                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded border bg-purple-50 text-purple-700 border-purple-200">
+                            Trilha {item.track}
+                          </span>
+                        )}
                         <h4 className="font-bold text-slate-800">{item.title}</h4>
                      </div>
                      {item.description && <p className="text-xs text-gray-600 mt-1">{item.description}</p>}
@@ -807,6 +812,20 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                        <option value="break">Intervalo</option>
                        <option value="social">Social</option>
                        <option value="ceremony">Cerimônia</option>
+                     </select>
+                   </div>
+                   <div>
+                     <label className="text-xs text-gray-500 block mb-1">Trilha (Opcional)</label>
+                     <select 
+                       className="w-full border p-2 rounded bg-white" 
+                       value={editSchedule.track || ''} 
+                       onChange={e => setEditSchedule({...editSchedule, track: e.target.value ? Number(e.target.value) as 1|2|3|4 : undefined})}
+                     >
+                       <option value="">-- Nenhuma (Geral) --</option>
+                       <option value="1">1 - Meio Ambiente e Saúde</option>
+                       <option value="2">2 - Ecologia e Conservação</option>
+                       <option value="3">3 - Engenharias e Sustentabilidade</option>
+                       <option value="4">4 - Energia e Materiais</option>
                      </select>
                    </div>
                 </div>

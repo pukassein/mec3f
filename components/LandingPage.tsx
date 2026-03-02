@@ -61,14 +61,7 @@ const formatDate = (dateString: string) => {
   };
 };
 
-const getEventColor = (type: string) => {
-  switch(type) {
-    case 'ceremony': return 'border-mec-yellow bg-mec-yellow/10'; // Yellow
-    case 'break': return 'border-slate-300 bg-slate-50 opacity-80';
-    case 'social': return 'border-mec-salmon bg-mec-salmon/10'; // Salmon
-    default: return 'border-mec-teal bg-mec-teal/10'; // Teal (lecture)
-  }
-};
+
 
 const getThemeStyles = (index: number) => {
   const styles = [
@@ -516,6 +509,27 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
     .filter(item => item.date === activeDate)
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
 
+  // Group items by start_time
+  const groupedItems = activeItems.reduce((acc, item) => {
+    const key = item.start_time;
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(item);
+    return acc;
+  }, {} as Record<string, ScheduleItem[]>);
+
+  const sortedTimes = Object.keys(groupedItems).sort();
+
+  const TRACKS = {
+    1: { name: 'Meio Ambiente e Saúde', location: 'Auditório Florestan Fernandes I', color: 'bg-blue-50 border-blue-200 text-blue-900', headerColor: 'bg-blue-600' },
+    2: { name: 'Ecologia e Conservação', location: 'Auditório Florestan Fernandes III', color: 'bg-green-50 border-green-200 text-green-900', headerColor: 'bg-green-600' },
+    3: { name: 'Engenharias e Sustentabilidade', location: 'Auditório César Lattes', color: 'bg-slate-50 border-slate-200 text-slate-900', headerColor: 'bg-slate-600' },
+    4: { name: 'Energia e Materiais', location: 'Auditório Florestan Fernandes II', color: 'bg-orange-50 border-orange-200 text-orange-900', headerColor: 'bg-orange-600' }
+  };
+
+  const hasTracks = activeItems.some(i => i.track);
+
   return (
     <section id="schedule" className="py-20 bg-white scroll-mt-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -548,58 +562,96 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
             </div>
 
             {/* Timeline View */}
-            <div className="max-w-4xl mx-auto">
-              {activeItems.map((item, idx) => {
-                const isLast = idx === activeItems.length - 1;
-                return (
-                  <div key={item.id} className="flex gap-4 md:gap-8 group">
-                    <div className="flex-shrink-0 w-20 md:w-24 text-right pt-2">
-                       <span className="block font-bold text-slate-700">{item.start_time}</span>
-                       <span className="block text-xs text-slate-400">{item.end_time}</span>
+            <div className="max-w-6xl mx-auto">
+              {/* Track Headers (Only if tracks exist for this day) */}
+              {hasTracks && (
+                <div className="hidden md:grid grid-cols-4 gap-4 mb-8 sticky top-20 z-20 bg-white py-4 shadow-sm">
+                  {[1, 2, 3, 4].map(trackId => (
+                    <div key={trackId} className={`p-3 rounded-lg text-white text-center shadow-md ${TRACKS[trackId as 1|2|3|4].headerColor}`}>
+                      <div className="text-xs font-bold uppercase opacity-80 mb-1">Temática {trackId}</div>
+                      <div className="font-bold text-sm leading-tight">{TRACKS[trackId as 1|2|3|4].name}</div>
+                      <div className="text-[10px] mt-2 opacity-90 bg-black/20 rounded px-2 py-1 inline-block">
+                        {TRACKS[trackId as 1|2|3|4].location}
+                      </div>
                     </div>
+                  ))}
+                </div>
+              )}
 
-                    <div className="relative flex flex-col items-center">
-                       <div className="w-3 h-3 rounded-full bg-mec-teal ring-4 ring-white shadow-sm z-10"></div>
-                       {!isLast && <div className="flex-grow w-0.5 bg-slate-200 my-2"></div>}
-                    </div>
+              <div className="space-y-8">
+                {sortedTimes.map((startTime, idx) => {
+                  const items = groupedItems[startTime];
+                  const firstItem = items[0];
+                  // Check if this time slot has track items
+                  const isTrackSlot = items.some(i => i.track);
 
-                    <div className={`flex-grow pb-8 ${isLast ? '' : ''}`}>
-                       <div className={`rounded-xl p-5 border-l-4 shadow-sm hover:shadow-md transition-all duration-300 ${getEventColor(item.type)}`}>
-                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                            <div>
-                               <div className="flex items-center gap-2 mb-1">
-                                  <span className={`text-xs font-bold px-2 py-0.5 rounded uppercase tracking-wide ${
-                                    item.type === 'ceremony' ? 'bg-mec-yellow text-slate-800' : 
-                                    item.type === 'break' ? 'bg-slate-200 text-slate-700' :
-                                    item.type === 'social' ? 'bg-mec-salmon text-white' :
-                                    'bg-mec-teal text-white'
-                                  }`}>
-                                    {item.type === 'social' ? 'Social' : item.type === 'ceremony' ? 'Cerimônia' : item.type === 'break' ? 'Intervalo' : 'Acadêmico'}
-                                  </span>
-                               </div>
-                               <h4 className="text-lg md:text-xl font-bold text-slate-800">{item.title}</h4>
-                               {item.description && <p className="text-slate-600 mt-2 text-sm">{item.description}</p>}
-                               
-                               {item.speaker && (
-                                 <div className="mt-4 flex items-center gap-3 bg-white/60 p-2 rounded-lg border border-slate-100/50 w-fit">
-                                    <img 
-                                      src={item.speaker.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.speaker.name)}`} 
-                                      alt={item.speaker.name}
-                                      className="w-10 h-10 rounded-full object-cover" 
-                                    />
-                                    <div>
-                                       <div className="text-xs text-slate-500 font-semibold uppercase">Palestrante</div>
-                                       <div className="text-sm font-bold text-slate-800">{item.speaker.name}</div>
-                                    </div>
-                                 </div>
-                               )}
-                            </div>
-                         </div>
-                       </div>
+                  return (
+                    <div key={startTime} className="relative">
+                      {/* Time Marker */}
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="bg-slate-900 text-white px-3 py-1 rounded text-sm font-bold shadow-sm">
+                          {startTime} - {firstItem.end_time}
+                        </div>
+                        <div className="h-px bg-slate-200 flex-grow"></div>
+                      </div>
+
+                      {isTrackSlot ? (
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                          {[1, 2, 3, 4].map(trackId => {
+                            const trackItem = items.find(i => i.track === trackId);
+                            if (!trackItem) return <div key={trackId} className="hidden md:block"></div>;
+                            
+                            const trackInfo = TRACKS[trackId as 1|2|3|4];
+                            
+                            return (
+                              <div key={trackId} className={`rounded-xl p-4 border shadow-sm hover:shadow-md transition-all ${trackInfo.color}`}>
+                                <div className="md:hidden text-xs font-bold uppercase mb-2 text-slate-500">
+                                  {trackInfo.name}
+                                </div>
+                                <h4 className="font-bold text-sm md:text-base mb-1">{trackItem.title}</h4>
+                                {trackItem.description && <p className="text-xs opacity-80">{trackItem.description}</p>}
+                                {trackItem.speaker && (
+                                   <div className="mt-2 flex items-center gap-2">
+                                      <div className="w-6 h-6 rounded-full bg-white/50 overflow-hidden">
+                                        <img src={trackItem.speaker.image_url} className="w-full h-full object-cover" />
+                                      </div>
+                                      <span className="text-xs font-medium">{trackItem.speaker.name}</span>
+                                   </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        // General Event (Full Width)
+                        <div className={`rounded-xl p-6 border-l-4 shadow-sm hover:shadow-md transition-all ${
+                          firstItem.type === 'break' ? 'bg-slate-50 border-slate-300' :
+                          firstItem.type === 'social' ? 'bg-orange-50 border-orange-400' :
+                          firstItem.type === 'ceremony' ? 'bg-purple-50 border-purple-400' :
+                          'bg-white border-mec-teal'
+                        }`}>
+                           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                              <div className="text-center md:text-left">
+                                <h4 className="text-xl font-bold text-slate-800">{firstItem.title}</h4>
+                                {firstItem.description && <p className="text-slate-600 mt-1">{firstItem.description}</p>}
+                              </div>
+                              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                                firstItem.type === 'break' ? 'bg-slate-200 text-slate-700' :
+                                firstItem.type === 'social' ? 'bg-orange-100 text-orange-800' :
+                                firstItem.type === 'ceremony' ? 'bg-purple-100 text-purple-800' :
+                                'bg-mec-teal/10 text-mec-teal'
+                              }`}>
+                                {firstItem.type === 'break' ? 'Intervalo' : 
+                                 firstItem.type === 'social' ? 'Social' : 
+                                 firstItem.type === 'ceremony' ? 'Cerimônia' : 'Geral'}
+                              </span>
+                           </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
               
               {activeItems.length === 0 && (
                 <div className="text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-300">

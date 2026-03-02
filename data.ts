@@ -51,7 +51,7 @@ export const SCHEDULE_DATA: DaySchedule[] = [
         date: "2026-08-25",
         start_time: "14:00", 
         end_time: "16:00", 
-        title: "Recepção e Orientações", 
+        title: "Recepção", 
         type: "social", 
         description: "Credenciamento e entrega de materiais." 
       },
@@ -71,16 +71,16 @@ export const SCHEDULE_DATA: DaySchedule[] = [
         end_time: "18:00", 
         title: "Conferência de Abertura", 
         type: "lecture", 
-        description: "Palestrante Convidado (TBA)" 
+        description: "Prof. Dr. Draulio Barros de Araújo – Professor Titular, Instituto do Cérebro, UFRN" 
       },
       { 
         id: "d1-4",
         date: "2026-08-25",
-        start_time: "19:30", 
+        start_time: "20:00", 
         end_time: "23:00", 
-        title: "Confraternização", 
+        title: "Jantar Científico", 
         type: "social", 
-        description: "Jantar por adesão" 
+        description: "Por adesão" 
       }
     ]
   },
@@ -89,38 +89,47 @@ export const SCHEDULE_DATA: DaySchedule[] = [
     dayOfWeek: "Quarta-feira",
     label: "Dia 2",
     items: [
-      { 
-        id: "d2-1",
-        date: "2026-08-26",
-        start_time: "08:30", 
-        end_time: "10:00", 
-        title: "Sessões Técnicas - Saúde e Meio Ambiente", 
-        type: "session" 
-      },
-      { 
-        id: "d2-2",
-        date: "2026-08-26",
-        start_time: "10:00", 
-        end_time: "10:30", 
-        title: "Coffee Break", 
-        type: "break" 
-      },
-      { 
-        id: "d2-3",
-        date: "2026-08-26",
-        start_time: "10:30", 
-        end_time: "12:00", 
-        title: "Mesa Redonda: Desafios da Tríplice Fronteira", 
-        type: "lecture" 
-      },
-      { 
-        id: "d2-4",
-        date: "2026-08-26",
-        start_time: "14:00", 
-        end_time: "18:00", 
-        title: "Apresentação de Trabalhos (Pôsteres)", 
-        type: "session" 
-      }
+      // 08:30 - 09:30: Palestra 1 (4 tracks)
+      { id: "d2-1-t1", date: "2026-08-26", start_time: "08:30", end_time: "09:30", title: "Palestra 1", type: "lecture", track: 1 },
+      { id: "d2-1-t2", date: "2026-08-26", start_time: "08:30", end_time: "09:30", title: "Palestra 1", type: "lecture", track: 2 },
+      { id: "d2-1-t3", date: "2026-08-26", start_time: "08:30", end_time: "09:30", title: "Palestra 1", type: "lecture", track: 3 },
+      { id: "d2-1-t4", date: "2026-08-26", start_time: "08:30", end_time: "09:30", title: "Palestra 1", type: "lecture", track: 4 },
+
+      // 09:30 - 10:30: Sessão de Comunicação Oral (4 tracks)
+      { id: "d2-2-t1", date: "2026-08-26", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 1 },
+      { id: "d2-2-t2", date: "2026-08-26", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 2 },
+      { id: "d2-2-t3", date: "2026-08-26", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 3 },
+      { id: "d2-2-t4", date: "2026-08-26", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 4 },
+
+      // 10:30 - 11:00: Intervalo - Café (General)
+      { id: "d2-3", date: "2026-08-26", start_time: "10:30", end_time: "11:00", title: "Intervalo - Café", type: "break" },
+
+      // 11:00 - 12:30: Mesa-Redonda I (4 tracks)
+      { id: "d2-4-t1", date: "2026-08-26", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 1 },
+      { id: "d2-4-t2", date: "2026-08-26", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 2 },
+      { id: "d2-4-t3", date: "2026-08-26", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 3 },
+      { id: "d2-4-t4", date: "2026-08-26", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 4 },
+
+      // 12:30 - 14:00: Intervalo - Almoço (General)
+      { id: "d2-5", date: "2026-08-26", start_time: "12:30", end_time: "14:00", title: "Intervalo - Almoço", type: "break" },
+
+      // 14:00 - 15:00: Palestra 2 (4 tracks)
+      { id: "d2-6-t1", date: "2026-08-26", start_time: "14:00", end_time: "15:00", title: "Palestra 2", type: "lecture", track: 1 },
+      { id: "d2-6-t2", date: "2026-08-26", start_time: "14:00", end_time: "15:00", title: "Palestra 2", type: "lecture", track: 2 },
+      { id: "d2-6-t3", date: "2026-08-26", start_time: "14:00", end_time: "15:00", title: "Palestra 2", type: "lecture", track: 3 },
+      { id: "d2-6-t4", date: "2026-08-26", start_time: "14:00", end_time: "15:00", title: "Palestra 2", type: "lecture", track: 4 },
+
+      // 15:00 - 16:00: Sessão de Comunicação Oral (4 tracks)
+      { id: "d2-7-t1", date: "2026-08-26", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 1 },
+      { id: "d2-7-t2", date: "2026-08-26", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 2 },
+      { id: "d2-7-t3", date: "2026-08-26", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 3 },
+      { id: "d2-7-t4", date: "2026-08-26", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 4 },
+
+      // 16:00 - 17:00: Café e Sessão de Pôster I (General)
+      { id: "d2-8", date: "2026-08-26", start_time: "16:00", end_time: "17:00", title: "Café e Sessão de Pôster I", type: "session" },
+
+      // 17:00 - 18:00: Seminário Interdisciplinar I (General)
+      { id: "d2-9", date: "2026-08-26", start_time: "17:00", end_time: "18:00", title: "Seminário Interdisciplinar I", type: "lecture" }
     ]
   },
   {
@@ -128,38 +137,47 @@ export const SCHEDULE_DATA: DaySchedule[] = [
     dayOfWeek: "Quinta-feira",
     label: "Dia 3",
     items: [
-      { 
-        id: "d3-1",
-        date: "2026-08-27",
-        start_time: "08:30", 
-        end_time: "10:00", 
-        title: "Sessões Técnicas - Engenharias", 
-        type: "session" 
-      },
-      { 
-        id: "d3-2",
-        date: "2026-08-27",
-        start_time: "10:00", 
-        end_time: "10:30", 
-        title: "Coffee Break", 
-        type: "break" 
-      },
-      { 
-        id: "d3-3",
-        date: "2026-08-27",
-        start_time: "10:30", 
-        end_time: "12:00", 
-        title: "Workshop: Inovação e Tecnologia", 
-        type: "lecture" 
-      },
-      { 
-        id: "d3-4",
-        date: "2026-08-27",
-        start_time: "14:00", 
-        end_time: "18:00", 
-        title: "Minicursos", 
-        type: "session" 
-      }
+      // 08:30 - 09:30: Palestra 3 (4 tracks)
+      { id: "d3-1-t1", date: "2026-08-27", start_time: "08:30", end_time: "09:30", title: "Palestra 3", type: "lecture", track: 1 },
+      { id: "d3-1-t2", date: "2026-08-27", start_time: "08:30", end_time: "09:30", title: "Palestra 3", type: "lecture", track: 2 },
+      { id: "d3-1-t3", date: "2026-08-27", start_time: "08:30", end_time: "09:30", title: "Palestra 3", type: "lecture", track: 3 },
+      { id: "d3-1-t4", date: "2026-08-27", start_time: "08:30", end_time: "09:30", title: "Palestra 3", type: "lecture", track: 4 },
+
+      // 09:30 - 10:30: Sessão de Comunicação Oral (4 tracks)
+      { id: "d3-2-t1", date: "2026-08-27", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 1 },
+      { id: "d3-2-t2", date: "2026-08-27", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 2 },
+      { id: "d3-2-t3", date: "2026-08-27", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 3 },
+      { id: "d3-2-t4", date: "2026-08-27", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 4 },
+
+      // 10:30 - 11:00: Intervalo - Café (General)
+      { id: "d3-3", date: "2026-08-27", start_time: "10:30", end_time: "11:00", title: "Intervalo - Café", type: "break" },
+
+      // 11:00 - 12:30: Mesa-Redonda I (4 tracks)
+      { id: "d3-4-t1", date: "2026-08-27", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 1 },
+      { id: "d3-4-t2", date: "2026-08-27", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 2 },
+      { id: "d3-4-t3", date: "2026-08-27", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 3 },
+      { id: "d3-4-t4", date: "2026-08-27", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 4 },
+
+      // 12:30 - 14:00: Intervalo - Almoço (General)
+      { id: "d3-5", date: "2026-08-27", start_time: "12:30", end_time: "14:00", title: "Intervalo - Almoço", type: "break" },
+
+      // 14:00 - 15:00: Palestra 4 (4 tracks)
+      { id: "d3-6-t1", date: "2026-08-27", start_time: "14:00", end_time: "15:00", title: "Palestra 4", type: "lecture", track: 1 },
+      { id: "d3-6-t2", date: "2026-08-27", start_time: "14:00", end_time: "15:00", title: "Palestra 4", type: "lecture", track: 2 },
+      { id: "d3-6-t3", date: "2026-08-27", start_time: "14:00", end_time: "15:00", title: "Palestra 4", type: "lecture", track: 3 },
+      { id: "d3-6-t4", date: "2026-08-27", start_time: "14:00", end_time: "15:00", title: "Palestra 4", type: "lecture", track: 4 },
+
+      // 15:00 - 16:00: Sessão de Comunicação Oral (4 tracks)
+      { id: "d3-7-t1", date: "2026-08-27", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 1 },
+      { id: "d3-7-t2", date: "2026-08-27", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 2 },
+      { id: "d3-7-t3", date: "2026-08-27", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 3 },
+      { id: "d3-7-t4", date: "2026-08-27", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 4 },
+
+      // 16:00 - 17:00: Café e Sessão de Pôster II (General)
+      { id: "d3-8", date: "2026-08-27", start_time: "16:00", end_time: "17:00", title: "Café e Sessão de Pôster II", type: "session" },
+
+      // 18:00 - 22:00: Espaço Cultural & Científico-Tecnológico (General)
+      { id: "d3-9", date: "2026-08-27", start_time: "18:00", end_time: "22:00", title: "Espaço Cultural & Científico-Tecnológico", type: "social" }
     ]
   },
   {
@@ -167,22 +185,38 @@ export const SCHEDULE_DATA: DaySchedule[] = [
     dayOfWeek: "Sexta-feira",
     label: "Dia 4",
     items: [
-      { 
-        id: "d4-1",
-        date: "2026-08-28",
-        start_time: "09:00", 
-        end_time: "11:00", 
-        title: "Sessão de Encerramento", 
-        type: "ceremony" 
-      },
-      { 
-        id: "d4-2",
-        date: "2026-08-28",
-        start_time: "11:00", 
-        end_time: "12:00", 
-        title: "Premiação de Melhores Trabalhos", 
-        type: "ceremony" 
-      }
+      // 08:30 - 09:30: Palestra 5 (4 tracks)
+      { id: "d4-1-t1", date: "2026-08-28", start_time: "08:30", end_time: "09:30", title: "Palestra 5", type: "lecture", track: 1 },
+      { id: "d4-1-t2", date: "2026-08-28", start_time: "08:30", end_time: "09:30", title: "Palestra 5", type: "lecture", track: 2 },
+      { id: "d4-1-t3", date: "2026-08-28", start_time: "08:30", end_time: "09:30", title: "Palestra 5", type: "lecture", track: 3 },
+      { id: "d4-1-t4", date: "2026-08-28", start_time: "08:30", end_time: "09:30", title: "Palestra 5", type: "lecture", track: 4 },
+
+      // 09:30 - 10:30: Sessão de Comunicação Oral (4 tracks)
+      { id: "d4-2-t1", date: "2026-08-28", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 1 },
+      { id: "d4-2-t2", date: "2026-08-28", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 2 },
+      { id: "d4-2-t3", date: "2026-08-28", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 3 },
+      { id: "d4-2-t4", date: "2026-08-28", start_time: "09:30", end_time: "10:30", title: "Com. Oral", type: "session", track: 4 },
+
+      // 10:30 - 11:00: Intervalo - Café (General)
+      { id: "d4-3", date: "2026-08-28", start_time: "10:30", end_time: "11:00", title: "Intervalo - Café", type: "break" },
+
+      // 11:00 - 12:30: Mesa-Redonda I (4 tracks)
+      { id: "d4-4-t1", date: "2026-08-28", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 1 },
+      { id: "d4-4-t2", date: "2026-08-28", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 2 },
+      { id: "d4-4-t3", date: "2026-08-28", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 3 },
+      { id: "d4-4-t4", date: "2026-08-28", start_time: "11:00", end_time: "12:30", title: "Mesa-Redonda I", type: "session", track: 4 },
+
+      // 12:30 - 14:00: Intervalo - Almoço (General)
+      { id: "d4-5", date: "2026-08-28", start_time: "12:30", end_time: "14:00", title: "Intervalo - Almoço", type: "break" },
+
+      // 14:00 - 16:00: Rede de Pesquisadoras/res (Reunião Geral) (General)
+      { id: "d4-6", date: "2026-08-28", start_time: "14:00", end_time: "16:00", title: "Rede de Pesquisadoras/res (Reunião Geral)", type: "session" },
+
+      // 16:00 - 17:00: Conferência de encerramento (General)
+      { id: "d4-7", date: "2026-08-28", start_time: "16:00", end_time: "17:00", title: "Conferência de encerramento", type: "ceremony" },
+
+      // 17:15 - 18:00: Cerimônia de menção honrosa e encerramento (General)
+      { id: "d4-8", date: "2026-08-28", start_time: "17:15", end_time: "18:00", title: "Cerimônia de menção honrosa e encerramento", type: "ceremony" }
     ]
   }
 ];

@@ -10,6 +10,7 @@ export interface ScheduleItem {
   location?: string;
   speaker_id?: string;
   speaker?: Speaker; // Joined relation
+  track?: 1 | 2 | 3 | 4; // 1: Health, 2: Ecology, 3: Engineering, 4: Energy
 }
 
 export interface DaySchedule {
