@@ -189,4 +189,47 @@ https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=fo
 https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
 https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
 https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')
-on conflict (key) do update set value = excluded.value;
+
+-- 9. Important Dates Table
+create table if not exists important_dates (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamptz default now(),
+  description text not null,
+  date_text text not null,
+  display_order int default 0
+);
+
+-- Policies
+alter table important_dates enable row level security;
+
+drop policy if exists "Public can view important dates" on important_dates;
+create policy "Public can view important dates" on important_dates for select to anon, authenticated using (true);
+
+drop policy if exists "Admins can manage important dates" on important_dates;
+create policy "Admins can manage important dates" on important_dates for all to anon, authenticated using (true) with check (true);
+
+-- Realtime
+do $$
+begin
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'important_dates') then
+    alter publication supabase_realtime add table important_dates;
+  end if;
+end;
+$$;
+
+-- Insert default important dates
+insert into important_dates (description, date_text, display_order)
+select 'Início das Inscrições', '15/03/2026', 1
+where not exists (select 1 from important_dates limit 1);
+
+insert into important_dates (description, date_text, display_order)
+select 'Submissão de Resumos', 'Até 30/04/2026', 2
+where not exists (select 1 from important_dates limit 1);
+
+insert into important_dates (description, date_text, display_order)
+select 'Divulgação dos Aceitos', '15/05/2026', 3
+where not exists (select 1 from important_dates limit 1);
+
+insert into important_dates (description, date_text, display_order)
+select 'Início do Evento', '25/08/2026', 4
+where not exists (select 1 from important_dates limit 1);

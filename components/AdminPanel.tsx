@@ -15,7 +15,7 @@ import {
   CalendarIcon,
   MapPinIcon
 } from './Icons';
-import { ContentCard, Registration, Speaker, ScheduleItem } from '../types';
+import { ContentCard, Registration, Speaker, ScheduleItem, ImportantDate } from '../types';
 
 // --- Icon Mapper for Dropdown ---
 const IconMap: Record<string, React.ElementType> = {
@@ -45,17 +45,19 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
   const [loading, setLoading] = useState(false);
   
   // Data State
-  const [activeTab, setActiveTab] = useState<'cards' | 'speakers' | 'schedule' | 'settings' | 'registrations' | 'uploads'>('cards');
+  const [activeTab, setActiveTab] = useState<'cards' | 'speakers' | 'schedule' | 'settings' | 'registrations' | 'uploads' | 'dates'>('cards');
   const [cards, setCards] = useState<ContentCard[]>([]);
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [importantDates, setImportantDates] = useState<ImportantDate[]>([]);
   const [registrationFilter, setRegistrationFilter] = useState<'all' | 'attendee' | 'participant'>('all');
   
   // Edit State
   const [editCard, setEditCard] = useState<Partial<ContentCard> | null>(null);
   const [editSpeaker, setEditSpeaker] = useState<Partial<Speaker> | null>(null);
   const [editSchedule, setEditSchedule] = useState<Partial<ScheduleItem> | null>(null);
+  const [editDate, setEditDate] = useState<Partial<ImportantDate> | null>(null);
   const [editHeroUrl, setEditHeroUrl] = useState('');
   const [editAboutUrl, setEditAboutUrl] = useState('');
   const [editGalleryUrls, setEditGalleryUrls] = useState('');
@@ -73,6 +75,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
       fetchSchedule();
       fetchSiteContent();
       fetchRegistrations();
+      fetchImportantDates();
     }
   }, [isAuthenticated]);
 
@@ -95,6 +98,11 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
   const fetchSchedule = async () => {
     const { data } = await supabase.from('schedule_items').select('*').order('date').order('start_time');
     if (data) setScheduleItems(data);
+  };
+
+  const fetchImportantDates = async () => {
+    const { data } = await supabase.from('important_dates').select('*').order('display_order');
+    if (data) setImportantDates(data);
   };
 
   const fetchRegistrations = async () => {
@@ -299,6 +307,78 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
     else alert("Imagem da seção 'Sobre' atualizada!");
   };
 
+  const handleDeleteDate = async (id: string) => {
+    if (!window.confirm("Excluir esta data?")) return;
+    const { error } = await supabase.from('important_dates').delete().eq('id', id);
+    if (error) alert("Erro ao excluir: " + error.message);
+    else fetchImportantDates();
+  };
+
+  const handleSaveDate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editDate) return;
+
+    setLoading(true);
+    let error;
+    
+    // Prepare payload to avoid sending extra fields
+    const payload = {
+      description: editDate.description,
+      date_text: editDate.date_text,
+      display_order: editDate.display_order
+    };
+
+    if (editDate.id) {
+      const { error: updateError } = await supabase
+        .from('important_dates')
+        .update(payload)
+        .eq('id', editDate.id);
+      error = updateError;
+    } else {
+      const { error: insertError } = await supabase
+        .from('important_dates')
+        .insert(payload);
+      error = insertError;
+    }
+
+    if (error) {
+      alert("Erro ao salvar: " + error.message);
+    } else {
+      setEditDate(null);
+      fetchImportantDates();
+    }
+    setLoading(false);
+  };
+
+  const handleResetDates = async () => {
+    if (!window.confirm("Isso apagará todas as datas existentes e restaurará o padrão. Continuar?")) return;
+    setLoading(true);
+    
+    // Delete all existing
+    const { error: deleteError } = await supabase.from('important_dates').delete().neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all
+    
+    if (deleteError) {
+      alert("Erro ao limpar datas: " + deleteError.message);
+      setLoading(false);
+      return;
+    }
+
+    const defaultDates = [
+      { description: 'Início das Inscrições', date_text: '15/03/2026', display_order: 1 },
+      { description: 'Submissão de Resumos', date_text: 'Até 30/04/2026', display_order: 2 },
+      { description: 'Divulgação dos Aceitos', date_text: '15/05/2026', display_order: 3 },
+      { description: 'Início do Evento', date_text: '25/08/2026', display_order: 4 }
+    ];
+
+    for (const d of defaultDates) {
+      await supabase.from('important_dates').insert(d);
+    }
+    
+    await fetchImportantDates();
+    setLoading(false);
+    alert("Datas redefinidas com sucesso!");
+  };
+
   const getFilteredRegistrations = () => {
     return registrations.filter(r => {
         if (registrationFilter === 'all') return true;
@@ -449,6 +529,12 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
             className={`px-4 py-2 rounded-lg font-medium transition ${activeTab === 'schedule' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
           >
             Programação
+          </button>
+          <button 
+            onClick={() => setActiveTab('dates')}
+            className={`px-4 py-2 rounded-lg font-medium transition ${activeTab === 'dates' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+          >
+            Datas
           </button>
           <button 
             onClick={() => setActiveTab('uploads')}
@@ -670,6 +756,111 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                  </div>
                ))}
                {scheduleItems.length === 0 && <p className="text-gray-500 text-center py-8">Nenhum evento cadastrado.</p>}
+            </div>
+          </div>
+        )}
+
+        {/* Dates Tab */}
+        {activeTab === 'dates' && (
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-8 animate-fade-in-up">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold">Gerenciar Datas Importantes</h3>
+              <div className="flex gap-2">
+                <button 
+                  onClick={handleResetDates}
+                  className="bg-gray-200 text-gray-700 px-4 py-2 rounded text-sm hover:bg-gray-300 shadow"
+                >
+                  Restaurar Padrão
+                </button>
+                <button 
+                  onClick={() => setEditDate({ description: '', date_text: '', display_order: 0 })}
+                  className="bg-emerald-600 text-white px-4 py-2 rounded text-sm hover:bg-emerald-700 shadow"
+                >
+                  + Nova Data
+                </button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {importantDates.map(item => (
+                <div key={item.id} className="border p-4 rounded-lg flex justify-between items-center bg-gray-50">
+                  <div>
+                    <h4 className="font-bold text-slate-800">{item.description}</h4>
+                    <p className="text-sm text-gray-600">{item.date_text}</p>
+                  </div>
+                  <div className="flex gap-4 text-xs font-medium">
+                    <button onClick={() => setEditDate(item)} className="text-blue-600 hover:text-blue-800">Editar</button>
+                    <button onClick={() => handleDeleteDate(item.id)} className="text-red-600 hover:text-red-800">Excluir</button>
+                  </div>
+                </div>
+              ))}
+              {importantDates.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 mb-4">Nenhuma data cadastrada.</p>
+                  <button 
+                    onClick={handleResetDates}
+                    className="text-emerald-600 hover:text-emerald-800 font-medium text-sm underline"
+                  >
+                    Adicionar datas padrão
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Edit Date Modal */}
+        {editDate && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[60]">
+            <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl animate-fade-in-up">
+              <h3 className="text-xl font-bold mb-4">{editDate.id ? 'Editar Data' : 'Nova Data'}</h3>
+              <form onSubmit={handleSaveDate} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Descrição</label>
+                  <input 
+                    type="text" 
+                    value={editDate.description || ''} 
+                    onChange={e => setEditDate({...editDate, description: e.target.value})} 
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    required
+                    placeholder="Ex: Data limite para submissão"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Data (Texto)</label>
+                  <input 
+                    type="text" 
+                    value={editDate.date_text || ''} 
+                    onChange={e => setEditDate({...editDate, date_text: e.target.value})} 
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    required
+                    placeholder="Ex: 28/02/2026"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Ordem de Exibição</label>
+                  <input 
+                    type="number" 
+                    value={editDate.display_order || 0} 
+                    onChange={e => setEditDate({...editDate, display_order: parseInt(e.target.value)})} 
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  />
+                </div>
+                <div className="flex justify-end gap-3 mt-6">
+                  <button 
+                    type="button" 
+                    onClick={() => setEditDate(null)} 
+                    className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-medium"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-bold shadow-md"
+                  >
+                    Salvar
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

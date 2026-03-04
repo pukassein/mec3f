@@ -13,6 +13,13 @@ export interface ScheduleItem {
   track?: 1 | 2 | 3 | 4; // 1: Health, 2: Ecology, 3: Engineering, 4: Energy
 }
 
+export interface ImportantDate {
+  id: string;
+  description: string;
+  date_text: string;
+  display_order: number;
+}
+
 export interface DaySchedule {
   date: string;
   label: string;

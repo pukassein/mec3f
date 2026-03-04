@@ -25,7 +25,7 @@ import {
   ClockIcon,
   ImageIcon
 } from './Icons';
-import { ContentCard, Speaker, ScheduleItem } from '../types';
+import { ContentCard, Speaker, ScheduleItem, ImportantDate } from '../types';
 
 // --- Icon Mapper ---
 const IconMap: Record<string, React.ElementType> = {
@@ -314,6 +314,31 @@ export const Hero = ({ imageUrls }: { imageUrls: string[] }) => {
   );
 };
 
+export const SaveTheDateSection = ({ dates }: { dates: ImportantDate[] }) => {
+  if (!dates || dates.length === 0) return null;
+
+  return (
+    <section className="py-12 bg-white border-b border-slate-100">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-2xl font-bold text-center text-mec-green mb-8 uppercase tracking-wide">Save the Date</h2>
+        
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+          <div className="divide-y divide-slate-100">
+            {dates.map((item) => (
+              <div key={item.id} className="flex flex-col sm:flex-row justify-between items-center p-5 hover:bg-slate-50 transition-colors gap-2 sm:gap-4">
+                <span className="text-slate-700 font-medium text-center sm:text-left">{item.description}</span>
+                <span className="text-slate-900 font-bold whitespace-nowrap bg-slate-100 px-3 py-1 rounded-lg border border-slate-200 text-sm">
+                  {item.date_text}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 export const AboutSection = ({ imageUrl }: { imageUrl?: string }) => {
   return (
     <section id="about" className="py-20 bg-slate-50 scroll-mt-32">
@@ -496,7 +521,7 @@ export const SpeakersSection = ({ speakers }: { speakers: Speaker[] }) => {
 };
 
 // --- Schedule Card Component ---
-const ScheduleCard = ({ item, trackInfo }: { item: ScheduleItem, trackInfo: any }) => {
+const ScheduleCard: React.FC<{ item: ScheduleItem, trackInfo: any }> = ({ item, trackInfo }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -1644,6 +1669,56 @@ export const SponsorsSection = () => {
 
       </div>
     </section>
+  );
+};
+
+export const SaveTheDateFloatingButton = ({ dates }: { dates: ImportantDate[] }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (!dates || dates.length === 0) return null;
+
+  return (
+    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end">
+      {/* Popover Content */}
+      <div 
+        className={`mb-4 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 origin-bottom-right ${
+          isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
+        }`}
+        style={{ width: '300px' }}
+      >
+        <div className="bg-mec-green px-4 py-3 flex justify-between items-center">
+          <h3 className="text-white font-bold text-sm uppercase tracking-wide">Datas Importantes</h3>
+          <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white">
+            <XIcon className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="divide-y divide-slate-100 max-h-[60vh] overflow-y-auto">
+          {dates.map((item) => (
+            <div key={item.id} className="p-4 hover:bg-slate-50 transition-colors">
+              <p className="text-slate-600 text-xs font-medium mb-1">{item.description}</p>
+              <p className="text-slate-900 font-bold text-sm bg-slate-100 inline-block px-2 py-0.5 rounded border border-slate-200">
+                {item.date_text}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Floating Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`group flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-mec-teal/30 ${
+          isOpen ? 'bg-slate-800 text-white rotate-90' : 'bg-mec-teal text-white'
+        }`}
+        aria-label="Ver datas importantes"
+      >
+        {isOpen ? (
+          <XIcon className="w-6 h-6" />
+        ) : (
+          <CalendarIcon className="w-6 h-6 animate-pulse-slow" />
+        )}
+      </button>
+    </div>
   );
 };
 

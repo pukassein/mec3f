@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
 import { THEMES, SCHEDULE_DATA } from './data';
-import { ContentCard, Speaker, ScheduleItem } from './types';
+import { ContentCard, Speaker, ScheduleItem, ImportantDate } from './types';
 import { AdminPanel } from './components/AdminPanel';
 import { 
   Navbar, 
   Hero, 
+  SaveTheDateSection,
   AboutSection, 
   ThemesSection, 
   SpeakersSection, 
@@ -15,7 +16,8 @@ import {
   GallerySection,
   TeamSection, 
   SponsorsSection, 
-  Footer 
+  Footer,
+  SaveTheDateFloatingButton
 } from './components/LandingPage';
 
 const ConfigWarning = () => {
@@ -47,6 +49,7 @@ const App = () => {
   const [heroImages, setHeroImages] = useState<string[]>([]);
   const [aboutImage, setAboutImage] = useState<string>('');
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [importantDates, setImportantDates] = useState<ImportantDate[]>([]);
 
   const loadData = async () => {
     if (!isSupabaseConfigured()) {
@@ -70,7 +73,11 @@ const App = () => {
     if (scheduleData && scheduleData.length > 0) setScheduleItems(scheduleData as any);
     else setScheduleItems(SCHEDULE_DATA.flatMap(d => d.items));
 
-    // 4. Site Content (Hero, About, AND Gallery)
+    // 4. Important Dates
+    const { data: datesData } = await supabase.from('important_dates').select('*').order('display_order');
+    if (datesData) setImportantDates(datesData);
+
+    // 5. Site Content (Hero, About, AND Gallery)
     const { data: contentData } = await supabase.from('site_content').select('*');
     if (contentData) {
         const contentMap = contentData.reduce((acc, item) => {
@@ -144,10 +151,12 @@ const App = () => {
             <ScheduleSection scheduleItems={scheduleItems} />
             <RegistrationSection />
             <SubmissionsSection />
+            <SaveTheDateSection dates={importantDates} />
             <GallerySection images={galleryImages} />
             <TeamSection />
             <SponsorsSection />
           </main>
+          <SaveTheDateFloatingButton dates={importantDates} />
           <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
         </>
       )}

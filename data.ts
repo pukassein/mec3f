@@ -244,13 +244,16 @@ export const ORGANIZATION_GENERAL: TeamMember[] = [
 ];
 
 export const ORGANIZATION_LOCAL: TeamMember[] = [
+  { name: "Alana Golin", institution: "" },
   { name: "Ana Beatriz Rodrigues Gonzaga", institution: "" },
   { name: "Ana Paula Gomes da Silva Castro", institution: "" },
   { name: "Angie Rocio Barrera Contreras", institution: "" },
   { name: "Anna Beatriz Mota de Moura", institution: "" },
   { name: "Cristian Godoy", institution: "" },
+  { name: "Esdras Rebecchi de Almeida", institution: "" },
   { name: "Flávio Camacho", institution: "" },
   { name: "Gricelda Adelina Diaz Rolón", institution: "" },
+  { name: "Hussein A K Moussa", institution: "" },
   { name: "Lynn Ahmad Sayah", institution: "" },
   { name: "Maria Luiza Guimarães Dias dos Santos", institution: "" },
   { name: "Milene Miranda Almeida Lira", institution: "" }
