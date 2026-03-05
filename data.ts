@@ -260,18 +260,21 @@ export const ORGANIZATION_LOCAL: TeamMember[] = [
 ];
 
 export const SCIENTIFIC_COMMITTEE: TeamMember[] = [
-  { name: "Alex Matos da Silva Costa", institution: "FaCEN - UNA, Paraguai" },
-  { name: "Aref Kalilo Lima Kzam", institution: "ILATIT - UNILA, Brasil" },
-  { name: "Danilo Fernández Ríos", institution: "FaCEN - UNA, Paraguai" },
-  { name: "Danúbia Frasson Furtado", institution: "ILACVN - UNILA, Brasil" },
-  { name: "Fernando Jose Mendez Gaona", institution: "FaCEN - UNA, Paraguai" },
-  { name: "Isac Kiyoshi Fujita", institution: "IFSP, São Paulo, Brasil" },
-  { name: "Jean Franciesco Vettorazzi", institution: "ILACVN - UNILA, Brasil" },
-  { name: "Jefferson Luis Ferrari", institution: "UFU, Uberlândia, Brasil" },
-  { name: "Luis Fernando Q. P. Marchesi", institution: "UTFPR, Brasil" },
-  { name: "Maria Cláudia Gross", institution: "ILACVN - UNILA, Brasil" },
-  { name: "Michel Varajão Garey", institution: "ILACVN - UNILA, Brasil" },
-  { name: "Rodrigo Sequinel", institution: "UFPR, Palotina, Brasil" },
-  { name: "Sérgio Yoshinobu Araki", institution: "IFSP, São Paulo, Brasil" },
-  { name: "Thiago Sequinel", institution: "UFGD, Dourados-MS, Brasil" }
+  { name: "Alexandre Beletti Ferreira", institution: "IFSP, Brasil" },
+  { name: "Dario Lirussi", institution: "INMeT, Argentina" },
+  { name: "Diana Pésole", institution: "Itaipu Binacional, Paraguai" },
+  { name: "Diego Pinzon", institution: "ILACVN-UNILA, Brasil" },
+  { name: "Elena Torres", institution: "UNA, Paraguay" },
+  { name: "Felipe de Almeida La Porta", institution: "UTFPR, Brasil" },
+  { name: "Gladis Miriam Aparicio Rojas", institution: "UAO, Colômbia" },
+  { name: "Gustavo Arturo Riveros Godoy", institution: "Itaipu Binacional, Paraguai" },
+  { name: "Julieta Beatriz Benitez", institution: "UNaM, Argentina" },
+  { name: "Katherina Vizcaychipi", institution: "INMeT, Argentina" },
+  { name: "Maraí de Freitas Maio Vendramine", institution: "USP/ESALQ, Brasil" },
+  { name: "María Evangelina Vallejos", institution: "UNaM, Argentina" },
+  { name: "María Laura Vera", institution: "UNaM, Argentina" },
+  { name: "Raul Jose de Souza", institution: "IFSP, Brasil" },
+  { name: "Renata Danielle Adati", institution: "UTFPR, Brasil" },
+  { name: "Silvina Gabriela Ramos", institution: "UNaM, Argentina" },
+  { name: "Thomas Goossen", institution: "Itaipu Binacional, Paraguai" }
 ];

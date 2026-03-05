@@ -1511,7 +1511,6 @@ export const RegistrationSection = () => {
 
 export const TeamSection = () => {
   const [showAllGeneral, setShowAllGeneral] = useState(false);
-  const [showAllScience, setShowAllScience] = useState(false);
 
   const ToggleButton = ({ isOpen, onClick, label }: { isOpen: boolean, onClick: () => void, label: string }) => (
     <button 
@@ -1569,24 +1568,17 @@ export const TeamSection = () => {
 
             <div>
               <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Comitê Científico</h3>
-              <ul className="space-y-3">
-              {(showAllScience ? SCIENTIFIC_COMMITTEE : SCIENTIFIC_COMMITTEE.slice(0, 4)).map((person, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm">
+              <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-4">
+              {SCIENTIFIC_COMMITTEE.map((person, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm">
                   <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-mec-teal flex-shrink-0"></div>
                   <div>
-                    <span className="font-semibold text-slate-800">{person.name}</span>
-                    <span className="text-slate-500 block text-xs">{person.institution}</span>
+                    <span className="font-semibold text-slate-800 block leading-tight">{person.name}</span>
+                    <span className="text-slate-500 text-xs">{person.institution}</span>
                   </div>
                 </li>
               ))}
               </ul>
-              {SCIENTIFIC_COMMITTEE.length > 4 && (
-                <ToggleButton 
-                  isOpen={showAllScience} 
-                  onClick={() => setShowAllScience(!showAllScience)} 
-                  label={showAllScience ? "Ver menos" : `Ver mais (${SCIENTIFIC_COMMITTEE.length - 4})`}
-                />
-              )}
             </div>
           </div>
         </div>
