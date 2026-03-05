@@ -320,7 +320,7 @@ export const SaveTheDateSection = ({ dates }: { dates: ImportantDate[] }) => {
   return (
     <section className="py-12 bg-white border-b border-slate-100">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-center text-mec-green mb-8 uppercase tracking-wide">Save the Date</h2>
+        <h2 className="text-2xl font-bold text-center text-mec-green mb-8 uppercase tracking-wide">Datas Importantes</h2>
         
         <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
           <div className="divide-y divide-slate-100">
