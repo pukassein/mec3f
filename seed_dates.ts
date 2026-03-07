@@ -18,9 +18,13 @@ async function seedDates() {
 
   const defaultDates = [
     { description: 'Início das Inscrições', date_text: '15/03/2026', display_order: 1 },
-    { description: 'Submissão de Resumos', date_text: 'Até 30/04/2026', display_order: 2 },
-    { description: 'Divulgação dos Aceitos', date_text: '15/05/2026', display_order: 3 },
-    { description: 'Início do Evento', date_text: '25/08/2026', display_order: 4 }
+    { description: 'Início da Submissão de Resumos', date_text: '15/03/2026', display_order: 2 },
+    { description: 'Prazo Final para Submissão de Resumos', date_text: '30/04/2026', display_order: 3 },
+    { description: 'Avaliação dos Trabalhos', date_text: '01/05/2026 – 14/05/2026', display_order: 4 },
+    { description: 'Divulgação dos Trabalhos Aceitos', date_text: 'a partir de 15/05/2026', display_order: 5 },
+    { description: 'Prazo para Envio das Versões Corrigidas', date_text: '31/05/2026', display_order: 6 },
+    { description: 'Divulgação da Programação Final', date_text: 'a partir de 30/06/2026', display_order: 7 },
+    { description: 'Início do Evento', date_text: '25/08/2026', display_order: 8 }
   ];
 
   for (const d of defaultDates) {

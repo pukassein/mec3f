@@ -1674,7 +1674,7 @@ export const SaveTheDateFloatingButton = ({ dates }: { dates: ImportantDate[] })
       {/* Popover Content */}
       <div 
         className={`mb-4 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 origin-bottom-right ${
-          isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
+          isOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
         }`}
         style={{ width: '300px' }}
       >
@@ -1688,9 +1688,9 @@ export const SaveTheDateFloatingButton = ({ dates }: { dates: ImportantDate[] })
           {dates.map((item) => (
             <div key={item.id} className="p-4 hover:bg-slate-50 transition-colors">
               <p className="text-slate-600 text-xs font-medium mb-1">{item.description}</p>
-              <p className="text-slate-900 font-bold text-sm bg-slate-100 inline-block px-2 py-0.5 rounded border border-slate-200">
+              <span className="text-slate-900 font-bold text-sm bg-slate-100 inline-block px-2 py-0.5 rounded border border-slate-200">
                 {item.date_text}
-              </p>
+              </span>
             </div>
           ))}
         </div>
