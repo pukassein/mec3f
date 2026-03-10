@@ -1051,6 +1051,76 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
           </div>
         )}
 
+        {/* Edit Speaker Modal */}
+        {editSpeaker && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[70]">
+            <div className="bg-white rounded-lg p-6 max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+              <h3 className="text-lg font-bold mb-4">{editSpeaker.id ? 'Editar Palestrante' : 'Novo Palestrante'}</h3>
+              <div className="space-y-4">
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">Nome</label>
+                   <input className="w-full border p-2 rounded" value={editSpeaker.name || ''} onChange={e => setEditSpeaker({...editSpeaker, name: e.target.value})} />
+                </div>
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">Instituição</label>
+                   <input className="w-full border p-2 rounded" value={editSpeaker.institution || ''} onChange={e => setEditSpeaker({...editSpeaker, institution: e.target.value})} />
+                </div>
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">URL da Imagem</label>
+                   <input className="w-full border p-2 rounded" value={editSpeaker.image_url || ''} onChange={e => setEditSpeaker({...editSpeaker, image_url: e.target.value})} />
+                </div>
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">Descrição</label>
+                   <textarea className="w-full border p-2 rounded h-20" value={editSpeaker.description || ''} onChange={e => setEditSpeaker({...editSpeaker, description: e.target.value})} />
+                </div>
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">Ordem de Exibição</label>
+                   <input type="number" className="w-full border p-2 rounded" value={editSpeaker.display_order || 0} onChange={e => setEditSpeaker({...editSpeaker, display_order: parseInt(e.target.value)})} />
+                </div>
+                <div className="flex justify-end gap-2 mt-4">
+                  <button onClick={() => setEditSpeaker(null)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                  <button onClick={handleSaveSpeaker} className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700">Salvar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Card Modal */}
+        {editCard && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[70]">
+            <div className="bg-white rounded-lg p-6 max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+              <h3 className="text-lg font-bold mb-4">{editCard.id ? 'Editar Temática' : 'Nova Temática'}</h3>
+              <div className="space-y-4">
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">Título</label>
+                   <input className="w-full border p-2 rounded" value={editCard.title || ''} onChange={e => setEditCard({...editCard, title: e.target.value})} />
+                </div>
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">Descrição</label>
+                   <textarea className="w-full border p-2 rounded h-20" value={editCard.description || ''} onChange={e => setEditCard({...editCard, description: e.target.value})} />
+                </div>
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">Ícone</label>
+                   <select className="w-full border p-2 rounded bg-white" value={editCard.icon_name || 'Leaf'} onChange={e => setEditCard({...editCard, icon_name: e.target.value})}>
+                     {Object.keys(IconMap).map(icon => (
+                       <option key={icon} value={icon}>{icon}</option>
+                     ))}
+                   </select>
+                </div>
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">Ordem de Exibição</label>
+                   <input type="number" className="w-full border p-2 rounded" value={editCard.display_order || 0} onChange={e => setEditCard({...editCard, display_order: parseInt(e.target.value)})} />
+                </div>
+                <div className="flex justify-end gap-2 mt-4">
+                  <button onClick={() => setEditCard(null)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                  <button onClick={handleSaveCard} className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700">Salvar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

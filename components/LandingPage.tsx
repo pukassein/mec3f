@@ -176,6 +176,12 @@ export const Navbar = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
             >
               Inscreva-se Agora
             </a>
+            <button 
+              onClick={() => { setIsOpen(false); onOpenAdmin(); }}
+              className="block mt-4 text-center text-sm text-slate-400 w-full py-2"
+            >
+              Área do Organizador
+            </button>
           </div>
         </div>
       )}
