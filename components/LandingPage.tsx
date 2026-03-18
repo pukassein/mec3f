@@ -1676,7 +1676,7 @@ export const SaveTheDateFloatingButton = ({ dates }: { dates: ImportantDate[] })
   if (!dates || dates.length === 0) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end">
+    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end pointer-events-none">
       {/* Popover Content */}
       <div 
         className={`mb-4 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 origin-bottom-right ${
@@ -1705,7 +1705,7 @@ export const SaveTheDateFloatingButton = ({ dates }: { dates: ImportantDate[] })
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`group flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-mec-teal/30 ${
+        className={`pointer-events-auto group flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-mec-teal/30 ${
           isOpen ? 'bg-slate-800 text-white rotate-90' : 'bg-mec-teal text-white'
         }`}
         aria-label="Ver datas importantes"
