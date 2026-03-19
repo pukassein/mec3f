@@ -570,6 +570,69 @@ const ScheduleCard: React.FC<{ item: ScheduleItem, trackInfo: any }> = ({ item, 
   );
 };
 
+const GeneralEventCard: React.FC<{ item: ScheduleItem }> = ({ item }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const isExpandable = !!item.description || !!item.speaker;
+
+  return (
+    <div 
+      onClick={() => isExpandable && setIsExpanded(!isExpanded)}
+      className={`rounded-lg p-3 border-l-4 shadow-sm transition-all ${isExpandable ? 'cursor-pointer hover:shadow' : ''} ${
+        item.type === 'break' ? 'bg-slate-50 border-slate-300' :
+        item.type === 'social' ? 'bg-orange-50 border-orange-400' :
+        item.type === 'ceremony' ? 'bg-purple-50 border-purple-400' :
+        'bg-white border-mec-teal'
+      }`}
+    >
+       <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+          <div className="text-center md:text-left flex-grow">
+            <h4 className="text-base font-bold text-slate-800">{item.title}</h4>
+            {!isExpanded && item.speaker && (
+              <p className="text-xs text-slate-500 mt-0.5">{item.speaker.name}</p>
+            )}
+            {!isExpanded && item.description && !item.speaker && (
+              <p className="text-slate-600 text-xs mt-0.5 line-clamp-1">{item.description}</p>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase whitespace-nowrap ${
+              item.type === 'break' ? 'bg-slate-200 text-slate-700' :
+              item.type === 'social' ? 'bg-orange-100 text-orange-800' :
+              item.type === 'ceremony' ? 'bg-purple-100 text-purple-800' :
+              'bg-mec-teal/10 text-mec-teal'
+            }`}>
+              {item.type === 'break' ? 'Intervalo' : 
+               item.type === 'social' ? 'Social' : 
+               item.type === 'ceremony' ? 'Cerimônia' : 'Geral'}
+            </span>
+            {isExpandable && (
+              <div className="text-slate-400">
+                {isExpanded ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />}
+              </div>
+            )}
+          </div>
+       </div>
+
+       {isExpanded && isExpandable && (
+         <div className="mt-3 text-sm border-t border-slate-100 pt-3 animate-fade-in text-left">
+            {item.description && <p className="mb-3 text-slate-600">{item.description}</p>}
+            {item.speaker && (
+               <div className="flex items-center gap-3 bg-slate-50 p-2 rounded-lg inline-flex pr-6">
+                  <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden shrink-0">
+                    <img src={item.speaker.image_url} className="w-full h-full object-cover" alt={item.speaker.name} />
+                  </div>
+                  <div>
+                     <span className="font-bold block text-slate-800">{item.speaker.name}</span>
+                     <span className="block text-xs text-slate-500">{item.speaker.institution}</span>
+                  </div>
+               </div>
+            )}
+         </div>
+       )}
+    </div>
+  );
+};
+
 export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem[] }) => {
   const dates = Array.from(new Set(scheduleItems.map(i => i.date))).sort();
   const [activeDate, setActiveDate] = useState<string>(dates[0] || '');
@@ -685,29 +748,7 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
                         </div>
                       ) : (
                         // General Event (Full Width)
-                        <div className={`rounded-lg p-3 border-l-4 shadow-sm hover:shadow transition-all ${
-                          firstItem.type === 'break' ? 'bg-slate-50 border-slate-300' :
-                          firstItem.type === 'social' ? 'bg-orange-50 border-orange-400' :
-                          firstItem.type === 'ceremony' ? 'bg-purple-50 border-purple-400' :
-                          'bg-white border-mec-teal'
-                        }`}>
-                           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-                              <div className="text-center md:text-left flex-grow">
-                                <h4 className="text-base font-bold text-slate-800">{firstItem.title}</h4>
-                                {firstItem.description && <p className="text-slate-600 text-xs mt-0.5">{firstItem.description}</p>}
-                              </div>
-                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase whitespace-nowrap ${
-                                firstItem.type === 'break' ? 'bg-slate-200 text-slate-700' :
-                                firstItem.type === 'social' ? 'bg-orange-100 text-orange-800' :
-                                firstItem.type === 'ceremony' ? 'bg-purple-100 text-purple-800' :
-                                'bg-mec-teal/10 text-mec-teal'
-                              }`}>
-                                {firstItem.type === 'break' ? 'Intervalo' : 
-                                 firstItem.type === 'social' ? 'Social' : 
-                                 firstItem.type === 'ceremony' ? 'Cerimônia' : 'Geral'}
-                              </span>
-                           </div>
-                        </div>
+                        <GeneralEventCard item={firstItem} />
                       )}
                     </div>
                   );
