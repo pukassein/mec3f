@@ -15,6 +15,7 @@ import {
   RegistrationSection, 
   GallerySection,
   TeamSection, 
+  LocationSection,
   SponsorsSection, 
   Footer,
   SaveTheDateFloatingButton
@@ -154,6 +155,7 @@ const App = () => {
             <SaveTheDateSection dates={importantDates} />
             <GallerySection images={galleryImages} />
             <TeamSection />
+            <LocationSection />
             <SponsorsSection />
           </main>
           <SaveTheDateFloatingButton dates={importantDates} />

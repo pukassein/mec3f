@@ -23,7 +23,10 @@ import {
   DownloadIcon,
   UploadCloudIcon,
   ClockIcon,
-  ImageIcon
+  ImageIcon,
+  NavigationIcon,
+  PlaneIcon,
+  CameraIcon
 } from './Icons';
 import { ContentCard, Speaker, ScheduleItem, ImportantDate } from '../types';
 
@@ -100,6 +103,7 @@ export const Navbar = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
     { name: 'Submissões', href: '#submissions' },
     { name: 'Galeria', href: '#gallery' },
     { name: 'Equipe', href: '#team' },
+    { name: 'Local', href: '#location' },
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -1558,6 +1562,7 @@ export const RegistrationSection = () => {
 
 export const TeamSection = () => {
   const [showAllGeneral, setShowAllGeneral] = useState(false);
+  const [showAllScientific, setShowAllScientific] = useState(false);
 
   const ToggleButton = ({ isOpen, onClick, label }: { isOpen: boolean, onClick: () => void, label: string }) => (
     <button 
@@ -1616,7 +1621,7 @@ export const TeamSection = () => {
             <div>
               <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Comitê Científico</h3>
               <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-4">
-              {SCIENTIFIC_COMMITTEE.map((person, i) => (
+              {(showAllScientific ? SCIENTIFIC_COMMITTEE : SCIENTIFIC_COMMITTEE.slice(0, 8)).map((person, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm">
                   <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-mec-teal flex-shrink-0"></div>
                   <div>
@@ -1626,6 +1631,89 @@ export const TeamSection = () => {
                 </li>
               ))}
               </ul>
+              {SCIENTIFIC_COMMITTEE.length > 8 && (
+                <ToggleButton 
+                  isOpen={showAllScientific} 
+                  onClick={() => setShowAllScientific(!showAllScientific)} 
+                  label={showAllScientific ? "Ver menos" : `Ver mais (${SCIENTIFIC_COMMITTEE.length - 8})`}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export const LocationSection = () => {
+  return (
+    <section id="location" className="py-24 relative overflow-hidden scroll-mt-20 bg-slate-50">
+      {/* Colorful Background Elements (Softened for light theme) */}
+      <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-96 h-96 bg-mec-teal/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-96 h-96 bg-mec-green/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-mec-teal text-sm font-medium mb-6 shadow-sm">
+              <MapPinIcon className="w-4 h-4" />
+              Destino
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-slate-900">
+              Foz do Iguaçu, <span className="text-transparent bg-clip-text bg-gradient-to-r from-mec-teal to-mec-green">Paraná</span>
+            </h2>
+            <p className="text-slate-600 text-lg mb-8 leading-relaxed">
+              O MEC3F 2026 será realizado em uma das cidades mais deslumbrantes do Brasil. 
+              Aproveite o evento para expandir seus conhecimentos e explorar maravilhas mundiais.
+            </p>
+
+            <div className="grid sm:grid-cols-2 gap-6 mb-10">
+              <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-mec-teal/30 transition-all">
+                <PlaneIcon className="w-8 h-8 text-mec-teal mb-3" />
+                <h4 className="text-slate-800 font-semibold mb-1">Fácil Acesso</h4>
+                <p className="text-slate-600 text-sm">Aeroporto Internacional (IGU) com voos diretos das principais capitais do Brasil.</p>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-mec-yellow/30 transition-all">
+                <CameraIcon className="w-8 h-8 text-mec-yellow mb-3" />
+                <h4 className="text-slate-800 font-semibold mb-1">Turismo</h4>
+                <p className="text-slate-600 text-sm">Cataratas do Iguaçu, Itaipu Binacional, Marco das Três Fronteiras e muito mais.</p>
+              </div>
+            </div>
+
+            <a 
+              href="https://maps.app.goo.gl/6WjqwAS2f2br7DzC7" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-mec-teal to-mec-green text-white px-8 py-4 rounded-full font-bold hover:shadow-lg hover:shadow-mec-teal/25 transition-all hover:-translate-y-1"
+            >
+              <NavigationIcon className="w-5 h-5" />
+              Traçar Rota no Google Maps
+            </a>
+          </div>
+
+          {/* Right Content - Map/Images */}
+          <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-xl border border-slate-200 group">
+            {/* Map Iframe */}
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115230.13840733845!2d-54.66228303035048!3d-25.506950005740444!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94f690ebaa264423%3A0x861e2d426315a411!2sFoz%20do%20Igua%C3%A7u%2C%20State%20of%20Paran%C3%A1!5e0!3m2!1sen!2sbr!4v1711290000000!5m2!1sen!2sbr" 
+              width="100%" 
+              height="100%" 
+              style={{ border: 0 }} 
+              allowFullScreen 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+              className="absolute inset-0 z-0"
+            ></iframe>
+            
+            <div className="absolute bottom-6 left-6 right-6 z-20 pointer-events-none">
+              <div className="bg-white/90 backdrop-blur-md border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-lg">
+                <p className="text-slate-800 font-medium flex items-center gap-2">
+                  <MapPinIcon className="w-5 h-5 text-mec-orange" />
+                  Foz do Iguaçu, PR - Brasil
+                </p>
+              </div>
             </div>
           </div>
         </div>
