@@ -725,33 +725,75 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
               </button>
             </div>
 
-            <div className="space-y-2">
-               {scheduleItems.map(item => (
-                 <div key={item.id} className="border p-4 rounded-lg flex flex-col md:flex-row justify-between items-center bg-gray-50 gap-4">
-                   <div className="flex-shrink-0 w-32 text-sm text-gray-500 text-center md:text-left">
-                     <div className="font-bold text-gray-800">{formatDate(item.date).day} ({formatDate(item.date).dayOfWeek})</div>
-                     <div>{item.start_time} - {item.end_time}</div>
+            <div className="space-y-8">
+               {Object.entries(
+                 scheduleItems.reduce((acc, item) => {
+                   if (!acc[item.date]) acc[item.date] = [];
+                   acc[item.date].push(item);
+                   return acc;
+                 }, {} as Record<string, ScheduleItem[]>)
+               ).sort(([dateA], [dateB]) => dateA.localeCompare(dateB)).map(([date, items]) => (
+                 <div key={date} className="border rounded-xl overflow-hidden bg-white shadow-sm">
+                   <div className="bg-slate-50 p-4 border-b font-bold text-slate-800 flex items-center gap-2">
+                     <CalendarIcon className="w-5 h-5 text-mec-teal" />
+                     {formatDate(date).day} <span className="text-slate-500 font-normal capitalize">({formatDate(date).dayOfWeek})</span>
                    </div>
-                   <div className="flex-grow text-center md:text-left">
-                     <div className="flex items-center justify-center md:justify-start gap-2">
-                        <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded border ${
-                            item.type === 'ceremony' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
-                            item.type === 'break' ? 'bg-gray-200 text-gray-600 border-gray-300' :
-                            item.type === 'social' ? 'bg-orange-50 text-orange-700 border-orange-200' :
-                            'bg-blue-50 text-blue-700 border-blue-200'
-                        }`}>{item.type}</span>
-                        {item.track && (
-                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded border bg-purple-50 text-purple-700 border-purple-200">
-                            Trilha {item.track}
-                          </span>
-                        )}
-                        <h4 className="font-bold text-slate-800">{item.title}</h4>
-                     </div>
-                     {item.description && <p className="text-xs text-gray-600 mt-1">{item.description}</p>}
-                   </div>
-                   <div className="flex gap-4 text-xs font-medium">
-                     <button onClick={() => setEditSchedule(item)} className="text-blue-600 hover:text-blue-800">Editar</button>
-                     <button onClick={() => handleDeleteSchedule(item.id)} className="text-red-600 hover:text-red-800">Excluir</button>
+                   <div className="p-4 space-y-6">
+                     {Object.entries(
+                       (items as ScheduleItem[]).reduce((acc, item) => {
+                         if (!acc[item.start_time]) acc[item.start_time] = [];
+                         acc[item.start_time].push(item);
+                         return acc;
+                       }, {} as Record<string, ScheduleItem[]>)
+                     ).sort(([timeA], [timeB]) => timeA.localeCompare(timeB)).map(([time, timeItems]) => (
+                       <div key={time} className="flex flex-col md:flex-row gap-4 relative">
+                         <div className="w-24 shrink-0 font-bold text-slate-600 pt-2 flex flex-col items-center md:items-start">
+                           <span className="bg-slate-100 px-2 py-1 rounded text-sm border border-slate-200">{time}</span>
+                         </div>
+                         <div className="flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                           {(timeItems as ScheduleItem[]).map(item => {
+                             const isTrack = !!item.track;
+                             const trackColor = 
+                               item.track === 1 ? 'bg-blue-50 border-blue-200 text-blue-900' :
+                               item.track === 2 ? 'bg-green-50 border-green-200 text-green-900' :
+                               item.track === 3 ? 'bg-slate-50 border-slate-200 text-slate-900' :
+                               item.track === 4 ? 'bg-orange-50 border-orange-200 text-orange-900' : '';
+                             
+                             const typeColor = 
+                               item.type === 'break' ? 'bg-gray-50 border-gray-300 text-gray-700' :
+                               item.type === 'social' ? 'bg-yellow-50 border-yellow-300 text-yellow-800' :
+                               item.type === 'ceremony' ? 'bg-purple-50 border-purple-300 text-purple-800' :
+                               'bg-white border-mec-teal text-slate-800';
+
+                             return (
+                               <div key={item.id} className={`border p-3 rounded-lg flex flex-col justify-between shadow-sm hover:shadow transition-shadow ${isTrack ? trackColor : typeColor}`}>
+                                 <div>
+                                   <div className="flex justify-between items-start mb-2 gap-2">
+                                     <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded border bg-white/60 truncate`}>
+                                       {item.track ? `Trilha ${item.track}` : 
+                                        item.type === 'break' ? 'Intervalo' : 
+                                        item.type === 'social' ? 'Social' : 
+                                        item.type === 'ceremony' ? 'Cerimônia' : 'Geral'}
+                                     </span>
+                                     <span className="text-xs opacity-70 whitespace-nowrap">{item.start_time} - {item.end_time}</span>
+                                   </div>
+                                   <h4 className="font-bold text-sm mb-1 line-clamp-2" title={item.title}>{item.title}</h4>
+                                   {item.speaker_id && (
+                                     <p className="text-xs opacity-80 mb-2 truncate" title={speakers.find(s => s.id === item.speaker_id)?.name}>
+                                       {speakers.find(s => s.id === item.speaker_id)?.name || 'Palestrante'}
+                                     </p>
+                                   )}
+                                 </div>
+                                 <div className="flex gap-3 text-xs font-bold mt-3 pt-2 border-t border-black/10">
+                                   <button onClick={() => setEditSchedule(item)} className="text-blue-600 hover:text-blue-800 transition-colors">Editar</button>
+                                   <button onClick={() => handleDeleteSchedule(item.id)} className="text-red-600 hover:text-red-800 transition-colors">Excluir</button>
+                                 </div>
+                               </div>
+                             );
+                           })}
+                         </div>
+                       </div>
+                     ))}
                    </div>
                  </div>
                ))}
