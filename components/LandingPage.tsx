@@ -1734,7 +1734,9 @@ export const SponsorsSection = () => {
   ];
 
   const sponsorsLogos = [
-    { name: "PAEP CAPES", url: "https://ciencia.ufpr.br/portal/wp-content/uploads/2024/09/paep-capes.jpg" }
+    { name: "PAEP CAPES", url: "https://ciencia.ufpr.br/portal/wp-content/uploads/2024/09/paep-capes.jpg" },
+    { name: "PPGFISA", url: "https://portal.unila.edu.br/programas-pos-graduacao/fisica/arquivos/ppgfisa-completo-assinatura.png" },
+    { name: "PPGIES", url: "https://portal.unila.edu.br/mestrado-doutorado/ppgies/imagens/ASSINATURAPPGIES_COLORpng.png" }
   ];
 
   const supportLogos = [
@@ -1766,7 +1768,7 @@ export const SponsorsSection = () => {
 
         <div className="mb-20 text-center">
           <h2 className="text-3xl font-bold text-slate-900 mb-12">Patrocinadores</h2>
-          <div className="flex justify-center items-center">
+          <div className="flex flex-wrap justify-center items-center gap-x-12 sm:gap-x-16 gap-y-10">
              {sponsorsLogos.map((logo) => (
               <div key={logo.name}>
                 <img
