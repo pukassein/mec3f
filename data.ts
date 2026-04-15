@@ -161,23 +161,16 @@ export const SCHEDULE_DATA: DaySchedule[] = [
       // 12:30 - 14:00: Intervalo - Almoço (General)
       { id: "d3-5", date: "2026-08-27", start_time: "12:30", end_time: "14:00", title: "Intervalo - Almoço", type: "break" },
 
-      // 14:00 - 15:00: Palestra 4 (4 tracks)
-      { id: "d3-6-t1", date: "2026-08-27", start_time: "14:00", end_time: "15:00", title: "Palestra 4", type: "lecture", track: 1 },
-      { id: "d3-6-t2", date: "2026-08-27", start_time: "14:00", end_time: "15:00", title: "Palestra 4", type: "lecture", track: 2 },
-      { id: "d3-6-t3", date: "2026-08-27", start_time: "14:00", end_time: "15:00", title: "Palestra 4", type: "lecture", track: 3 },
-      { id: "d3-6-t4", date: "2026-08-27", start_time: "14:00", end_time: "15:00", title: "Palestra 4", type: "lecture", track: 4 },
-
-      // 15:00 - 16:00: Sessão de Comunicação Oral (4 tracks)
-      { id: "d3-7-t1", date: "2026-08-27", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 1 },
-      { id: "d3-7-t2", date: "2026-08-27", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 2 },
-      { id: "d3-7-t3", date: "2026-08-27", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 3 },
-      { id: "d3-7-t4", date: "2026-08-27", start_time: "15:00", end_time: "16:00", title: "Com. Oral", type: "session", track: 4 },
-
-      // 16:00 - 17:00: Café e Sessão de Pôster II (General)
-      { id: "d3-8", date: "2026-08-27", start_time: "16:00", end_time: "17:00", title: "Café e Sessão de Pôster II", type: "session" },
-
-      // 18:00 - 22:00: Espaço Cultural & Científico-Tecnológico (General)
-      { id: "d3-9", date: "2026-08-27", start_time: "18:00", end_time: "22:00", title: "Espaço Cultural & Científico-Tecnológico", type: "social" }
+      // 14:00 - 18:00: Eixo de Imersão/Circuito Técnico-Científico
+      { 
+        id: "d3-6", 
+        date: "2026-08-27", 
+        start_time: "14:00", 
+        end_time: "18:00", 
+        title: "Eixo de Imersão/Circuito Técnico-Científico", 
+        type: "session",
+        description: "Encontros entre grupos de pesquisa ou workshops de projetos específicos, ampliando as oportunidades de aprendizagem, intercâmbio e colaboração entre os participantes. Além de promoção para a integração entre teoria e prática por meio de atividades complementares, como visitas técnicas, científicas e culturais."
+      }
     ]
   },
   {
