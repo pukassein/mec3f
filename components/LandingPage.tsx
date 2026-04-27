@@ -76,6 +76,103 @@ const getThemeStyles = (index: number) => {
   return styles[index % styles.length];
 };
 
+export const DeadlinePopup = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [daysLeft, setDaysLeft] = useState(0);
+
+  useEffect(() => {
+    // Show popup after a small delay for better UX
+    // Use sessionStorage so it only shows once per browser tab session to not be overly annoying,
+    // but still serves its purpose.
+    const hasSeen = sessionStorage.getItem('deadlinePopupSeen');
+    if (!hasSeen) {
+      const showTimer = setTimeout(() => setIsOpen(true), 800);
+      return () => clearTimeout(showTimer);
+    }
+  }, []);
+
+  useEffect(() => {
+    const calculateDays = () => {
+      // Set target to April 30, 2026 23:59:59 BRT (UTC-3)
+      const targetDate = new Date('2026-04-30T23:59:59-03:00');
+      const now = new Date();
+      const diffTime = targetDate.getTime() - now.getTime();
+      
+      if (diffTime <= 0) {
+        setDaysLeft(0);
+      } else {
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        setDaysLeft(diffDays);
+      }
+    };
+
+    calculateDays();
+    // Update every hour
+    const interval = setInterval(calculateDays, 1000 * 60 * 60); 
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    sessionStorage.setItem('deadlinePopupSeen', 'true');
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-fade-in"
+      onClick={handleClose}
+    >
+      <div 
+        className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative transform transition-all scale-100"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button 
+          onClick={handleClose}
+          className="absolute top-4 right-4 text-white hover:text-blue-100 bg-black/20 hover:bg-black/30 rounded-full p-2 transition-colors z-10 backdrop-blur-md"
+        >
+          <XIcon className="w-5 h-5" />
+        </button>
+        
+        <div className="bg-gradient-to-br from-mec-teal to-blue-600 p-8 text-center text-white relative overflow-hidden">
+           {/* Background accents */}
+           <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+           <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/3 w-32 h-32 bg-black/10 rounded-full blur-xl"></div>
+           
+           <h3 className="text-3xl font-black mb-1 relative z-10 tracking-tight">Prazo Final!</h3>
+           <p className="opacity-90 font-medium relative z-10 text-lg">Submissão de Resumos</p>
+        </div>
+        
+        <div className="p-8 text-center">
+          <div className="inline-flex items-center justify-center gap-2 bg-slate-100 text-slate-700 px-5 py-2.5 rounded-full mb-8 font-semibold shadow-inner">
+            <CalendarIcon className="w-5 h-5 text-mec-teal" />
+            <span>30 de Abril de 2026</span>
+          </div>
+          
+          <div className="flex flex-col items-center justify-center mb-8 bg-slate-50 rounded-2xl py-6 border border-slate-100">
+            <div className="text-8xl font-black text-slate-900 tabular-nums tracking-tighter leading-none mb-2 drop-shadow-sm">
+              {daysLeft}
+            </div>
+            <div className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">
+              {daysLeft === 1 ? 'Dia Restante' : 'Dias Restantes'}
+            </div>
+          </div>
+          
+          <a 
+            href="#submissions" 
+            onClick={handleClose}
+            className="block w-full bg-slate-900 text-white font-bold py-4 px-6 rounded-xl hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 duration-200 text-lg"
+          >
+            Enviar Meu Resumo Agora
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const Navbar = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
