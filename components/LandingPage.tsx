@@ -78,44 +78,20 @@ const getThemeStyles = (index: number) => {
 
 export const DeadlinePopup = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [daysLeft, setDaysLeft] = useState(0);
 
   useEffect(() => {
     // Show popup after a small delay for better UX
-    // Use sessionStorage so it only shows once per browser tab session to not be overly annoying,
-    // but still serves its purpose.
-    const hasSeen = sessionStorage.getItem('deadlinePopupSeen');
+    // Use sessionStorage so it only shows once per browser tab session
+    const hasSeen = sessionStorage.getItem('deadlinePopupSeen_v2');
     if (!hasSeen) {
       const showTimer = setTimeout(() => setIsOpen(true), 800);
       return () => clearTimeout(showTimer);
     }
   }, []);
 
-  useEffect(() => {
-    const calculateDays = () => {
-      // Set target to April 30, 2026 23:59:59 BRT (UTC-3)
-      const targetDate = new Date('2026-04-30T23:59:59-03:00');
-      const now = new Date();
-      const diffTime = targetDate.getTime() - now.getTime();
-      
-      if (diffTime <= 0) {
-        setDaysLeft(0);
-      } else {
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        setDaysLeft(diffDays);
-      }
-    };
-
-    calculateDays();
-    // Update every hour
-    const interval = setInterval(calculateDays, 1000 * 60 * 60); 
-
-    return () => clearInterval(interval);
-  }, []);
-
   const handleClose = () => {
     setIsOpen(false);
-    sessionStorage.setItem('deadlinePopupSeen', 'true');
+    sessionStorage.setItem('deadlinePopupSeen_v2', 'true');
   };
 
   if (!isOpen) return null;
@@ -141,23 +117,20 @@ export const DeadlinePopup = () => {
            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
            <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/3 w-32 h-32 bg-black/10 rounded-full blur-xl"></div>
            
-           <h3 className="text-3xl font-black mb-1 relative z-10 tracking-tight">Prazo Final!</h3>
-           <p className="opacity-90 font-medium relative z-10 text-lg">Submissão de Resumos</p>
+           <h3 className="text-3xl font-black mb-1 relative z-10 tracking-tight">Prazo Prorrogado!</h3>
+           <p className="opacity-90 font-medium relative z-10 text-lg">Submissão de Trabalhos</p>
         </div>
         
         <div className="p-8 text-center">
-          <div className="inline-flex items-center justify-center gap-2 bg-slate-100 text-slate-700 px-5 py-2.5 rounded-full mb-8 font-semibold shadow-inner">
+          <div className="inline-flex items-center justify-center gap-2 bg-slate-100 text-slate-700 px-5 py-2.5 rounded-full mb-6 font-semibold shadow-inner">
             <CalendarIcon className="w-5 h-5 text-mec-teal" />
-            <span>30 de Abril de 2026</span>
+            <span>Novo Prazo: 31 de Maio de 2026</span>
           </div>
           
-          <div className="flex flex-col items-center justify-center mb-8 bg-slate-50 rounded-2xl py-6 border border-slate-100">
-            <div className="text-8xl font-black text-slate-900 tabular-nums tracking-tighter leading-none mb-2 drop-shadow-sm">
-              {daysLeft}
-            </div>
-            <div className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">
-              {daysLeft === 1 ? 'Dia Restante' : 'Dias Restantes'}
-            </div>
+          <div className="flex flex-col items-center justify-center mb-8">
+            <p className="text-slate-600 text-[1.1rem] leading-relaxed">
+              Atendendo a pedidos, o prazo para envio do seu trabalho foi prorrogado. Aproveite essa nova oportunidade para submeter sua pesquisa!
+            </p>
           </div>
           
           <a 
@@ -165,7 +138,7 @@ export const DeadlinePopup = () => {
             onClick={handleClose}
             className="block w-full bg-slate-900 text-white font-bold py-4 px-6 rounded-xl hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 duration-200 text-lg"
           >
-            Enviar Meu Resumo Agora
+            Enviar Meu Trabalho Agora
           </a>
         </div>
       </div>
