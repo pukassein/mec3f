@@ -1795,7 +1795,7 @@ export const LocationSection = () => {
 export const SponsorsSection = () => {
   const realizationLogos = [
     { name: "UNILA", url: "https://upload.wikimedia.org/wikipedia/commons/0/07/Unila.jpg" },
-    { name: "IBS UNaM", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Logo_IBS_1.jpg/1200px-Logo_IBS_1.jpg" },
+    { name: "IBS UNaM", url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Logo_IBS.jpg" },
     { name: "IFPR", url: "https://portal.unila.edu.br/eventos/siepe-2019/arquivo/ifpr.jpg/ifpr.jpg" },
     { name: "IFSP", url: "https://blog-static.infra.grancursosonline.com.br/wp-content/uploads/2014/02/03144911/IFSP-Inscri%C3%A7%C3%B5es-abertas-para-217-vagas.png" },
     { name: "UNM", url: "https://ccint.fflch.usp.br/sites/ccint.fflch.usp.br/files/inline-images/%C3%ADndice.png" },
@@ -1806,7 +1806,8 @@ export const SponsorsSection = () => {
   const sponsorsLogos = [
     { name: "PAEP CAPES", url: "https://ciencia.ufpr.br/portal/wp-content/uploads/2024/09/paep-capes.jpg" },
     { name: "PPGFISA", url: "https://portal.unila.edu.br/programas-pos-graduacao/fisica/arquivos/ppgfisa-completo-assinatura.png" },
-    { name: "PPGIES", url: "https://portal.unila.edu.br/mestrado-doutorado/ppgies/imagens/ASSINATURAPPGIES_COLORpng.png" }
+    { name: "PPGIES", url: "https://portal.unila.edu.br/mestrado-doutorado/ppgies/imagens/ASSINATURAPPGIES_COLORpng.png" },
+    { name: "CNPq", url: "https://www.gov.br/cnpq/pt-br/canais_atendimento/identidade-visual/CNPq_v2017_rgb.jpg" }
   ];
 
   const supportLogos = [
