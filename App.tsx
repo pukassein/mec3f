@@ -73,12 +73,13 @@ const App = () => {
     // 3. Schedule
     const tryFetchSchedule = async () => {
       const { data, error } = await supabase.from('schedule_items')
-        .select('*, speaker:speakers(*), schedule_item_speakers(speakers(*))')
+        .select('*, speaker:speakers!schedule_items_speaker_id_fkey(*), schedule_item_speakers(*, speakers(*))')
         .order('date')
         .order('start_time');
       if (error) {
+        console.error("fetch_error", error)
         const { data: fallbackData } = await supabase.from('schedule_items')
-          .select('*, speaker:speakers(*)')
+          .select('*, speaker:speakers!schedule_items_speaker_id_fkey(*)')
           .order('date')
           .order('start_time');
         return fallbackData;

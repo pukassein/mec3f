@@ -98,6 +98,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
   const fetchSchedule = async () => {
     const { data, error } = await supabase.from('schedule_items').select('*, schedule_item_speakers(*)').order('date').order('start_time');
     if (error) {
+      console.error("admin_fetch_error", error);
       const { data: fallbackData } = await supabase.from('schedule_items').select('*').order('date').order('start_time');
       if (fallbackData) setScheduleItems(fallbackData);
     } else if (data) {
