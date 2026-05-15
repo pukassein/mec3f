@@ -614,8 +614,11 @@ const ScheduleCard: React.FC<{ item: ScheduleItem, trackInfo: any }> = ({ item, 
            <div className="md:hidden text-[10px] font-bold uppercase mb-1 opacity-70 truncate">
              {trackInfo.name}
            </div>
-           <h4 className="font-bold text-sm leading-tight truncate">{item.title}</h4>
-           {!isExpanded && item.speaker && (
+           <h4 className={`font-bold text-sm leading-tight ${item.speakers && item.speakers.length > 1 ? '' : 'truncate'}`}>{item.title}</h4>
+           {!isExpanded && item.speakers && item.speakers.length > 0 && (
+             <p className="text-[10px] mt-1 opacity-80 truncate">{item.speakers.map(s => s.name).join(', ')}</p>
+           )}
+           {!isExpanded && !item.speakers && item.speaker && (
              <p className="text-[10px] mt-1 opacity-80 truncate">{item.speaker.name}</p>
            )}
         </div>
@@ -627,17 +630,17 @@ const ScheduleCard: React.FC<{ item: ScheduleItem, trackInfo: any }> = ({ item, 
       {isExpanded && (
         <div className="mt-3 text-xs opacity-90 border-t border-black/10 pt-2 animate-fade-in">
            {item.description && <p className="mb-2">{item.description}</p>}
-           {item.speaker && (
-              <div className="flex items-center gap-2">
+           {(item.speakers?.length ? item.speakers : item.speaker ? [item.speaker] : []).map(speaker => (
+              <div key={speaker.id} className="flex items-center gap-2 mb-2">
                  <div className="w-8 h-8 rounded-full bg-white/50 overflow-hidden shrink-0">
-                   <img src={item.speaker.image_url} className="w-full h-full object-cover" />
+                   <img src={speaker.image_url} className="w-full h-full object-cover" />
                  </div>
                  <div className="min-w-0">
-                    <span className="font-bold block truncate">{item.speaker.name}</span>
-                    <span className="block text-[10px] opacity-80 truncate">{item.speaker.institution}</span>
+                    <span className="font-bold block truncate">{speaker.name}</span>
+                    <span className="block text-[10px] opacity-80 truncate">{speaker.institution}</span>
                  </div>
               </div>
-           )}
+           ))}
         </div>
       )}
     </div>
@@ -646,7 +649,7 @@ const ScheduleCard: React.FC<{ item: ScheduleItem, trackInfo: any }> = ({ item, 
 
 const GeneralEventCard: React.FC<{ item: ScheduleItem }> = ({ item }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const isExpandable = !!item.description || !!item.speaker;
+  const isExpandable = !!item.description || !!item.speaker || !!(item.speakers && item.speakers.length > 0);
 
   return (
     <div 
@@ -661,10 +664,13 @@ const GeneralEventCard: React.FC<{ item: ScheduleItem }> = ({ item }) => {
        <div className="flex flex-col md:flex-row justify-between items-center gap-2">
           <div className="text-center md:text-left flex-grow">
             <h4 className="text-base font-bold text-slate-800">{item.title}</h4>
-            {!isExpanded && item.speaker && (
+            {!isExpanded && item.speakers && item.speakers.length > 0 && (
+              <p className="text-xs text-slate-500 mt-0.5">{item.speakers.map(s => s.name).join(', ')}</p>
+            )}
+            {!isExpanded && !item.speakers && item.speaker && (
               <p className="text-xs text-slate-500 mt-0.5">{item.speaker.name}</p>
             )}
-            {!isExpanded && item.description && !item.speaker && (
+            {!isExpanded && item.description && !(item.speakers?.length || item.speaker) && (
               <p className="text-slate-600 text-xs mt-0.5 line-clamp-1">{item.description}</p>
             )}
           </div>
@@ -690,17 +696,19 @@ const GeneralEventCard: React.FC<{ item: ScheduleItem }> = ({ item }) => {
        {isExpanded && isExpandable && (
          <div className="mt-3 text-sm border-t border-slate-100 pt-3 animate-fade-in text-left">
             {item.description && <p className="mb-3 text-slate-600">{item.description}</p>}
-            {item.speaker && (
-               <div className="flex items-center gap-3 bg-slate-50 p-2 rounded-lg inline-flex pr-6">
-                  <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden shrink-0">
-                    <img src={item.speaker.image_url} className="w-full h-full object-cover" alt={item.speaker.name} />
-                  </div>
-                  <div>
-                     <span className="font-bold block text-slate-800">{item.speaker.name}</span>
-                     <span className="block text-xs text-slate-500">{item.speaker.institution}</span>
-                  </div>
-               </div>
-            )}
+            <div className="flex flex-wrap gap-2">
+              {(item.speakers?.length ? item.speakers : item.speaker ? [item.speaker] : []).map(speaker => (
+                 <div key={speaker.id} className="flex items-center gap-3 bg-slate-50 p-2 rounded-lg inline-flex pr-6">
+                    <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden shrink-0">
+                      <img src={speaker.image_url} className="w-full h-full object-cover" alt={speaker.name} />
+                    </div>
+                    <div>
+                       <span className="font-bold block text-slate-800">{speaker.name}</span>
+                       <span className="block text-xs text-slate-500">{speaker.institution}</span>
+                    </div>
+                 </div>
+              ))}
+            </div>
          </div>
        )}
     </div>

@@ -71,9 +71,38 @@ const App = () => {
     if (speakersData) setSpeakers(speakersData);
 
     // 3. Schedule
-    const { data: scheduleData } = await supabase.from('schedule_items').select('*, speaker:speakers(*)').order('date').order('start_time');
-    if (scheduleData && scheduleData.length > 0) setScheduleItems(scheduleData as any);
-    else setScheduleItems(SCHEDULE_DATA.flatMap(d => d.items));
+    const tryFetchSchedule = async () => {
+      const { data, error } = await supabase.from('schedule_items')
+        .select('*, speaker:speakers(*), schedule_item_speakers(speakers(*))')
+        .order('date')
+        .order('start_time');
+      if (error) {
+        const { data: fallbackData } = await supabase.from('schedule_items')
+          .select('*, speaker:speakers(*)')
+          .order('date')
+          .order('start_time');
+        return fallbackData;
+      }
+      return data;
+    };
+    
+    const rawScheduleData = await tryFetchSchedule();
+    if (rawScheduleData && rawScheduleData.length > 0) {
+      const mapped = rawScheduleData.map(item => {
+        let allSpeakers: any[] = [];
+        if (item.speaker) allSpeakers.push(item.speaker);
+        if (item.schedule_item_speakers && Array.isArray(item.schedule_item_speakers)) {
+           const additionalSpeakers = item.schedule_item_speakers.map((s: any) => s.speakers).filter(Boolean);
+           allSpeakers = [...allSpeakers, ...additionalSpeakers];
+           // Remove duplicates by ID
+           allSpeakers = allSpeakers.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
+        }
+        return { ...item, speakers: allSpeakers };
+      });
+      setScheduleItems(mapped as any);
+    } else {
+      setScheduleItems(SCHEDULE_DATA.flatMap(d => d.items));
+    }
 
     // 4. Important Dates
     const { data: datesData } = await supabase.from('important_dates').select('*').order('display_order');

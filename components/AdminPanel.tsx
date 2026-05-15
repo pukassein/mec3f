@@ -96,8 +96,18 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
   };
 
   const fetchSchedule = async () => {
-    const { data } = await supabase.from('schedule_items').select('*').order('date').order('start_time');
-    if (data) setScheduleItems(data);
+    const { data, error } = await supabase.from('schedule_items').select('*, schedule_item_speakers(*)').order('date').order('start_time');
+    if (error) {
+      const { data: fallbackData } = await supabase.from('schedule_items').select('*').order('date').order('start_time');
+      if (fallbackData) setScheduleItems(fallbackData);
+    } else if (data) {
+      const mapped = data.map(dbItem => {
+        const item = {...dbItem} as any;
+        item.speaker_ids = item.schedule_item_speakers ? item.schedule_item_speakers.map((s: any) => s.speaker_id) : (item.speaker_id ? [item.speaker_id] : []);
+        return item;
+      });
+      setScheduleItems(mapped);
+    }
   };
 
   const fetchImportantDates = async () => {
@@ -199,14 +209,43 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
   const handleSaveSchedule = async () => {
     if (!editSchedule) return;
     setLoading(true);
+    
+    const { speaker_ids, speakers, schedule_item_speakers, ...basePayload } = editSchedule as any;
+    
+    let speaker_id_val = basePayload.speaker_id === '' ? null : basePayload.speaker_id;
+    if (speaker_ids && speaker_ids.length > 0) {
+       speaker_id_val = speaker_ids[0];
+    } else if (speaker_ids && speaker_ids.length === 0) {
+       speaker_id_val = null;
+    }
+
     const payload = {
-        ...editSchedule,
-        speaker_id: editSchedule.speaker_id === '' ? null : editSchedule.speaker_id
+        ...basePayload,
+        speaker_id: speaker_id_val
     };
 
-    const { error } = await supabase.from('schedule_items').upsert(payload);
-    if (error) alert(error.message);
-    else {
+    const { data: insertedData, error } = await supabase.from('schedule_items').upsert(payload).select().single();
+    
+    if (error) {
+       alert(error.message);
+    } else if (insertedData) {
+      if (speaker_ids) {
+        try {
+          await supabase.from('schedule_item_speakers').delete().eq('schedule_item_id', insertedData.id);
+          if (speaker_ids.length > 0) {
+            const insertPayload = speaker_ids.map((sId: string) => ({
+              schedule_item_id: insertedData.id,
+              speaker_id: sId
+            }));
+            await supabase.from('schedule_item_speakers').insert(insertPayload);
+          }
+        } catch (e) {
+          console.error("Error updating multiple speakers join table:", e);
+        }
+      }
+      setEditSchedule(null);
+      fetchSchedule();
+    } else {
       setEditSchedule(null);
       fetchSchedule();
     }
@@ -778,7 +817,11 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                                      <span className="text-xs opacity-70 whitespace-nowrap">{item.start_time} - {item.end_time}</span>
                                    </div>
                                    <h4 className="font-bold text-sm mb-1 line-clamp-2" title={item.title}>{item.title}</h4>
-                                   {item.speaker_id && (
+                                   {((item as any).speaker_ids && (item as any).speaker_ids.length > 0) ? (
+                                     <p className="text-xs opacity-80 mb-2 truncate" title={(item as any).speaker_ids.map((sid: string) => speakers.find(s => s.id === sid)?.name).filter(Boolean).join(', ')}>
+                                       {(item as any).speaker_ids.map((sid: string) => speakers.find(s => s.id === sid)?.name).filter(Boolean).join(', ')}
+                                     </p>
+                                   ) : item.speaker_id && (
                                      <p className="text-xs opacity-80 mb-2 truncate" title={speakers.find(s => s.id === item.speaker_id)?.name}>
                                        {speakers.find(s => s.id === item.speaker_id)?.name || 'Palestrante'}
                                      </p>
@@ -1071,13 +1114,16 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                    <textarea className="w-full border p-2 rounded h-20" value={editSchedule.description || ''} onChange={e => setEditSchedule({...editSchedule, description: e.target.value})} />
                 </div>
                 <div>
-                   <label className="text-xs text-gray-500 block mb-1">Palestrante Associado (Opcional)</label>
+                   <label className="text-xs text-gray-500 block mb-1">Palestrantes Associados (Selecione múltiplos usando Ctrl/Cmd)</label>
                    <select 
-                      className="w-full border p-2 rounded bg-white"
-                      value={editSchedule.speaker_id || ''}
-                      onChange={e => setEditSchedule({...editSchedule, speaker_id: e.target.value})}
+                      multiple
+                      className="w-full border p-2 rounded bg-white h-32"
+                      value={editSchedule.speaker_ids || (editSchedule.speaker_id ? [editSchedule.speaker_id] : [])}
+                      onChange={e => {
+                        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+                        setEditSchedule({...editSchedule, speaker_ids: selectedOptions});
+                      }}
                    >
-                     <option value="">-- Nenhum --</option>
                      {speakers.map(s => (
                        <option key={s.id} value={s.id}>{s.name}</option>
                      ))}

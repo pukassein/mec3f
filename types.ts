@@ -9,7 +9,9 @@ export interface ScheduleItem {
   description?: string;
   location?: string;
   speaker_id?: string;
-  speaker?: Speaker; // Joined relation
+  speaker?: Speaker; // Legacy single speaker
+  speakers?: Speaker[]; // New array of multiple speakers
+  schedule_item_speakers?: { speaker_id: string, speakers: Speaker }[]; // For database join mapping
   track?: 1 | 2 | 3 | 4; // 1: Health, 2: Ecology, 3: Engineering, 4: Energy
 }
 
