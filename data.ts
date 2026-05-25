@@ -243,6 +243,7 @@ export const ORGANIZATION_LOCAL: TeamMember[] = [
   { name: "Angie Rocio Barrera Contreras", institution: "" },
   { name: "Anna Beatriz Mota de Moura", institution: "" },
   { name: "Cristian Godoy", institution: "" },
+  { name: "Diego David Pinzon Moreno", institution: "" },
   { name: "Esdras Rebecchi de Almeida", institution: "" },
   { name: "Flávio Camacho", institution: "" },
   { name: "Gricelda Adelina Diaz Rolón", institution: "" },
