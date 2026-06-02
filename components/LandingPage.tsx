@@ -26,7 +26,8 @@ import {
   ImageIcon,
   NavigationIcon,
   PlaneIcon,
-  CameraIcon
+  CameraIcon,
+  LockIcon
 } from './Icons';
 import { ContentCard, Speaker, ScheduleItem, ImportantDate } from '../types';
 
@@ -874,7 +875,7 @@ export const SubmissionsSection = () => {
         file_example: "AbreviaturaDaTematica_IniciaisSobrenome.pdf",
         action_model: "Baixar Modelo",
         action_example: "Ver Exemplo (PDF)",
-        action_form: "Formulário de Envio",
+        action_form: "Submissões Encerradas",
       },
       attention: {
         title: "Gratuidade",
@@ -896,7 +897,7 @@ export const SubmissionsSection = () => {
         file_example: "AbreviaturaDeLaTemática_InicialesApellido.pdf",
         action_model: "Descargar Modelo",
         action_example: "Ver Ejemplo (PDF)",
-        action_form: "Formulario de Envío",
+        action_form: "Envíos Cerrados",
       },
       attention: {
         title: "Gratuidad",
@@ -1015,14 +1016,10 @@ export const SubmissionsSection = () => {
                    {current.step2.action_example}
                  </a>
                </div>
-               <a 
-                 href={formUrl} 
-                 target="_blank" 
-                 rel="noopener noreferrer"
-                 className="w-full inline-flex items-center justify-center px-4 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg gap-2"
-               >
+               <div className="w-full inline-flex items-center justify-center px-4 py-3 bg-slate-300 text-slate-500 font-bold rounded-xl gap-2 cursor-not-allowed text-center mx-auto">
+                 <LockIcon className="w-5 h-5" />
                  {current.step2.action_form}
-               </a>
+               </div>
              </div>
           </div>
         </div>

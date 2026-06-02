@@ -18,8 +18,7 @@ import {
   LocationSection,
   SponsorsSection, 
   Footer,
-  SaveTheDateFloatingButton,
-  DeadlinePopup
+  SaveTheDateFloatingButton
 } from './components/LandingPage';
 
 const ConfigWarning = () => {
@@ -174,7 +173,6 @@ const App = () => {
         <AdminPanel onClose={() => setIsAdminOpen(false)} />
       ) : (
         <>
-          <DeadlinePopup />
           <Navbar onOpenAdmin={() => setIsAdminOpen(true)} />
           <main>
             <Hero imageUrls={heroImages} />
