@@ -238,6 +238,7 @@ export const ORGANIZATION_GENERAL: TeamMember[] = [
 
 export const ORGANIZATION_LOCAL: TeamMember[] = [
   { name: "Alana Golin", institution: "" },
+  { name: "Alana Mesquita Murca Maia", institution: "" },
   { name: "Ana Beatriz Rodrigues Gonzaga", institution: "" },
   { name: "Ana Paula Gomes da Silva Castro", institution: "" },
   { name: "Angie Rocio Barrera Contreras", institution: "" },
