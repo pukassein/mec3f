@@ -1099,7 +1099,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                        onChange={e => setEditSchedule({...editSchedule, track: e.target.value ? Number(e.target.value) as 1|2|3|4 : undefined})}
                      >
                        <option value="">-- Nenhuma (Geral) --</option>
-                       <option value="1">1 - Meio Ambiente e Saúde</option>
+                       <option value="1">1 - Saúde e Meio Ambiente</option>
                        <option value="2">2 - Ecologia e Conservação</option>
                        <option value="3">3 - Engenharias e Sustentabilidade</option>
                        <option value="4">4 - Energia e Materiais</option>
