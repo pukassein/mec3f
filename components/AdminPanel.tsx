@@ -1121,7 +1121,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                       className="w-full border p-2 rounded bg-white h-32"
                       value={editSchedule.speaker_ids || (editSchedule.speaker_id ? [editSchedule.speaker_id] : [])}
                       onChange={e => {
-                        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+                        const selectedOptions = Array.from(e.target.selectedOptions, (option: HTMLOptionElement) => option.value);
                         setEditSchedule({...editSchedule, speaker_ids: selectedOptions});
                       }}
                    >

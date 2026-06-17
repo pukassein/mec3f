@@ -27,7 +27,8 @@ import {
   NavigationIcon,
   PlaneIcon,
   CameraIcon,
-  LockIcon
+  LockIcon,
+  SearchIcon
 } from './Icons';
 import { ContentCard, Speaker, ScheduleItem, ImportantDate } from '../types';
 
@@ -719,6 +720,7 @@ const GeneralEventCard: React.FC<{ item: ScheduleItem }> = ({ item }) => {
 export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem[] }) => {
   const dates = Array.from(new Set(scheduleItems.map(i => i.date))).sort();
   const [activeDate, setActiveDate] = useState<string>(dates[0] || '');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (dates.length > 0 && !activeDate) {
@@ -728,6 +730,21 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
 
   const activeItems = scheduleItems
     .filter(item => item.date === activeDate)
+    .filter(item => {
+        if (!searchTerm) return true;
+        const searchLower = searchTerm.toLowerCase();
+        const matchesTitle = item.title.toLowerCase().includes(searchLower);
+        const matchesType = item.type.toLowerCase().includes(searchLower);
+        const matchesDescription = item.description?.toLowerCase().includes(searchLower) || false;
+        
+        // Handle speakers: either array 'speakers', or single 'speaker'
+        const speakersList = item.speakers ? item.speakers : (item.speaker ? [item.speaker] : []);
+        const matchesSpeakers = speakersList.some(speaker => 
+            speaker?.name?.toLowerCase().includes(searchLower) ||
+            speaker?.institution?.toLowerCase().includes(searchLower)
+        );
+        return matchesTitle || matchesType || matchesDescription || matchesSpeakers;
+    })
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
 
   // Group items by start_time
@@ -761,6 +778,28 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
 
         {dates.length > 0 ? (
           <>
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto mb-8 relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <SearchIcon className="h-5 w-5 text-slate-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Procure aqui a apresentação de seu interesse..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="block w-full pl-10 pr-10 py-3 border border-slate-300 rounded-xl leading-5 bg-white placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-2 focus:ring-mec-teal focus:border-mec-teal sm:text-sm shadow-sm transition-all"
+              />
+              {searchTerm && (
+                <button 
+                  onClick={() => setSearchTerm('')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                >
+                  <XIcon className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+
             {/* Tabs */}
             <div className="flex flex-wrap justify-center gap-2 mb-12">
               {dates.map((dateStr) => {
@@ -840,7 +879,8 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
               
               {activeItems.length === 0 && (
                 <div className="text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-300">
-                   <p className="text-slate-500">Nenhuma atividade cadastrada para este dia.</p>
+                   <p className="text-slate-500 font-medium">Nenhuma atividade encontrada com os termos informados para este dia.</p>
+                   <p className="text-slate-400 mt-2 text-sm">Tente verificar em outro dia na programação acima.</p>
                 </div>
               )}
             </div>
