@@ -1423,7 +1423,7 @@ export const RegistrationSection = () => {
                   <h3 className="text-xl font-bold mb-6 text-mec-teal border-b pb-2">Dados do Participante</h3>
                   
                   {/* Toggle Switch */}
-                  <div className="flex bg-slate-100 p-1 rounded-lg mb-6">
+                  <div className="flex bg-slate-100 p-1 rounded-lg mb-6 relative">
                     <button
                       type="button"
                       onClick={() => setInscriptionType('attendee')}
@@ -1433,9 +1433,11 @@ export const RegistrationSection = () => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setInscriptionType('participant')}
-                      className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${inscriptionType === 'participant' ? 'bg-white text-mec-salmon shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                      disabled
+                      title="Prazo para submissão de trabalhos encerrado."
+                      className={`flex-1 py-2 text-sm font-bold rounded-md transition-all opacity-50 cursor-not-allowed text-slate-500 flex items-center justify-center gap-1`}
                     >
+                      <LockIcon className="w-3.5 h-3.5" />
                       Participante (c/ apresentação de trabalho)
                     </button>
                   </div>
