@@ -15,7 +15,7 @@ import {
   CalendarIcon,
   MapPinIcon
 } from './Icons';
-import { ContentCard, Registration, Speaker, ScheduleItem, ImportantDate } from '../types';
+import { ContentCard, Registration, Speaker, ScheduleItem, ImportantDate, Poster, ThemeType } from '../types';
 
 // --- Icon Mapper for Dropdown ---
 const IconMap: Record<string, React.ElementType> = {
@@ -45,12 +45,13 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
   const [loading, setLoading] = useState(false);
   
   // Data State
-  const [activeTab, setActiveTab] = useState<'cards' | 'speakers' | 'schedule' | 'settings' | 'registrations' | 'uploads' | 'dates'>('cards');
+  const [activeTab, setActiveTab] = useState<'cards' | 'speakers' | 'schedule' | 'settings' | 'registrations' | 'uploads' | 'dates' | 'posters'>('cards');
   const [cards, setCards] = useState<ContentCard[]>([]);
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [importantDates, setImportantDates] = useState<ImportantDate[]>([]);
+  const [posters, setPosters] = useState<Poster[]>([]);
   const [registrationFilter, setRegistrationFilter] = useState<'all' | 'attendee' | 'participant'>('all');
   
   // Edit State
@@ -58,6 +59,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
   const [editSpeaker, setEditSpeaker] = useState<Partial<Speaker> | null>(null);
   const [editSchedule, setEditSchedule] = useState<Partial<ScheduleItem> | null>(null);
   const [editDate, setEditDate] = useState<Partial<ImportantDate> | null>(null);
+  const [editPoster, setEditPoster] = useState<Partial<Poster> | null>(null);
   const [editHeroUrl, setEditHeroUrl] = useState('');
   const [editAboutUrl, setEditAboutUrl] = useState('');
   const [editGalleryUrls, setEditGalleryUrls] = useState('');
@@ -76,6 +78,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
       fetchSiteContent();
       fetchRegistrations();
       fetchImportantDates();
+      fetchPosters();
     }
   }, [isAuthenticated]);
 
@@ -114,6 +117,11 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
   const fetchImportantDates = async () => {
     const { data } = await supabase.from('important_dates').select('*').order('display_order');
     if (data) setImportantDates(data);
+  };
+
+  const fetchPosters = async () => {
+    const { data } = await supabase.from('posters').select('*').order('code');
+    if (data) setPosters(data);
   };
 
   const fetchRegistrations = async () => {
@@ -185,6 +193,43 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
     if (!window.confirm('Tem certeza?')) return;
     const { error } = await supabase.from('content_cards').delete().eq('id', id);
     if (!error) fetchCards();
+  };
+
+  // --- Poster Logic ---
+  const handleSavePoster = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editPoster) return;
+    setLoading(true);
+    
+    // Only send the required fields
+    const payload = {
+      code: editPoster.code,
+      title: editPoster.title,
+      authors: editPoster.authors,
+      theme: editPoster.theme
+    };
+
+    let error;
+    if (editPoster.id) {
+       const { error: updErr } = await supabase.from('posters').update(payload).eq('id', editPoster.id);
+       error = updErr;
+    } else {
+       const { error: insErr } = await supabase.from('posters').insert(payload);
+       error = insErr;
+    }
+    
+    if (error) alert(error.message);
+    else {
+      setEditPoster(null);
+      fetchPosters();
+    }
+    setLoading(false);
+  };
+
+  const handleDeletePoster = async (id: string) => {
+    if (!window.confirm('Tem certeza?')) return;
+    const { error } = await supabase.from('posters').delete().eq('id', id);
+    if (!error) fetchPosters();
   };
 
   // --- Speaker Logic ---
@@ -571,6 +616,12 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
             Programação
           </button>
           <button 
+            onClick={() => setActiveTab('posters')}
+            className={`px-4 py-2 rounded-lg font-medium transition ${activeTab === 'posters' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+          >
+            Pôsteres
+          </button>
+          <button 
             onClick={() => setActiveTab('dates')}
             className={`px-4 py-2 rounded-lg font-medium transition ${activeTab === 'dates' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
           >
@@ -942,6 +993,112 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                   <button 
                     type="submit" 
                     className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-bold shadow-md"
+                  >
+                    Salvar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Posters Tab */}
+        {activeTab === 'posters' && (
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-8 animate-fade-in-up">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold">Gerenciar Trabalhos de Pôster</h3>
+              <button 
+                onClick={() => setEditPoster({ code: '', title: '', authors: '', theme: ThemeType.HEALTH })}
+                className="bg-emerald-600 text-white px-4 py-2 rounded text-sm hover:bg-emerald-700 shadow"
+              >
+                + Novo Pôster
+              </button>
+            </div>
+            <div className="space-y-2">
+              {posters.map(item => (
+                <div key={item.id} className="border p-4 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center bg-gray-50 gap-4">
+                  <div>
+                    <h4 className="font-bold text-slate-800"><span className="text-emerald-700">{item.code}</span> - {item.title}</h4>
+                    <p className="text-sm text-gray-600">Autores: {item.authors}</p>
+                    <span className="inline-block mt-1 bg-white border border-gray-200 text-gray-500 text-xs px-2 py-0.5 rounded-full">{item.theme}</span>
+                  </div>
+                  <div className="flex gap-4 text-sm font-medium">
+                    <button onClick={() => setEditPoster(item)} className="text-blue-600 hover:text-blue-800">Editar</button>
+                    <button onClick={() => handleDeletePoster(item.id)} className="text-red-600 hover:text-red-800">Excluir</button>
+                  </div>
+                </div>
+              ))}
+              {posters.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 mb-4">Nenhum pôster cadastrado.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Edit Poster Modal */}
+        {editPoster && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[60]">
+            <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl animate-fade-in-up" style={{ maxHeight: '90vh', overflowY: 'auto' }}>
+              <h3 className="text-xl font-bold mb-4">{editPoster.id ? 'Editar Pôster' : 'Novo Pôster'}</h3>
+              <form onSubmit={handleSavePoster} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Código do Pôster</label>
+                  <input 
+                    type="text" 
+                    value={editPoster.code || ''} 
+                    onChange={e => setEditPoster({...editPoster, code: e.target.value})} 
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500"
+                    required
+                    placeholder="Ex: C-O1"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Título</label>
+                  <textarea 
+                    value={editPoster.title || ''} 
+                    onChange={e => setEditPoster({...editPoster, title: e.target.value})} 
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500"
+                    required
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Autores</label>
+                  <textarea 
+                    value={editPoster.authors || ''} 
+                    onChange={e => setEditPoster({...editPoster, authors: e.target.value})} 
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500"
+                    required
+                    rows={2}
+                    placeholder="Nomes separados por vírgula"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Temática</label>
+                  <select 
+                    value={editPoster.theme || ThemeType.HEALTH} 
+                    onChange={e => setEditPoster({...editPoster, theme: e.target.value as ThemeType})} 
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 bg-white"
+                    required
+                  >
+                    {Object.values(ThemeType).map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex justify-end gap-3 mt-6">
+                  <button 
+                    type="button" 
+                    onClick={() => setEditPoster(null)} 
+                    className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-medium"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-bold"
                   >
                     Salvar
                   </button>

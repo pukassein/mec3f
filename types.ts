@@ -75,6 +75,14 @@ export interface Speaker {
   description?: string;
 }
 
+export interface Poster {
+  id: string;
+  code: string;
+  title: string;
+  authors: string;
+  theme: string;
+}
+
 export interface SiteContent {
   key: string;
   value: string;

@@ -3,6 +3,7 @@ import { supabase, isSupabaseConfigured } from './lib/supabase';
 import { THEMES, SCHEDULE_DATA } from './data';
 import { ContentCard, Speaker, ScheduleItem, ImportantDate } from './types';
 import { AdminPanel } from './components/AdminPanel';
+import PostersPage from './components/PostersPage';
 import { 
   Navbar, 
   Hero, 
@@ -43,7 +44,7 @@ const ConfigWarning = () => {
 };
 
 const App = () => {
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [currentView, setCurrentView] = useState<'home' | 'admin' | 'posters'>('home');
   const [cards, setCards] = useState<ContentCard[]>([]);
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
@@ -169,16 +170,26 @@ const App = () => {
     <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
       <ConfigWarning />
       
-      {isAdminOpen ? (
-        <AdminPanel onClose={() => setIsAdminOpen(false)} />
+      {currentView === 'admin' ? (
+        <AdminPanel onClose={() => setCurrentView('home')} />
+      ) : currentView === 'posters' ? (
+        <PostersPage onBack={() => setCurrentView('home')} />
       ) : (
         <>
-          <Navbar onOpenAdmin={() => setIsAdminOpen(true)} />
+          <Navbar onOpenAdmin={() => setCurrentView('admin')} />
           <main>
             <Hero imageUrls={heroImages} />
             <AboutSection imageUrl={aboutImage} />
             <ThemesSection cards={cards} />
             <SpeakersSection speakers={speakers} />
+            <div className="bg-emerald-50 py-8 text-center">
+              <button 
+                onClick={() => setCurrentView('posters')}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition-colors"
+              >
+                Ver trabalhos para sessão de pôster da quarta-feira 16h 26/08
+              </button>
+            </div>
             <ScheduleSection scheduleItems={scheduleItems} />
             <RegistrationSection />
             <SubmissionsSection />
@@ -189,7 +200,7 @@ const App = () => {
             <SponsorsSection />
           </main>
           <SaveTheDateFloatingButton dates={importantDates} />
-          <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+          <Footer onOpenAdmin={() => setCurrentView('admin')} />
         </>
       )}
     </div>
