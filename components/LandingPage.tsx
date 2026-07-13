@@ -616,7 +616,7 @@ const ScheduleCard: React.FC<{ item: ScheduleItem, trackInfo: any }> = ({ item, 
            <div className="md:hidden text-[10px] font-bold uppercase mb-1 opacity-70 truncate">
              {trackInfo.name}
            </div>
-           <h4 className={`font-bold text-sm leading-tight ${item.speakers && item.speakers.length > 1 ? '' : 'truncate'}`}>
+           <h4 className={`font-bold text-sm leading-tight ${isExpanded ? '' : (item.speakers && item.speakers.length > 1 ? '' : 'truncate')}`}>
              {item.code && <span className="text-mec-teal mr-1">{item.code} -</span>} 
              {item.title}
            </h4>
@@ -639,7 +639,7 @@ const ScheduleCard: React.FC<{ item: ScheduleItem, trackInfo: any }> = ({ item, 
         <div className="mt-3 text-xs opacity-90 border-t border-black/10 pt-2 animate-fade-in">
            {item.authors && <p className="mb-2 italic text-slate-600">Autores: {item.authors}</p>}
            {item.presenter && <p className="mb-2 font-medium">Apresentador(a): {item.presenter}</p>}
-           {item.description && <p className="mb-2">{item.description}</p>}
+           {item.description && !item.code && <p className="mb-2">{item.description}</p>}
            {(item.speakers?.length ? item.speakers : item.speaker ? [item.speaker] : []).map(speaker => (
               <div key={speaker.id} className="flex items-center gap-2 mb-2">
                  <div className="w-8 h-8 rounded-full bg-white/50 overflow-hidden shrink-0">
@@ -713,7 +713,7 @@ const GeneralEventCard: React.FC<{ item: ScheduleItem }> = ({ item }) => {
          <div className="mt-3 text-sm border-t border-slate-100 pt-3 animate-fade-in text-left">
             {item.authors && <p className="mb-2 italic text-slate-600">Autores: {item.authors}</p>}
             {item.presenter && <p className="mb-2 font-medium">Apresentador(a): {item.presenter}</p>}
-            {item.description && <p className="mb-3 text-slate-600">{item.description}</p>}
+            {item.description && !item.code && <p className="mb-3 text-slate-600">{item.description}</p>}
             <div className="flex flex-wrap gap-2">
               {(item.speakers?.length ? item.speakers : item.speaker ? [item.speaker] : []).map(speaker => (
                  <div key={speaker.id} className="flex items-center gap-3 bg-slate-50 p-2 rounded-lg inline-flex pr-6">
@@ -749,8 +749,8 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
     .filter(item => {
         if (!searchTerm) return true;
         const searchLower = searchTerm.toLowerCase();
-        const matchesTitle = item.title.toLowerCase().includes(searchLower);
-        const matchesType = item.type.toLowerCase().includes(searchLower);
+        const matchesTitle = item.title?.toLowerCase().includes(searchLower) || false;
+        const matchesType = item.type?.toLowerCase().includes(searchLower) || false;
         const matchesDescription = item.description?.toLowerCase().includes(searchLower) || false;
         const matchesCode = item.code?.toLowerCase().includes(searchLower) || false;
         const matchesAuthors = item.authors?.toLowerCase().includes(searchLower) || false;
