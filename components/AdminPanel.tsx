@@ -206,6 +206,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
       code: editPoster.code,
       title: editPoster.title,
       authors: editPoster.authors,
+      presenter: editPoster.presenter,
       theme: editPoster.theme
     };
 
@@ -1007,8 +1008,8 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
           <div className="bg-white rounded-xl shadow-sm p-6 mb-8 animate-fade-in-up">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold">Gerenciar Trabalhos de Pôster</h3>
-              <button 
-                onClick={() => setEditPoster({ code: '', title: '', authors: '', theme: ThemeType.HEALTH })}
+                <button 
+                onClick={() => setEditPoster({ code: '', title: '', authors: '', presenter: '', theme: ThemeType.HEALTH })}
                 className="bg-emerald-600 text-white px-4 py-2 rounded text-sm hover:bg-emerald-700 shadow"
               >
                 + Novo Pôster
@@ -1020,6 +1021,7 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                   <div>
                     <h4 className="font-bold text-slate-800"><span className="text-emerald-700">{item.code}</span> - {item.title}</h4>
                     <p className="text-sm text-gray-600">Autores: {item.authors}</p>
+                    {item.presenter && <p className="text-sm text-gray-500">Apresentador(a): {item.presenter}</p>}
                     <span className="inline-block mt-1 bg-white border border-gray-200 text-gray-500 text-xs px-2 py-0.5 rounded-full">{item.theme}</span>
                   </div>
                   <div className="flex gap-4 text-sm font-medium">
@@ -1073,6 +1075,16 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                     required
                     rows={2}
                     placeholder="Nomes separados por vírgula"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Apresentador(a)</label>
+                  <input 
+                    type="text" 
+                    value={editPoster.presenter || ''} 
+                    onChange={e => setEditPoster({...editPoster, presenter: e.target.value})} 
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500"
+                    placeholder="Nome de quem vai apresentar"
                   />
                 </div>
                 <div>
@@ -1265,7 +1277,19 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                 </div>
                 <div>
                    <label className="text-xs text-gray-500 block mb-1">Título</label>
-                   <input className="w-full border p-2 rounded" value={editSchedule.title} onChange={e => setEditSchedule({...editSchedule, title: e.target.value})} />
+                   <input className="w-full border p-2 rounded" value={editSchedule.title || ''} onChange={e => setEditSchedule({...editSchedule, title: e.target.value})} />
+                </div>
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">Código do Trabalho (Opcional)</label>
+                   <input className="w-full border p-2 rounded" value={editSchedule.code || ''} onChange={e => setEditSchedule({...editSchedule, code: e.target.value})} placeholder="Ex: SMA-01" />
+                </div>
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">Autores (Opcional)</label>
+                   <textarea className="w-full border p-2 rounded h-16" value={editSchedule.authors || ''} onChange={e => setEditSchedule({...editSchedule, authors: e.target.value})} placeholder="Autores do trabalho" />
+                </div>
+                <div>
+                   <label className="text-xs text-gray-500 block mb-1">Apresentador(a) (Opcional)</label>
+                   <input className="w-full border p-2 rounded" value={editSchedule.presenter || ''} onChange={e => setEditSchedule({...editSchedule, presenter: e.target.value})} placeholder="Nome do apresentador" />
                 </div>
                 <div>
                    <label className="text-xs text-gray-500 block mb-1">Descrição</label>

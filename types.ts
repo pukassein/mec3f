@@ -8,6 +8,9 @@ export interface ScheduleItem {
   type: 'ceremony' | 'lecture' | 'break' | 'social' | 'session';
   description?: string;
   location?: string;
+  code?: string;
+  authors?: string;
+  presenter?: string;
   speaker_id?: string;
   speaker?: Speaker; // Legacy single speaker
   speakers?: Speaker[]; // New array of multiple speakers
@@ -80,6 +83,7 @@ export interface Poster {
   code: string;
   title: string;
   authors: string;
+  presenter?: string;
   theme: string;
 }
 

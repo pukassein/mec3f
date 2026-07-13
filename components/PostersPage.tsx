@@ -47,10 +47,11 @@ export default function PostersPage({ onBack }: { onBack: () => void }) {
   };
 
   const filteredPosters = posters.filter(poster => 
-    poster.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    poster.authors.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    poster.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    poster.theme.toLowerCase().includes(searchTerm.toLowerCase())
+    (poster.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (poster.authors?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (poster.presenter?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (poster.code?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (poster.theme?.toLowerCase() || '').includes(searchTerm.toLowerCase())
   );
 
   const postersByTheme = filteredPosters.reduce((acc, poster) => {
@@ -133,7 +134,8 @@ export default function PostersPage({ onBack }: { onBack: () => void }) {
                               {poster.title}
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-500">
-                              {poster.authors}
+                              <div>{poster.authors}</div>
+                              {poster.presenter && <div className="mt-1 text-xs text-green-700 font-medium">Apresentador(a): {poster.presenter}</div>}
                             </td>
                           </tr>
                         ))}

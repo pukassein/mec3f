@@ -616,7 +616,13 @@ const ScheduleCard: React.FC<{ item: ScheduleItem, trackInfo: any }> = ({ item, 
            <div className="md:hidden text-[10px] font-bold uppercase mb-1 opacity-70 truncate">
              {trackInfo.name}
            </div>
-           <h4 className={`font-bold text-sm leading-tight ${item.speakers && item.speakers.length > 1 ? '' : 'truncate'}`}>{item.title}</h4>
+           <h4 className={`font-bold text-sm leading-tight ${item.speakers && item.speakers.length > 1 ? '' : 'truncate'}`}>
+             {item.code && <span className="text-mec-teal mr-1">{item.code} -</span>} 
+             {item.title}
+           </h4>
+           {item.presenter && !isExpanded && (
+             <p className="text-[10px] mt-1 opacity-80 truncate text-slate-600">Apresentador(a): {item.presenter}</p>
+           )}
            {!isExpanded && item.speakers && item.speakers.length > 0 && (
              <p className="text-[10px] mt-1 opacity-80 truncate">{item.speakers.map(s => s.name).join(', ')}</p>
            )}
@@ -631,6 +637,8 @@ const ScheduleCard: React.FC<{ item: ScheduleItem, trackInfo: any }> = ({ item, 
       
       {isExpanded && (
         <div className="mt-3 text-xs opacity-90 border-t border-black/10 pt-2 animate-fade-in">
+           {item.authors && <p className="mb-2 italic text-slate-600">Autores: {item.authors}</p>}
+           {item.presenter && <p className="mb-2 font-medium">Apresentador(a): {item.presenter}</p>}
            {item.description && <p className="mb-2">{item.description}</p>}
            {(item.speakers?.length ? item.speakers : item.speaker ? [item.speaker] : []).map(speaker => (
               <div key={speaker.id} className="flex items-center gap-2 mb-2">
@@ -665,14 +673,20 @@ const GeneralEventCard: React.FC<{ item: ScheduleItem }> = ({ item }) => {
     >
        <div className="flex flex-col md:flex-row justify-between items-center gap-2">
           <div className="text-center md:text-left flex-grow">
-            <h4 className="text-base font-bold text-slate-800">{item.title}</h4>
+            <h4 className="text-base font-bold text-slate-800">
+              {item.code && <span className="text-mec-teal mr-1">{item.code} -</span>}
+              {item.title}
+            </h4>
+            {item.presenter && !isExpanded && (
+              <p className="text-xs text-slate-500 mt-0.5">Apresentador(a): {item.presenter}</p>
+            )}
             {!isExpanded && item.speakers && item.speakers.length > 0 && (
               <p className="text-xs text-slate-500 mt-0.5">{item.speakers.map(s => s.name).join(', ')}</p>
             )}
             {!isExpanded && !item.speakers && item.speaker && (
               <p className="text-xs text-slate-500 mt-0.5">{item.speaker.name}</p>
             )}
-            {!isExpanded && item.description && !(item.speakers?.length || item.speaker) && (
+            {!isExpanded && item.description && !(item.speakers?.length || item.speaker) && !item.presenter && (
               <p className="text-slate-600 text-xs mt-0.5 line-clamp-1">{item.description}</p>
             )}
           </div>
@@ -697,6 +711,8 @@ const GeneralEventCard: React.FC<{ item: ScheduleItem }> = ({ item }) => {
 
        {isExpanded && isExpandable && (
          <div className="mt-3 text-sm border-t border-slate-100 pt-3 animate-fade-in text-left">
+            {item.authors && <p className="mb-2 italic text-slate-600">Autores: {item.authors}</p>}
+            {item.presenter && <p className="mb-2 font-medium">Apresentador(a): {item.presenter}</p>}
             {item.description && <p className="mb-3 text-slate-600">{item.description}</p>}
             <div className="flex flex-wrap gap-2">
               {(item.speakers?.length ? item.speakers : item.speaker ? [item.speaker] : []).map(speaker => (
@@ -736,6 +752,9 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
         const matchesTitle = item.title.toLowerCase().includes(searchLower);
         const matchesType = item.type.toLowerCase().includes(searchLower);
         const matchesDescription = item.description?.toLowerCase().includes(searchLower) || false;
+        const matchesCode = item.code?.toLowerCase().includes(searchLower) || false;
+        const matchesAuthors = item.authors?.toLowerCase().includes(searchLower) || false;
+        const matchesPresenter = item.presenter?.toLowerCase().includes(searchLower) || false;
         
         // Handle speakers: either array 'speakers', or single 'speaker'
         const speakersList = item.speakers ? item.speakers : (item.speaker ? [item.speaker] : []);
@@ -743,7 +762,7 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
             speaker?.name?.toLowerCase().includes(searchLower) ||
             speaker?.institution?.toLowerCase().includes(searchLower)
         );
-        return matchesTitle || matchesType || matchesDescription || matchesSpeakers;
+        return matchesTitle || matchesType || matchesDescription || matchesSpeakers || matchesCode || matchesAuthors || matchesPresenter;
     })
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
 
