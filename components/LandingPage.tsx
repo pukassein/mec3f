@@ -148,7 +148,7 @@ export const DeadlinePopup = () => {
   );
 };
 
-export const Navbar = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
+export const Navbar = ({ onOpenAdmin, onGoToTemplates }: { onOpenAdmin: () => void; onGoToTemplates?: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -173,8 +173,6 @@ export const Navbar = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
     { name: 'Programação', href: '#schedule' },
     { name: 'Inscrições', href: '#registration' },
     { name: 'Submissões', href: '#submissions' },
-    { name: 'Galeria', href: '#gallery' },
-    { name: 'Equipe', href: '#team' },
     { name: 'Local', href: '#location' },
   ];
 
@@ -202,7 +200,7 @@ export const Navbar = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
               </div>
             </div>
             
-            <div className="hidden md:flex space-x-8 items-center">
+            <div className="hidden md:flex space-x-6 items-center">
               {navLinks.map((link) => (
                 <a 
                   key={link.name} 
@@ -213,10 +211,18 @@ export const Navbar = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
                   {link.name}
                 </a>
               ))}
+              {onGoToTemplates && (
+                <button
+                  onClick={onGoToTemplates}
+                  className="text-slate-600 hover:text-mec-teal font-medium transition-colors text-sm uppercase tracking-wide cursor-pointer py-2"
+                >
+                  Templates
+                </button>
+              )}
               <a 
                 href="#registration"
                 onClick={(e) => handleNavClick(e, '#registration')}
-                className="bg-mec-teal text-white px-6 py-2.5 rounded-full font-medium hover:bg-teal-500 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 duration-200"
+                className="bg-mec-teal text-white px-5 py-2.5 rounded-full font-medium hover:bg-teal-500 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 duration-200 whitespace-nowrap"
               >
                 Inscreva-se
               </a>
@@ -245,6 +251,14 @@ export const Navbar = ({ onOpenAdmin }: { onOpenAdmin: () => void }) => {
                 {link.name}
               </a>
             ))}
+            {onGoToTemplates && (
+              <button
+                onClick={() => { setIsOpen(false); onGoToTemplates(); }}
+                className="block w-full text-left px-4 py-3 rounded-lg text-lg font-medium text-slate-700 hover:text-mec-teal hover:bg-slate-50 border border-transparent"
+              >
+                Templates
+              </button>
+            )}
             <a 
               href="#registration"
               onClick={(e) => handleNavClick(e, '#registration')}
@@ -921,21 +935,7 @@ export const SubmissionsSection = () => {
   const content = {
     pt: {
       title: "Submissão de Trabalhos",
-      subtitle: "Siga as etapas abaixo para submeter seu resumo expandido",
-      step1: {
-        title: "1. Realizar Inscrição",
-        description: "O(a) apresentador(a) do trabalho deve obrigatoriamente realizar sua inscrição na página oficial do evento antes de submeter.",
-        action: "Inscrever-se Agora",
-      },
-      step2: {
-        title: "2. Enviar Resumo",
-        description: "Os Resumos devem ser baixados, redigidos e submetidos pelo formulário abaixo. As normas e regras de formatação estão descritas no próprio modelo.",
-        file_label: "Nome do arquivo (PDF/DOCX):",
-        file_example: "AbreviaturaDaTematica_IniciaisSobrenome.pdf",
-        action_model: "Baixar Modelo",
-        action_example: "Ver Exemplo (PDF)",
-        action_form: "Submissões Encerradas",
-      },
+      description: "O período de submissão de trabalhos foi encerrado.",
       attention: {
         title: "Gratuidade",
         text: "O evento é totalmente gratuito. Não há qualquer cobrança de taxa de inscrição ou de submissão de trabalhos."
@@ -943,21 +943,7 @@ export const SubmissionsSection = () => {
     },
     es: {
       title: "Envío de Trabajos",
-      subtitle: "Siga los pasos a continuación para enviar su resumen ampliado",
-      step1: {
-        title: "1. Realizar Inscripción",
-        description: "El/la presentador(a) debe realizar obligatoriamente su inscripción en la página oficial del evento antes de enviar.",
-        action: "Inscribirse Ahora",
-      },
-      step2: {
-        title: "2. Enviar Resumen",
-        description: "Los resúmenes deben ser descargados, redactados y enviados a través del siguiente formulario. Las normas y reglas de formato están descritas en el propio modelo.",
-        file_label: "Nombre del archivo (PDF/DOCX):",
-        file_example: "AbreviaturaDeLaTemática_InicialesApellido.pdf",
-        action_model: "Descargar Modelo",
-        action_example: "Ver Ejemplo (PDF)",
-        action_form: "Envíos Cerrados",
-      },
+      description: "El período de envío de trabajos ha finalizado.",
       attention: {
         title: "Gratuidad",
         text: "El evento es totalmente gratuito. No hay cobro de ninguna tasa de inscripción o envío de trabajos."
@@ -966,26 +952,17 @@ export const SubmissionsSection = () => {
   };
 
   const current = content[lang];
-  const exampleUrl = "https://drive.google.com/file/d/1v7FblhhVcbc-AkVyIB7Mr2QsAgp00n-D/view";
-  const modelUrl = "https://docs.google.com/document/d/1tix6OHmASMxWoARDTEgAxTAsJeTZ-BSVB7VJ8S51NAA/edit?usp=sharing";
-  const formUrl = "https://forms.gle/2ZDWXP23KNYox5hN8";
 
   return (
-    <section id="submissions" className="py-24 bg-slate-50 scroll-mt-20 relative overflow-hidden">
+    <section id="submissions" className="py-16 bg-slate-50 scroll-mt-20 relative overflow-hidden">
        {/* Background accents */}
        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl"></div>
        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6 border-b border-slate-200 pb-8">
-          <div className="max-w-2xl">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{current.title}</h2>
-            <p className="text-lg text-slate-600">{current.subtitle}</p>
-          </div>
-          
-          {/* Language Switcher */}
+        {/* Language Switcher */}
+        <div className="flex justify-center mb-6">
           <div className="flex bg-white p-1 rounded-xl shadow-sm border border-slate-200">
              <button 
                onClick={() => setLang('pt')} 
@@ -1002,89 +979,17 @@ export const SubmissionsSection = () => {
           </div>
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          
-          {/* Card 1: Registration */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-slate-100 hover:border-emerald-500/30 hover:shadow-xl transition-all group relative overflow-hidden flex flex-col">
-             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-             
-             <div className="relative z-10 flex-grow">
-               <div className="w-14 h-14 bg-emerald-500/10 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300">
-                 <UsersIcon className="w-7 h-7" />
-               </div>
-               
-               <h3 className="text-xl font-bold text-slate-900 mb-3">{current.step1.title}</h3>
-               <p className="text-slate-600 mb-8 leading-relaxed">
-                 {current.step1.description}
-               </p>
-             </div>
-             
-             <div className="relative z-10 mt-auto">
-               <a 
-                 href="#registration" 
-                 onClick={(e) => smoothScrollTo(e, '#registration')}
-                 className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg gap-2"
-               >
-                 {current.step1.action}
-                 <ChevronDownIcon className="w-4 h-4 transform -rotate-90" />
-               </a>
-             </div>
-          </div>
-
-          {/* Card 2: Submission */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-slate-100 hover:border-blue-500/30 hover:shadow-xl transition-all group relative overflow-hidden flex flex-col">
-             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-             
-             <div className="relative z-10 flex-grow">
-               <div className="w-14 h-14 bg-blue-500/10 text-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300">
-                 <UploadCloudIcon className="w-7 h-7" />
-               </div>
-               
-               <h3 className="text-xl font-bold text-slate-900 mb-3">{current.step2.title}</h3>
-               <p className="text-slate-600 mb-6 leading-relaxed">
-                 {current.step2.description}
-               </p>
-
-               <div className="mb-8 bg-slate-50 p-4 rounded-lg border border-slate-200">
-                 <p className="font-semibold text-slate-700 mb-1 text-sm">{current.step2.file_label}</p>
-                 <code className="block bg-white p-2 rounded border border-slate-300 text-slate-600 font-mono text-xs break-all shadow-sm">
-                    {current.step2.file_example}
-                 </code>
-               </div>
-             </div>
-             
-             <div className="relative z-10 mt-auto flex flex-col gap-3">
-               <div className="flex flex-col sm:flex-row gap-3">
-                 <a 
-                   href={modelUrl} 
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors gap-2 text-sm text-center"
-                 >
-                   <DownloadIcon className="w-4 h-4" />
-                   {current.step2.action_model}
-                 </a>
-                 <a 
-                   href={exampleUrl} 
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors gap-2 text-sm text-center"
-                 >
-                   <DownloadIcon className="w-4 h-4" />
-                   {current.step2.action_example}
-                 </a>
-               </div>
-               <div className="w-full inline-flex items-center justify-center px-4 py-3 bg-slate-300 text-slate-500 font-bold rounded-xl gap-2 cursor-not-allowed text-center mx-auto">
-                 <LockIcon className="w-5 h-5" />
-                 {current.step2.action_form}
-               </div>
-             </div>
-          </div>
+        <h2 className="text-3xl font-bold text-slate-900 mb-4">{current.title}</h2>
+        
+        <div className="bg-white rounded-2xl p-8 shadow-md border border-slate-200 mb-8 flex flex-col items-center">
+           <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-4">
+             <LockIcon className="w-8 h-8" />
+           </div>
+           <p className="text-xl text-slate-600 font-medium">{current.description}</p>
         </div>
 
         {/* Attention Footer */}
-        <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-6 flex items-start gap-4">
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-6 flex items-start gap-4 text-left">
           <div className="bg-amber-500 text-white p-2 rounded-lg shrink-0 mt-1">
             <AlertTriangleIcon className="w-5 h-5" />
           </div>

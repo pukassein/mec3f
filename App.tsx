@@ -22,6 +22,9 @@ import {
   SaveTheDateFloatingButton
 } from './components/LandingPage';
 
+import { TemplatesPage } from './components/TemplatesPage';
+import { NotificationPopup } from './components/NotificationPopup';
+
 const ConfigWarning = () => {
   if (isSupabaseConfigured()) return null;
   return (
@@ -44,7 +47,7 @@ const ConfigWarning = () => {
 };
 
 const App = () => {
-  const [currentView, setCurrentView] = useState<'home' | 'admin' | 'posters'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'admin' | 'posters' | 'templates'>('home');
   const [cards, setCards] = useState<ContentCard[]>([]);
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
@@ -174,9 +177,11 @@ const App = () => {
         <AdminPanel onClose={() => setCurrentView('home')} />
       ) : currentView === 'posters' ? (
         <PostersPage onBack={() => setCurrentView('home')} />
+      ) : currentView === 'templates' ? (
+        <TemplatesPage onBack={() => setCurrentView('home')} />
       ) : (
         <>
-          <Navbar onOpenAdmin={() => setCurrentView('admin')} />
+          <Navbar onOpenAdmin={() => setCurrentView('admin')} onGoToTemplates={() => setCurrentView('templates')} />
           <main>
             <Hero imageUrls={heroImages} />
             <AboutSection imageUrl={aboutImage} />
@@ -199,6 +204,10 @@ const App = () => {
             <LocationSection />
             <SponsorsSection />
           </main>
+          <NotificationPopup 
+            onGoToPosters={() => setCurrentView('posters')} 
+            onGoToTemplates={() => setCurrentView('templates')} 
+          />
           <SaveTheDateFloatingButton dates={importantDates} />
           <Footer onOpenAdmin={() => setCurrentView('admin')} />
         </>
