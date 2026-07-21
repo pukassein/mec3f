@@ -56,6 +56,26 @@ const App = () => {
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [importantDates, setImportantDates] = useState<ImportantDate[]>([]);
 
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state && event.state.view) {
+        setCurrentView(event.state.view);
+      } else {
+        setCurrentView('home');
+      }
+    };
+    
+    // Set initial state without adding to history
+    window.history.replaceState({ view: 'home' }, '');
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigateTo = (view: 'home' | 'admin' | 'posters' | 'templates') => {
+    window.history.pushState({ view }, '');
+    setCurrentView(view);
+  };
+
   const loadData = async () => {
     if (!isSupabaseConfigured()) {
         // Fallbacks
@@ -174,14 +194,14 @@ const App = () => {
       <ConfigWarning />
       
       {currentView === 'admin' ? (
-        <AdminPanel onClose={() => setCurrentView('home')} />
+        <AdminPanel onClose={() => navigateTo('home')} />
       ) : currentView === 'posters' ? (
-        <PostersPage onBack={() => setCurrentView('home')} />
+        <PostersPage onBack={() => navigateTo('home')} />
       ) : currentView === 'templates' ? (
-        <TemplatesPage onBack={() => setCurrentView('home')} />
+        <TemplatesPage onBack={() => navigateTo('home')} />
       ) : (
         <>
-          <Navbar onOpenAdmin={() => setCurrentView('admin')} onGoToTemplates={() => setCurrentView('templates')} />
+          <Navbar onOpenAdmin={() => navigateTo('admin')} onGoToTemplates={() => navigateTo('templates')} />
           <main>
             <Hero imageUrls={heroImages} />
             <AboutSection imageUrl={aboutImage} />
@@ -189,7 +209,7 @@ const App = () => {
             <SpeakersSection speakers={speakers} />
             <div className="bg-emerald-50 py-8 text-center">
               <button 
-                onClick={() => setCurrentView('posters')}
+                onClick={() => navigateTo('posters')}
                 className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition-colors"
               >
                 Ver trabalhos para sessão de pôster da quarta-feira 16h 26/08
@@ -205,11 +225,11 @@ const App = () => {
             <SponsorsSection />
           </main>
           <NotificationPopup 
-            onGoToPosters={() => setCurrentView('posters')} 
-            onGoToTemplates={() => setCurrentView('templates')} 
+            onGoToPosters={() => navigateTo('posters')} 
+            onGoToTemplates={() => navigateTo('templates')} 
           />
           <SaveTheDateFloatingButton dates={importantDates} />
-          <Footer onOpenAdmin={() => setCurrentView('admin')} />
+          <Footer onOpenAdmin={() => navigateTo('admin')} />
         </>
       )}
     </div>

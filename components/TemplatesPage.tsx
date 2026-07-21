@@ -22,36 +22,80 @@ export const TemplatesPage = ({ onBack }: { onBack: () => void }) => {
           </div>
 
           <div className="p-8">
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid gap-6">
               
               {/* Poster Template */}
-              <div className="border border-slate-200 rounded-2xl p-8 flex flex-col items-center text-center hover:shadow-lg transition-shadow bg-slate-50/50">
-                <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
-                  <ImageIcon className="w-10 h-10" />
+              <div className="border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center md:items-stretch text-center md:text-left hover:shadow-lg transition-shadow bg-slate-50/50 gap-8">
+                
+                <div className="flex-shrink-0 w-48 h-64 md:h-auto rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden flex items-center justify-center relative">
+                  <div className="absolute inset-0 bg-slate-100 animate-pulse -z-10" />
+                  <img 
+                    src="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/porta_banner%20mec3f.png" 
+                    alt="Exemplo de Porta-banner" 
+                    className="w-full h-full object-cover sm:object-contain p-2" 
+                    loading="lazy"
+                  />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-3">Modelo de Pôster</h3>
-                <p className="text-slate-600 mb-8 flex-grow">
-                  Formato padrão para apresentações na sessão de pôsteres. Arquivo em formato PowerPoint (PPTX).
-                </p>
-                <button className="w-full bg-slate-900 text-white font-bold py-4 px-6 rounded-xl hover:bg-slate-800 transition-all shadow-md flex justify-center items-center gap-2">
-                  <DownloadIcon className="w-5 h-5" />
-                  Baixar Pôster (Em Breve)
-                </button>
+
+                <div className="flex-grow flex flex-col">
+                  <div className="flex items-center justify-center md:justify-start gap-4 mb-4">
+                    <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shadow-sm">
+                      <ImageIcon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-800">Modelo de Pôster</h3>
+                  </div>
+                  
+                  <p className="text-slate-600 mb-6">
+                    Formato padrão para apresentações na sessão de pôsteres. Arquivo em formato PowerPoint (PPTX).
+                  </p>
+                  
+                  <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 mb-8 text-sm text-emerald-800 space-y-3">
+                    <h4 className="font-bold text-emerald-900 mb-2 uppercase tracking-wider text-xs">Especificações de Impressão</h4>
+                    <p className="flex items-start gap-2">
+                      <span className="font-bold min-w-24">Dimensões:</span> 
+                      <span>90cm (largura) x 120cm (altura) - Formato vertical</span>
+                    </p>
+                    <p className="flex items-start gap-2">
+                      <span className="font-bold min-w-24">Acabamento:</span> 
+                      <span>O banner deve conter <strong>fio ou corda superior</strong> para suporte adequado no porta-banner (tripé).</span>
+                    </p>
+                  </div>
+
+                  <div className="mt-auto">
+                    <button className="w-full md:w-auto bg-slate-900 text-white font-bold py-3 px-6 rounded-xl hover:bg-slate-800 transition-all shadow-md flex justify-center items-center gap-2">
+                      <DownloadIcon className="w-5 h-5" />
+                      Baixar Pôster (Em Breve)
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* Oral Presentation Template */}
-              <div className="border border-slate-200 rounded-2xl p-8 flex flex-col items-center text-center hover:shadow-lg transition-shadow bg-slate-50/50">
-                <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
-                  <LayoutIcon className="w-10 h-10" />
+              <div className="border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center md:items-stretch text-center md:text-left hover:shadow-lg transition-shadow bg-slate-50/50 gap-8">
+                
+                <div className="flex-shrink-0 w-48 h-48 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-center">
+                  <LayoutIcon className="w-16 h-16 text-slate-300" />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-3">Apresentação Oral</h3>
-                <p className="text-slate-600 mb-8 flex-grow">
-                  Modelo de slides sugerido para apresentações orais. Arquivo em formato PowerPoint (PPTX).
-                </p>
-                <button className="w-full bg-slate-900 text-white font-bold py-4 px-6 rounded-xl hover:bg-slate-800 transition-all shadow-md flex justify-center items-center gap-2">
-                  <DownloadIcon className="w-5 h-5" />
-                  Baixar Slides (Em Breve)
-                </button>
+
+                <div className="flex-grow flex flex-col">
+                  <div className="flex items-center justify-center md:justify-start gap-4 mb-4">
+                    <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center shadow-sm">
+                      <LayoutIcon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-800">Apresentação Oral</h3>
+                  </div>
+                  
+                  <p className="text-slate-600 mb-8">
+                    Modelo de slides sugerido para apresentações orais. O arquivo segue a identidade visual do evento e está em formato PowerPoint (PPTX).
+                  </p>
+
+                  <div className="mt-auto">
+                    <button className="w-full md:w-auto bg-slate-900 text-white font-bold py-3 px-6 rounded-xl hover:bg-slate-800 transition-all shadow-md flex justify-center items-center gap-2">
+                      <DownloadIcon className="w-5 h-5" />
+                      Baixar Slides (Em Breve)
+                    </button>
+                  </div>
+                </div>
               </div>
 
             </div>
