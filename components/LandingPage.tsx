@@ -793,10 +793,10 @@ export const ScheduleSection = ({ scheduleItems }: { scheduleItems: ScheduleItem
   const sortedTimes = Object.keys(groupedItems).sort();
 
   const TRACKS = {
-    1: { name: 'Saúde e Meio Ambiente', location: 'Auditório Florestan Fernandes I', color: 'bg-blue-50 border-blue-200 text-blue-900', headerColor: 'bg-blue-600' },
+    1: { name: 'Saúde e Meio Ambiente', location: 'Auditório Florestan Fernandes II', color: 'bg-blue-50 border-blue-200 text-blue-900', headerColor: 'bg-blue-600' },
     2: { name: 'Ecologia e Conservação', location: 'Auditório Florestan Fernandes III', color: 'bg-green-50 border-green-200 text-green-900', headerColor: 'bg-green-600' },
     3: { name: 'Engenharias e Sustentabilidade', location: 'Auditório César Lattes', color: 'bg-slate-50 border-slate-200 text-slate-900', headerColor: 'bg-slate-600' },
-    4: { name: 'Energia e Materiais', location: 'Auditório Florestan Fernandes II', color: 'bg-orange-50 border-orange-200 text-orange-900', headerColor: 'bg-orange-600' }
+    4: { name: 'Energia e Materiais', location: 'Auditório Florestan Fernandes I', color: 'bg-orange-50 border-orange-200 text-orange-900', headerColor: 'bg-orange-600' }
   };
 
   const hasTracks = activeItems.some(i => i.track);
