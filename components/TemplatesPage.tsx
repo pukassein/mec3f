@@ -177,11 +177,27 @@ export const TemplatesPage = ({ onBack }: { onBack: () => void }) => {
                     Modelo de slides sugerido para apresentações orais. O arquivo segue a identidade visual do evento e está em formato PowerPoint (PPTX).
                   </p>
 
-                  <div className="mt-auto">
-                    <button className="w-full md:w-auto bg-slate-900 text-white font-bold py-3 px-6 rounded-xl hover:bg-slate-800 transition-all shadow-md flex justify-center items-center gap-2">
+                  <div className="mt-auto flex flex-col sm:flex-row gap-3">
+                    <a 
+                      href="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/COportugues.pptx"
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full md:w-auto bg-slate-900 text-white font-bold py-3 px-6 rounded-xl hover:bg-slate-800 transition-all shadow-md flex justify-center items-center gap-2"
+                    >
                       <DownloadIcon className="w-5 h-5" />
-                      Baixar Slides (Em Breve)
-                    </button>
+                      Baixar (Português)
+                    </a>
+                    <a 
+                      href="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/COEspanol.pptx"
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full md:w-auto bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition-all shadow-md flex justify-center items-center gap-2"
+                    >
+                      <DownloadIcon className="w-5 h-5" />
+                      Descargar (Español)
+                    </a>
                   </div>
                 </div>
               </div>
