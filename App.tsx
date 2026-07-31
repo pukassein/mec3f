@@ -61,18 +61,30 @@ const App = () => {
       if (event.state && event.state.view) {
         setCurrentView(event.state.view);
       } else {
-        setCurrentView('home');
+        const path = window.location.pathname;
+        if (path.includes('/admin')) setCurrentView('admin');
+        else if (path.includes('/posters')) setCurrentView('posters');
+        else if (path.includes('/templates')) setCurrentView('templates');
+        else setCurrentView('home');
       }
     };
     
+    const path = window.location.pathname;
+    let initialView: 'home' | 'admin' | 'posters' | 'templates' = 'home';
+    if (path.includes('/admin')) initialView = 'admin';
+    else if (path.includes('/posters')) initialView = 'posters';
+    else if (path.includes('/templates')) initialView = 'templates';
+
+    setCurrentView(initialView);
     // Set initial state without adding to history
-    window.history.replaceState({ view: 'home' }, '');
+    window.history.replaceState({ view: initialView }, '', path);
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const navigateTo = (view: 'home' | 'admin' | 'posters' | 'templates') => {
-    window.history.pushState({ view }, '');
+    const newPath = view === 'home' ? '/' : `/${view}`;
+    window.history.pushState({ view }, '', newPath);
     setCurrentView(view);
   };
 
