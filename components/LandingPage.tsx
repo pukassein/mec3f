@@ -1775,10 +1775,20 @@ export const SponsorsSection = () => {
   ];
 
   const sponsorsLogos = [
-    { name: "PAEP CAPES", url: "https://ciencia.ufpr.br/portal/wp-content/uploads/2024/09/paep-capes.jpg" },
+    { name: "Itaipu Parquetec", url: "https://www.itaipuparquetec.org.br/wp-content/uploads/2023/09/itaipuparquetec_RGB-01.png" },
+    { name: "Itaipu Binacional", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Logo_Itaipu_Preferencial.svg/960px-Logo_Itaipu_Preferencial.svg.png" },
+    { name: "CAPES", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Identidade_Visual_CAPES.png/1920px-Identidade_Visual_CAPES.png" }
+  ];
+
+  const additionalSupportLogos = [
+    { name: "CNPq", url: "https://sites.ufpe.br/gepifhri/wp-content/uploads/sites/86/2020/12/cnpq-logo.png" },
+    { name: "UNILA", url: "https://portal.unila.edu.br/secom/arquivos/marca-unila-e-logos/siglapretotransparente-3240x2196.png" }
+  ];
+
+  const programSupportLogos = [
     { name: "PPGFISA", url: "https://portal.unila.edu.br/programas-pos-graduacao/fisica/arquivos/ppgfisa-completo-assinatura.png" },
     { name: "PPGIES", url: "https://portal.unila.edu.br/mestrado-doutorado/ppgies/imagens/ASSINATURAPPGIES_COLORpng.png" },
-    { name: "CNPq", url: "https://www.gov.br/cnpq/pt-br/canais_atendimento/identidade-visual/CNPq_v2017_rgb.jpg" }
+    { name: "PPGBN", url: "https://portal.unila.edu.br/programas-pos-graduacao/biodiversidade-neotropical/regulamentos/arquivos/ppgbn-assinatura-completo.png" }
   ];
 
   const supportLogos = [
@@ -1809,14 +1819,36 @@ export const SponsorsSection = () => {
         </div>
 
         <div className="mb-20 text-center">
-          <h2 className="text-3xl font-bold text-slate-900 mb-12">Patrocinadores</h2>
+          <h2 className="text-3xl font-bold text-slate-900 mb-12">Apoio</h2>
           <div className="flex flex-wrap justify-center items-center gap-x-12 sm:gap-x-16 gap-y-10">
              {sponsorsLogos.map((logo) => (
               <div key={logo.name}>
                 <img
                   src={logo.url}
                   alt={logo.name}
-                  className="h-28 max-w-xs object-contain transform transition-transform duration-300 hover:scale-110"
+                  className={`${logo.name === "Itaipu Parquetec" ? "h-20 max-w-[200px]" : "h-28 max-w-xs"} object-contain transform transition-transform duration-300 hover:scale-110`}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap justify-center items-center gap-x-12 sm:gap-x-16 gap-y-10 mt-10">
+            {additionalSupportLogos.map((logo) => (
+              <div key={logo.name}>
+                <img
+                  src={logo.url}
+                  alt={logo.name}
+                  className={`${logo.name === "CNPq" ? "h-20 max-w-[200px]" : "h-28 max-w-xs"} object-contain transform transition-transform duration-300 hover:scale-110`}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap justify-center items-center gap-x-10 sm:gap-x-14 gap-y-8 mt-8">
+            {programSupportLogos.map((logo) => (
+              <div key={logo.name}>
+                <img
+                  src={logo.url}
+                  alt={logo.name}
+                  className="h-24 max-w-[240px] object-contain transform transition-transform duration-300 hover:scale-110 opacity-90"
                 />
               </div>
             ))}
@@ -1824,7 +1856,7 @@ export const SponsorsSection = () => {
         </div>
         
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-slate-900 mb-12">Apoio</h2>
+          <h2 className="text-3xl font-bold text-slate-900 mb-12">Apoio Parceiros</h2>
           <div className="flex flex-wrap justify-center items-center gap-x-12 sm:gap-x-16 gap-y-10">
              {supportLogos.map((logo) => (
               <div key={logo.url} className="flex-shrink-0">
