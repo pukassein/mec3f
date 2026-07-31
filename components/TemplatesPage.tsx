@@ -85,145 +85,183 @@ export const TemplatesPage = ({ onBack }: { onBack: () => void }) => {
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <button 
           onClick={onBack}
-          className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-mec-teal transition-colors mb-8"
+          className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-emerald-600 transition-colors mb-8"
         >
           <ChevronLeftIcon className="w-5 h-5 mr-1" />
           Voltar para Início
         </button>
 
-        <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-          <div className="bg-emerald-600 px-8 py-10 text-center text-white">
-            <h1 className="text-3xl font-bold mb-4">Templates para Apresentação</h1>
-            <p className="text-emerald-100 max-w-2xl mx-auto text-lg">
-              Faça o download dos modelos oficiais do evento para preparar sua apresentação oral ou pôster.
-            </p>
-          </div>
+        <div className="mb-10 text-center sm:text-left">
+          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
+            Templates & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">Recursos</span>
+          </h1>
+          <p className="text-slate-600 max-w-2xl text-lg">
+            Faça o download dos modelos oficiais do evento para preparar sua apresentação oral ou seu pôster com a identidade visual do 6º MEC3F.
+          </p>
+        </div>
 
-          <div className="p-8">
-            <div className="grid gap-6">
-              
-              {/* Poster Template */}
-              <div className="border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center md:items-stretch text-center md:text-left hover:shadow-lg transition-shadow bg-slate-50/50 gap-8">
-                
-                <div className="flex-shrink-0 w-48 h-64 md:h-auto rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden flex items-center justify-center relative">
-                  <div className="absolute inset-0 bg-slate-100 animate-pulse -z-10" />
-                  <img 
-                    src="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/porta_banner%20mec3f.png" 
-                    alt="Exemplo de Porta-banner" 
-                    className="w-full h-full object-cover sm:object-contain p-2" 
-                    loading="lazy"
-                  />
-                </div>
-
-                <div className="flex-grow flex flex-col w-full md:w-auto">
-                  <div className="flex items-center justify-center md:justify-start gap-4 mb-4">
-                    <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <ImageIcon className="w-6 h-6" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-slate-800">Modelo de Pôster</h3>
-                  </div>
-                  
-                  <p className="text-slate-600 mb-6">
-                    Formato padrão para apresentações na sessão de pôsteres. Arquivo em formato PowerPoint (PPTX).
-                  </p>
-                  
-                  <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 mb-8 text-sm text-emerald-800 space-y-3 text-left">
-                    <h4 className="font-bold text-emerald-900 mb-2 uppercase tracking-wider text-xs">Especificações de Impressão</h4>
-                    <p className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2">
-                      <span className="font-bold sm:min-w-24">Dimensões:</span> 
-                      <span>90cm (largura) x 120cm (altura) - Formato vertical</span>
-                    </p>
-                    <p className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-2">
-                      <span className="font-bold sm:min-w-24">Acabamento:</span> 
-                      <span>O banner deve conter <strong>fio ou corda superior</strong> para suporte adequado no porta-banner (tripé).</span>
-                    </p>
-                  </div>
-
-                  <div className="mt-auto flex flex-col sm:flex-row flex-wrap gap-3">
-                    <a 
-                      href="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/Poster_Portugus_6oMEC3F2026.pptx"
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full md:w-auto bg-slate-900 text-white font-bold py-3 px-6 rounded-xl hover:bg-slate-800 transition-all shadow-md flex justify-center items-center gap-2"
-                    >
-                      <DownloadIcon className="w-5 h-5" />
-                      Baixar (Português)
-                    </a>
-                    <a 
-                      href="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/Poster_Espanol_6oMEC3F2026.pptx"
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full md:w-auto bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition-all shadow-md flex justify-center items-center gap-2"
-                    >
-                      <DownloadIcon className="w-5 h-5" />
-                      Descargar (Español)
-                    </a>
-                    <button 
-                      onClick={() => setIsPosterInfoModalOpen(true)}
-                      className="w-full md:w-auto bg-emerald-100 text-emerald-800 font-bold py-3 px-6 rounded-xl hover:bg-emerald-200 transition-all flex justify-center items-center gap-2"
-                    >
-                      <InfoIcon className="w-5 h-5" />
-                      Mais Info / Más Info
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Oral Presentation Template */}
-              <div className="border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center md:items-stretch text-center md:text-left hover:shadow-lg transition-shadow bg-slate-50/50 gap-8">
-                
-                <div className="flex-shrink-0 w-48 h-48 rounded-xl border border-slate-200 bg-white shadow-sm flex items-center justify-center">
-                  <LayoutIcon className="w-16 h-16 text-slate-300" />
-                </div>
-
-                <div className="flex-grow flex flex-col w-full md:w-auto">
-                  <div className="flex items-center justify-center md:justify-start gap-4 mb-4">
-                    <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center shadow-sm">
-                      <LayoutIcon className="w-6 h-6" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-slate-800">Apresentação Oral</h3>
-                  </div>
-                  
-                  <p className="text-slate-600 mb-8">
-                    Modelo de slides sugerido para apresentações orais. O arquivo segue a identidade visual do evento e está em formato PowerPoint (PPTX).
-                  </p>
-
-                  <div className="mt-auto flex flex-col sm:flex-row gap-3">
-                    <a 
-                      href="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/COportugues.pptx"
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full md:w-auto bg-slate-900 text-white font-bold py-3 px-6 rounded-xl hover:bg-slate-800 transition-all shadow-md flex justify-center items-center gap-2"
-                    >
-                      <DownloadIcon className="w-5 h-5" />
-                      Baixar (Português)
-                    </a>
-                    <a 
-                      href="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/COEspanol.pptx"
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full md:w-auto bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition-all shadow-md flex justify-center items-center gap-2"
-                    >
-                      <DownloadIcon className="w-5 h-5" />
-                      Descargar (Español)
-                    </a>
-                  </div>
-                </div>
-              </div>
-
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Poster Template Card */}
+          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300 group">
+            {/* Header/Banner Area */}
+            <div className="h-64 bg-slate-50 border-b border-slate-100 relative flex items-center justify-center p-6 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-slate-100 opacity-50 z-0"></div>
+              <img 
+                src="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/porta_banner%20mec3f.png" 
+                alt="Exemplo de Pôster" 
+                className="h-full object-contain relative z-10 group-hover:scale-105 transition-transform duration-500" 
+                loading="lazy"
+              />
             </div>
 
+            {/* Content Area */}
+            <div className="p-8 flex flex-col flex-grow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                  <ImageIcon className="w-5 h-5" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-800">Modelo de Pôster</h3>
+              </div>
+              
+              <p className="text-slate-600 mb-6 flex-grow">
+                Formato padrão para apresentações na sessão de pôsteres. Utilize este template em PowerPoint (PPTX) para estruturar sua pesquisa de forma visualmente coesa.
+              </p>
+              
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-8 text-sm text-slate-700">
+                <h4 className="font-bold text-slate-900 mb-3 uppercase tracking-wider text-xs flex items-center gap-2">
+                  <InfoIcon className="w-4 h-4 text-emerald-600" />
+                  Especificações de Impressão
+                </h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>
+                    <div>
+                      <span className="font-bold text-slate-800 block">Dimensões Oficiais:</span>
+                      <span>90 cm de largura x 120 cm de altura (Formato Vertical).</span>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>
+                    <div>
+                      <span className="font-bold text-slate-800 block">Acabamento Necessário:</span>
+                      <span>O banner impresso deve conter fio ou corda superior para suporte no porta-banner/tripé.</span>
+                    </div>
+                  </li>
+                </ul>
+                <button 
+                  onClick={() => setIsPosterInfoModalOpen(true)}
+                  className="mt-4 text-emerald-600 font-semibold hover:text-emerald-700 transition-colors text-sm underline underline-offset-2"
+                >
+                  Ver regulamento completo / Ver reglamento
+                </button>
+              </div>
 
+              {/* Actions */}
+              <div className="grid sm:grid-cols-2 gap-3 mt-auto">
+                <a 
+                  href="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/Poster_Portugus_6oMEC3F2026.pptx"
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-emerald-600 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-emerald-700 transition-all shadow-sm hover:shadow flex justify-center items-center gap-2 w-full text-sm"
+                >
+                  <DownloadIcon className="w-4 h-4" />
+                  PPTX (Português)
+                </a>
+                <a 
+                  href="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/Poster_Espanol_6oMEC3F2026.pptx"
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-sky-600 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-sky-700 transition-all shadow-sm hover:shadow flex justify-center items-center gap-2 w-full text-sm"
+                >
+                  <DownloadIcon className="w-4 h-4" />
+                  PPTX (Español)
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Oral Presentation Template Card */}
+          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300 group">
+            {/* Header/Banner Area */}
+            <div className="h-64 bg-slate-50 border-b border-slate-100 relative flex items-center justify-center p-6 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-slate-100 opacity-50 z-0"></div>
+              <img 
+                src="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/presenting.png" 
+                alt="Exemplo de Apresentação Oral" 
+                className="h-full object-contain relative z-10 group-hover:scale-105 transition-transform duration-500" 
+                loading="lazy"
+              />
+            </div>
+
+            {/* Content Area */}
+            <div className="p-8 flex flex-col flex-grow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                  <LayoutIcon className="w-5 h-5" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-800">Comunicação Oral</h3>
+              </div>
+              
+              <p className="text-slate-600 mb-6 flex-grow">
+                Modelo sugerido para as apresentações orais durante as sessões temáticas do congresso. O arquivo contém layouts padronizados para introdução, desenvolvimento e conclusão, seguindo a identidade oficial.
+              </p>
+              
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-8 text-sm text-slate-700">
+                <h4 className="font-bold text-slate-900 mb-3 uppercase tracking-wider text-xs flex items-center gap-2">
+                  <InfoIcon className="w-4 h-4 text-blue-600" />
+                  Dicas para Apresentação
+                </h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0"></span>
+                    <div>
+                      <span className="font-bold text-slate-800 block">Tempo Limite:</span>
+                      <span>Verifique a programação oficial para confirmar o tempo alocado para sua fala e perguntas.</span>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0"></span>
+                    <div>
+                      <span className="font-bold text-slate-800 block">Conteúdo Visual:</span>
+                      <span>Priorize gráficos, imagens e palavras-chave. Evite slides com textos muito extensos.</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Actions */}
+              <div className="grid sm:grid-cols-2 gap-3 mt-auto">
+                <a 
+                  href="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/COportugues.pptx"
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-slate-800 transition-all shadow-sm hover:shadow flex justify-center items-center gap-2 w-full text-sm"
+                >
+                  <DownloadIcon className="w-4 h-4" />
+                  PPTX (Português)
+                </a>
+                <a 
+                  href="https://lpyswsovorgutlqfphgz.supabase.co/storage/v1/object/public/images/COEspanol.pptx"
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-slate-800 transition-all shadow-sm hover:shadow flex justify-center items-center gap-2 w-full text-sm"
+                >
+                  <DownloadIcon className="w-4 h-4" />
+                  PPTX (Español)
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
