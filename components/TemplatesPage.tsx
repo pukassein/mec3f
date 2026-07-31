@@ -214,21 +214,28 @@ export const TemplatesPage = ({ onBack }: { onBack: () => void }) => {
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-8 text-sm text-slate-700">
                 <h4 className="font-bold text-slate-900 mb-3 uppercase tracking-wider text-xs flex items-center gap-2">
                   <InfoIcon className="w-4 h-4 text-blue-600" />
-                  Dicas para Apresentação
+                  Regras e Dicas para Apresentação
                 </h4>
                 <ul className="space-y-3">
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0"></span>
                     <div>
-                      <span className="font-bold text-slate-800 block">Tempo Limite:</span>
-                      <span>Verifique a programação oficial para confirmar o tempo alocado para sua fala e perguntas.</span>
+                      <span className="font-bold text-slate-800 block">Tempo da Apresentação:</span>
+                      <span>Duração de 12 minutos, seguidos de 3 minutos para perguntas. (Data e horário serão comunicados posteriormente).</span>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0"></span>
                     <div>
-                      <span className="font-bold text-slate-800 block">Conteúdo Visual:</span>
-                      <span>Priorize gráficos, imagens e palavras-chave. Evite slides com textos muito extensos.</span>
+                      <span className="font-bold text-slate-800 block">Entrega do Arquivo:</span>
+                      <span>As apresentações devem ser entregues no dia da apresentação, antes do início das atividades, na sala correspondente, em um pendrive.</span>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0"></span>
+                    <div>
+                      <span className="font-bold text-slate-800 block">Formato e Idiomas:</span>
+                      <span>O formato deve ser PowerPoint (PPTX). Os idiomas aceitos são Espanhol, Português ou Inglês.</span>
                     </div>
                   </li>
                 </ul>
