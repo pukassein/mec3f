@@ -38,6 +38,11 @@ export const TemplatesPage = ({ onBack }: { onBack: () => void }) => {
                       <p className="mt-2">Os pôsteres precisarão ser fixados antes do horário da apresentação, para que interessadas/os possam ler antes da apresentação.</p>
                     </div>
                     <div>
+                      <h4 className="font-bold text-slate-800 mb-2">Organização e formatação do conteúdo</h4>
+                      <p>O pôster não precisa reproduzir o resumo exatamente como foi submetido. A organização do conteúdo interno é livre, sendo recomendada uma estrutura que facilite a leitura, por exemplo: Introdução, Objetivos, Metodologia, Resultados, Conclusões e Referências, conforme a necessidade do trabalho. Entretanto, a estrutura do template deve ser mantida, incluindo a identidade visual, o layout, as artes e a formatação do cabeçalho (título, autores e afiliações).</p>
+                      <p className="mt-2">Assim, os autores podem ajustar livremente a fonte, o tamanho das letras e a disposição dos elementos na parte interna do pôster, desde que o conteúdo permaneça legível e respeite as dimensões do template. O uso de resumo gráfico é opcional e fica a critério dos autores.</p>
+                    </div>
+                    <div>
                       <h4 className="font-bold text-slate-800 mb-2">Apresentação do pôster durante o Evento</h4>
                       <p>A apresentação de pôsteres será realizada no dia 26/08 das 16h00 às 18h30, ou seja, cada trabalho será avaliado por até três avaliadores durante esse período. Assim, os autores apresentadores deverão estar disponíveis durante esse período, especificamente no dia divulgado para apresentação do seu trabalho, que pode ser conferido no site do evento (<a href="http://www.mec3f.com" target="_blank" rel="noreferrer" className="text-emerald-600 hover:underline">www.mec3f.com</a>)</p>
                     </div>
@@ -271,4 +276,3 @@ export const TemplatesPage = ({ onBack }: { onBack: () => void }) => {
     </div>
   );
 };
-
