@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { DownloadIcon, ChevronLeftIcon, ImageIcon, LayoutIcon, InfoIcon, XIcon } from './Icons';
+import { DownloadIcon, ChevronLeftIcon, ImageIcon, LayoutIcon, InfoIcon, XIcon, MapPinIcon } from './Icons';
 
 export const TemplatesPage = ({ onBack }: { onBack: () => void }) => {
   const [isPosterInfoModalOpen, setIsPosterInfoModalOpen] = useState(false);
+  const [isPrintShopModalOpen, setIsPrintShopModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -90,6 +91,30 @@ export const TemplatesPage = ({ onBack }: { onBack: () => void }) => {
         </div>
       )}
 
+      {isPrintShopModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-emerald-50">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2"><ImageIcon className="w-6 h-6 text-emerald-600" /> Serviço de Impressão</h2>
+              <button onClick={() => setIsPrintShopModalOpen(false)} className="p-2 text-slate-400 hover:text-slate-700 hover:bg-white rounded-full"><XIcon className="w-5 h-5" /></button>
+            </div>
+            <div className="p-6 sm:p-8 overflow-y-auto text-slate-600 text-sm leading-relaxed space-y-5">
+              <p>Para facilitar a participação no 6º MEC3F, disponibilizamos uma empresa parceira para a impressão de pôsteres.</p>
+              <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5">
+                <h3 className="text-lg font-bold text-slate-800">Gráfica e Etiquetas Litoprint</h3>
+                <div className="mt-3 flex items-start gap-3"><MapPinIcon className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" /><span>Travessa Santos, 52 – Jardim Canadá<br />CEP 85861-290 – Foz do Iguaçu/PR</span></div>
+                <a href="https://wa.me/5545999526263" target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 font-bold text-white hover:bg-[#1ebe5d] shadow-sm">WhatsApp: enviar arquivo PDF</a>
+                <p className="mt-2 text-xs text-slate-500">+55 (45) 99952-6263</p>
+              </div>
+              <p>Como parceira do evento, a gráfica oferecerá impressão de pôsteres a partir de <strong>R$ 65,00</strong> para retirada no estabelecimento. Caso o participante opte pelo serviço de entrega, o valor do frete será cobrado à parte e deverá ser combinado diretamente com a gráfica.</p>
+              <div className="rounded-xl border border-amber-200 bg-amber-50 p-4"><p><strong className="text-slate-800">Importante:</strong> A contratação do serviço é de inteira responsabilidade do participante. Cada autor deverá entrar em contato diretamente com a empresa para solicitar orçamento, confirmar o valor final, definir a forma de pagamento, os prazos de produção e combinar a retirada do material ou a entrega, quando desejada.</p></div>
+              <p>O MEC3F atua apenas como intermediador da parceria, não se responsabilizando pela contratação, pagamento, impressão ou entrega dos pôsteres.</p>
+            </div>
+            <div className="p-5 border-t border-slate-100 bg-slate-50 flex justify-end"><button onClick={() => setIsPrintShopModalOpen(false)} className="bg-slate-900 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-slate-800">Fechar</button></div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-6xl mx-auto">
         <button 
           onClick={onBack}
@@ -161,6 +186,13 @@ export const TemplatesPage = ({ onBack }: { onBack: () => void }) => {
                   className="mt-4 text-emerald-600 font-semibold hover:text-emerald-700 transition-colors text-sm underline underline-offset-2"
                 >
                   Ver regulamento completo / Ver reglamento
+                </button>
+                <button
+                  onClick={() => setIsPrintShopModalOpen(true)}
+                  className="mt-3 w-full rounded-xl border border-emerald-200 bg-white px-4 py-3 text-left font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors"
+                >
+                  Onde imprimir o pôster?
+                  <span className="block text-xs font-normal text-slate-500 mt-1">Conheça a gráfica parceira do evento</span>
                 </button>
               </div>
 
