@@ -1298,6 +1298,27 @@ export const RegistrationSection = () => {
     ticketWindow.document.close();
   };
 
+  // Registration is closed for the event.
+  return (
+    <section id="registration" className="py-20 bg-slate-900 text-white relative overflow-hidden scroll-mt-32">
+      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <div className="bg-white rounded-2xl p-10 text-slate-800 shadow-2xl">
+          <div className="w-16 h-16 bg-mec-salmon/20 rounded-full flex items-center justify-center mx-auto mb-5">
+            <span className="text-3xl" aria-hidden="true">✓</span>
+          </div>
+          <h2 className="text-3xl font-bold mb-4">Inscrições encerradas</h2>
+          <p className="text-slate-600 text-lg">
+            As inscrições para o MEC3F 2026 estão encerradas no momento.
+          </p>
+          <p className="text-slate-500 mt-3">
+            Agradecemos o seu interesse e esperamos você no evento!
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+
   return (
     <section id="registration" className="py-20 bg-slate-900 text-white relative overflow-hidden scroll-mt-32">
       <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
