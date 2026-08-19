@@ -161,15 +161,15 @@ export const SCHEDULE_DATA: DaySchedule[] = [
       // 12:30 - 14:00: Intervalo - Almoço (General)
       { id: "d3-5", date: "2026-08-27", start_time: "12:30", end_time: "14:00", title: "Intervalo - Almoço", type: "break" },
 
-      // 14:00 - 18:00: Eixo de Imersão/Circuito Técnico-Científico
+      // 14:00 - 18:00: Workshops de quinta-feira à tarde
       { 
         id: "d3-6", 
         date: "2026-08-27", 
         start_time: "14:00", 
         end_time: "18:00", 
-        title: "Eixo de Imersão/Circuito Técnico-Científico", 
+        title: "Workshops — Quinta-feira à tarde", 
         type: "session",
-        description: "Encontros entre grupos de pesquisa ou workshops de projetos específicos, ampliando as oportunidades de aprendizagem, intercâmbio e colaboração entre os participantes. Além de promoção para a integração entre teoria e prática por meio de atividades complementares, como visitas técnicas, científicas e culturais."
+        description: "Dois workshops serão realizados nesta quinta-feira à tarde:\n\n1. Workshop Coleções Zoológicas da Tríplice Fronteira: diversidade biológica e soberania regional\n   (Colecciones zoológicas en la triple frontera: diversidad biológica y soberanía regional)\n\n2. Workshop Estratégico Latino-Americano de Materiais Avançados para Eletroquímica: da extração de críticos ao armazenamento de energia."
       }
     ]
   },

@@ -653,7 +653,7 @@ const ScheduleCard: React.FC<{ item: ScheduleItem, trackInfo: any }> = ({ item, 
         <div className="mt-3 text-xs opacity-90 border-t border-black/10 pt-2 animate-fade-in">
            {item.authors && <p className="mb-2 italic text-slate-600">Autores: {item.authors}</p>}
            {item.presenter && <p className="mb-2 font-medium">Apresentador(a): {item.presenter}</p>}
-           {item.description && !item.code && <p className="mb-2">{item.description}</p>}
+           {item.description && !item.code && <p className="mb-2 whitespace-pre-line">{item.description}</p>}
            {(item.speakers?.length ? item.speakers : item.speaker ? [item.speaker] : []).map(speaker => (
               <div key={speaker.id} className="flex items-center gap-2 mb-2">
                  <div className="w-8 h-8 rounded-full bg-white/50 overflow-hidden shrink-0">
@@ -701,7 +701,7 @@ const GeneralEventCard: React.FC<{ item: ScheduleItem }> = ({ item }) => {
               <p className="text-xs text-slate-500 mt-0.5">{item.speaker.name}</p>
             )}
             {!isExpanded && item.description && !(item.speakers?.length || item.speaker) && !item.presenter && (
-              <p className="text-slate-600 text-xs mt-0.5 line-clamp-1">{item.description}</p>
+              <p className="text-slate-600 text-xs mt-0.5 line-clamp-1 whitespace-pre-line">{item.description}</p>
             )}
           </div>
           <div className="flex items-center gap-3">
@@ -727,7 +727,7 @@ const GeneralEventCard: React.FC<{ item: ScheduleItem }> = ({ item }) => {
          <div className="mt-3 text-sm border-t border-slate-100 pt-3 animate-fade-in text-left">
             {item.authors && <p className="mb-2 italic text-slate-600">Autores: {item.authors}</p>}
             {item.presenter && <p className="mb-2 font-medium">Apresentador(a): {item.presenter}</p>}
-            {item.description && !item.code && <p className="mb-3 text-slate-600">{item.description}</p>}
+            {item.description && !item.code && <p className="mb-3 text-slate-600 whitespace-pre-line">{item.description}</p>}
             <div className="flex flex-wrap gap-2">
               {(item.speakers?.length ? item.speakers : item.speaker ? [item.speaker] : []).map(speaker => (
                  <div key={speaker.id} className="flex items-center gap-3 bg-slate-50 p-2 rounded-lg inline-flex pr-6">
