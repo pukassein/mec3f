@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { 
   XIcon, 
@@ -525,40 +526,19 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
       return;
     }
 
-    // SpreadsheetML is supported by Excel and keeps accents and long text intact.
-    const escapeXml = (value: unknown) => String(value ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&apos;');
-    const cell = (value: unknown, header = false) =>
-      `<Cell${header ? ' ss:StyleID="Header"' : ''}><Data ss:Type="String">${escapeXml(value)}</Data></Cell>`;
-    const headers = ['ID', 'Nome', 'Instituição', 'Descrição', 'URL da imagem', 'Ordem de exibição'];
-    const rows = speakers.map(speaker => `<Row>${[
-      speaker.id,
-      speaker.name,
-      speaker.institution,
-      speaker.description,
-      speaker.image_url,
-      speaker.display_order
-    ].map(value => cell(value)).join('')}</Row>`).join('');
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<?mso-application progid="Excel.Sheet"?>
-<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
-  <Worksheet ss:Name="Palestrantes"><Table>
-    <Row>${headers.map(header => cell(header, true)).join('')}</Row>${rows}
-  </Table></Worksheet>
-</Workbook>`;
-    const blob = new Blob([`\uFEFF${xml}`], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.href = url;
-    link.download = `palestrantes_mec3f_${new Date().toISOString().split('T')[0]}.xls`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const rows = speakers.map(speaker => ({
+      ID: speaker.id,
+      Nome: speaker.name,
+      Instituição: speaker.institution,
+      Descrição: speaker.description || '',
+      'URL da imagem': speaker.image_url || '',
+      'Ordem de exibição': speaker.display_order
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    worksheet['!cols'] = [{ wch: 38 }, { wch: 30 }, { wch: 35 }, { wch: 60 }, { wch: 55 }, { wch: 18 }];
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Palestrantes');
+    XLSX.writeFile(workbook, `palestrantes_mec3f_${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
   if (!isSupabaseConfigured()) {
