@@ -519,6 +519,48 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
     document.body.removeChild(link);
   };
 
+  const handleDownloadSpeakersExcel = () => {
+    if (speakers.length === 0) {
+      alert("Nenhum palestrante encontrado para baixar.");
+      return;
+    }
+
+    // SpreadsheetML is supported by Excel and keeps accents and long text intact.
+    const escapeXml = (value: unknown) => String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+    const cell = (value: unknown, header = false) =>
+      `<Cell${header ? ' ss:StyleID="Header"' : ''}><Data ss:Type="String">${escapeXml(value)}</Data></Cell>`;
+    const headers = ['ID', 'Nome', 'Instituição', 'Descrição', 'URL da imagem', 'Ordem de exibição'];
+    const rows = speakers.map(speaker => `<Row>${[
+      speaker.id,
+      speaker.name,
+      speaker.institution,
+      speaker.description,
+      speaker.image_url,
+      speaker.display_order
+    ].map(value => cell(value)).join('')}</Row>`).join('');
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+  <Worksheet ss:Name="Palestrantes"><Table>
+    <Row>${headers.map(header => cell(header, true)).join('')}</Row>${rows}
+  </Table></Worksheet>
+</Workbook>`;
+    const blob = new Blob([`\uFEFF${xml}`], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.download = `palestrantes_mec3f_${new Date().toISOString().split('T')[0]}.xls`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   if (!isSupabaseConfigured()) {
     return (
       <div className="fixed inset-0 z-[60] bg-gray-900 flex items-center justify-center p-4">
@@ -773,12 +815,20 @@ export const AdminPanel = ({ onClose }: { onClose: () => void }) => {
           <div className="bg-white rounded-xl shadow-sm p-6 mb-8 animate-fade-in-up">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold">Gerenciar Palestrantes</h3>
-              <button 
-                onClick={() => setEditSpeaker({ name: '', institution: '', image_url: '', description: '', display_order: speakers.length + 1 })}
-                className="bg-emerald-600 text-white px-4 py-2 rounded text-sm hover:bg-emerald-700 shadow"
-              >
-                + Novo Palestrante
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleDownloadSpeakersExcel}
+                  className="border border-emerald-600 text-emerald-700 px-4 py-2 rounded text-sm hover:bg-emerald-50 shadow-sm"
+                >
+                  <DownloadIcon className="inline-block w-4 h-4 mr-1" /> Baixar Excel
+                </button>
+                <button 
+                  onClick={() => setEditSpeaker({ name: '', institution: '', image_url: '', description: '', display_order: speakers.length + 1 })}
+                  className="bg-emerald-600 text-white px-4 py-2 rounded text-sm hover:bg-emerald-700 shadow"
+                >
+                  + Novo Palestrante
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
