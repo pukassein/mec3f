@@ -279,48 +279,12 @@ export const Navbar = ({ onOpenAdmin, onGoToTemplates }: { onOpenAdmin: () => vo
   );
 };
 
-const Countdown = ({ hasImages }: { hasImages: boolean }) => {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-
-  useEffect(() => {
-    // Target date: August 25, 2026 
-    const targetDate = new Date("2026-08-25T09:00:00").getTime(); 
-
-    const calculateTime = () => {
-      const now = new Date().getTime();
-      const difference = targetDate - now;
-
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((difference % (1000 * 60)) / 1000),
-        });
-      }
-    };
-
-    calculateTime();
-    const interval = setInterval(calculateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const TimeUnit = ({ value, label }: { value: number, label: string }) => (
-    <div className={`flex flex-col items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-xl backdrop-blur-md border ${hasImages ? 'bg-black/40 border-white/20 text-white' : 'bg-white border-slate-100 text-slate-800 shadow-lg'}`}>
-      <span className="text-3xl sm:text-4xl font-bold leading-none">{value}</span>
-      <span className={`text-[10px] sm:text-xs font-medium uppercase tracking-wider mt-1 ${hasImages ? 'text-mec-teal' : 'text-mec-teal'}`}>{label}</span>
-    </div>
-  );
-
-  return (
-    <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mt-8 mb-4">
-      <TimeUnit value={timeLeft.days} label="Dias" />
-      <TimeUnit value={timeLeft.hours} label="Horas" />
-      <TimeUnit value={timeLeft.minutes} label="Min" />
-      <TimeUnit value={timeLeft.seconds} label="Seg" />
-    </div>
-  );
-};
+const EventStatus = ({ hasImages }: { hasImages: boolean }) => (
+  <div className={`inline-flex items-center gap-2 mt-8 mb-4 px-5 py-3 rounded-full border ${hasImages ? 'bg-black/40 border-white/20 text-white' : 'bg-mec-teal/10 border-mec-teal/20 text-mec-teal'}`}>
+    <span className="w-2.5 h-2.5 rounded-full bg-mec-teal animate-pulse" aria-hidden="true" />
+    <span className="font-semibold tracking-wide">Evento em andamento</span>
+  </div>
+);
 
 export const Hero = ({ imageUrls }: { imageUrls: string[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -353,7 +317,7 @@ export const Hero = ({ imageUrls }: { imageUrls: string[] }) => {
           <span className={`block text-2xl md:text-4xl mt-2 font-normal ${hasImages ? 'text-slate-200' : 'text-slate-600'}`}>das Três Fronteiras</span>
         </h1>
 
-        <Countdown hasImages={hasImages} />
+        <EventStatus hasImages={hasImages} />
 
         <p className={`mt-4 text-xl max-w-2xl mx-auto ${hasImages ? 'text-slate-100 drop-shadow-md' : 'text-slate-600'}`}>
           Promovendo a integração científica e tecnológica na Tríplice Fronteira.
