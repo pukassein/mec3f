@@ -594,6 +594,9 @@ const ScheduleCard: React.FC<{ item: ScheduleItem, trackInfo: any }> = ({ item, 
            <div className="md:hidden text-[10px] font-bold uppercase mb-1 opacity-70 truncate">
              {trackInfo.name}
            </div>
+           <div className="md:hidden text-[10px] font-medium mb-2 text-slate-600 break-words">
+             Sala: {trackInfo.location}
+           </div>
            <h4 className={`font-bold text-sm leading-tight ${isExpanded ? '' : (item.speakers && item.speakers.length > 1 ? '' : 'truncate')}`}>
              {item.code && <span className="text-mec-teal mr-1">{item.code} -</span>} 
              {item.title}
