@@ -148,7 +148,7 @@ export const DeadlinePopup = () => {
   );
 };
 
-export const Navbar = ({ onOpenAdmin, onGoToTemplates }: { onOpenAdmin: () => void; onGoToTemplates?: () => void }) => {
+export const Navbar = ({ onOpenAdmin, onGoToTemplates, onGoToWorkshop }: { onOpenAdmin: () => void; onGoToTemplates?: () => void; onGoToWorkshop?: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -219,6 +219,7 @@ export const Navbar = ({ onOpenAdmin, onGoToTemplates }: { onOpenAdmin: () => vo
                   Templates
                 </button>
               )}
+              {onGoToWorkshop && <button onClick={onGoToWorkshop} className="text-mec-teal hover:text-teal-600 font-bold transition-colors text-sm uppercase tracking-wide py-2">Workshop</button>}
               <a 
                 href="#registration"
                 onClick={(e) => handleNavClick(e, '#registration')}
@@ -259,6 +260,7 @@ export const Navbar = ({ onOpenAdmin, onGoToTemplates }: { onOpenAdmin: () => vo
                 Templates
               </button>
             )}
+            {onGoToWorkshop && <button onClick={() => { setIsOpen(false); onGoToWorkshop(); }} className="block w-full text-left px-4 py-3 rounded-lg text-lg font-bold text-mec-teal hover:bg-slate-50">Workshop de hoje</button>}
             <a 
               href="#registration"
               onClick={(e) => handleNavClick(e, '#registration')}

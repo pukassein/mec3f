@@ -3,10 +3,12 @@ import { XIcon, InfoIcon } from './Icons';
 
 export const NotificationPopup = ({ 
   onGoToPosters, 
-  onGoToTemplates 
+  onGoToTemplates,
+  onGoToWorkshop
 }: { 
   onGoToPosters: () => void;
   onGoToTemplates: () => void;
+  onGoToWorkshop: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -86,10 +88,14 @@ export const NotificationPopup = ({
       
       <div className="p-4">
         <p className="text-slate-600 text-xs mb-4 leading-relaxed">
-          Confira a programação completa e a sessão de pôsteres. Os <strong>templates para download</strong> estarão disponíveis em breve.
+          <strong>Hoje, quinta-feira, 27 de agosto:</strong> Workshop Estratégico Latino-Americano, das 13h30 às 18h00. Confira a programação completa.
         </p>
         
         <div className="flex flex-col gap-2">
+          <button 
+            onClick={() => { onGoToWorkshop(); handleClose(); }}
+            className="w-full bg-mec-teal/10 hover:bg-mec-teal/20 text-mec-teal text-xs font-semibold py-2 px-3 rounded-lg transition-colors text-center"
+          >Ver programação do workshop</button>
           <button 
             onClick={() => { handleGoToSchedule(); handleClose(); }}
             className="w-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold py-2 px-3 rounded-lg transition-colors text-center"

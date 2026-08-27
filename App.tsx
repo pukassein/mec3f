@@ -24,6 +24,7 @@ import {
 
 import { TemplatesPage } from './components/TemplatesPage';
 import { NotificationPopup } from './components/NotificationPopup';
+import WorkshopProgramPage from './components/WorkshopProgramPage';
 
 const ConfigWarning = () => {
   if (isSupabaseConfigured()) return null;
@@ -47,7 +48,7 @@ const ConfigWarning = () => {
 };
 
 const App = () => {
-  const [currentView, setCurrentView] = useState<'home' | 'admin' | 'posters' | 'templates'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'admin' | 'posters' | 'templates' | 'programacao'>('home');
   const [cards, setCards] = useState<ContentCard[]>([]);
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
@@ -65,15 +66,17 @@ const App = () => {
         if (path.includes('/admin')) setCurrentView('admin');
         else if (path.includes('/posters')) setCurrentView('posters');
         else if (path.includes('/templates')) setCurrentView('templates');
+        else if (path.includes('/programacao')) setCurrentView('programacao');
         else setCurrentView('home');
       }
     };
     
     const path = window.location.pathname;
-    let initialView: 'home' | 'admin' | 'posters' | 'templates' = 'home';
+    let initialView: 'home' | 'admin' | 'posters' | 'templates' | 'programacao' = 'home';
     if (path.includes('/admin')) initialView = 'admin';
     else if (path.includes('/posters')) initialView = 'posters';
     else if (path.includes('/templates')) initialView = 'templates';
+    else if (path.includes('/programacao')) initialView = 'programacao';
 
     setCurrentView(initialView);
     // Set initial state without adding to history
@@ -82,7 +85,7 @@ const App = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  const navigateTo = (view: 'home' | 'admin' | 'posters' | 'templates') => {
+  const navigateTo = (view: 'home' | 'admin' | 'posters' | 'templates' | 'programacao') => {
     const newPath = view === 'home' ? '/' : `/${view}`;
     window.history.pushState({ view }, '', newPath);
     setCurrentView(view);
@@ -211,11 +214,24 @@ const App = () => {
         <PostersPage onBack={() => navigateTo('home')} />
       ) : currentView === 'templates' ? (
         <TemplatesPage onBack={() => navigateTo('home')} />
+      ) : currentView === 'programacao' ? (
+        <WorkshopProgramPage onBack={() => navigateTo('home')} />
       ) : (
         <>
-          <Navbar onOpenAdmin={() => navigateTo('admin')} onGoToTemplates={() => navigateTo('templates')} />
+          <Navbar onOpenAdmin={() => navigateTo('admin')} onGoToTemplates={() => navigateTo('templates')} onGoToWorkshop={() => navigateTo('programacao')} />
           <main>
             <Hero imageUrls={heroImages} />
+            <section className="bg-gradient-to-r from-mec-teal to-mec-green text-white py-10">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-widest text-white/80">Acontece hoje · 27 de agosto</p>
+                  <h2 className="text-2xl md:text-3xl font-extrabold mt-2">Workshop Estratégico Latino-Americano</h2>
+                  <p className="mt-2 text-white/90">Materiais Avançados para Eletroquímica · Da Extração de Críticos ao Armazenamento de Energia</p>
+                  <p className="mt-2 font-semibold">Quinta-feira, 27 de agosto de 2026 · 13h30 às 18h00</p>
+                </div>
+                <button onClick={() => navigateTo('programacao')} className="shrink-0 bg-white text-mec-teal px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition-colors shadow-lg">Ver programação</button>
+              </div>
+            </section>
             <AboutSection imageUrl={aboutImage} />
             <ThemesSection cards={cards} />
             <SpeakersSection speakers={speakers} />
@@ -238,6 +254,7 @@ const App = () => {
           </main>
           <NotificationPopup 
             onGoToPosters={() => navigateTo('posters')} 
+            onGoToWorkshop={() => navigateTo('programacao')}
             onGoToTemplates={() => navigateTo('templates')} 
           />
           <SaveTheDateFloatingButton dates={importantDates} />
