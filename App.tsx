@@ -23,7 +23,6 @@ import {
 } from './components/LandingPage';
 
 import { TemplatesPage } from './components/TemplatesPage';
-import { NotificationPopup } from './components/NotificationPopup';
 import WorkshopProgramPage from './components/WorkshopProgramPage';
 
 const ConfigWarning = () => {
@@ -252,11 +251,6 @@ const App = () => {
             <LocationSection />
             <SponsorsSection />
           </main>
-          <NotificationPopup 
-            onGoToPosters={() => navigateTo('posters')} 
-            onGoToWorkshop={() => navigateTo('programacao')}
-            onGoToTemplates={() => navigateTo('templates')} 
-          />
           <SaveTheDateFloatingButton dates={importantDates} />
           <Footer onOpenAdmin={() => navigateTo('admin')} />
         </>
