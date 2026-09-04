@@ -78,13 +78,13 @@ const getThemeStyles = (index: number) => {
   return styles[index % styles.length];
 };
 
-export const DeadlinePopup = () => {
+export const CertificatePopup = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     // Show popup after a small delay for better UX
     // Use sessionStorage so it only shows once per browser tab session
-    const hasSeen = sessionStorage.getItem('deadlinePopupSeen_v2');
+    const hasSeen = sessionStorage.getItem('certificatePopupSeen_v1');
     if (!hasSeen) {
       const showTimer = setTimeout(() => setIsOpen(true), 800);
       return () => clearTimeout(showTimer);
@@ -93,7 +93,7 @@ export const DeadlinePopup = () => {
 
   const handleClose = () => {
     setIsOpen(false);
-    sessionStorage.setItem('deadlinePopupSeen_v2', 'true');
+    sessionStorage.setItem('certificatePopupSeen_v1', 'true');
   };
 
   if (!isOpen) return null;
@@ -119,19 +119,19 @@ export const DeadlinePopup = () => {
            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
            <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/3 w-32 h-32 bg-black/10 rounded-full blur-xl"></div>
            
-           <h3 className="text-3xl font-black mb-1 relative z-10 tracking-tight">Prazo Prorrogado!</h3>
-           <p className="opacity-90 font-medium relative z-10 text-lg">Submissão de Trabalhos</p>
+           <h3 className="text-3xl font-black mb-1 relative z-10 tracking-tight">Obrigado por participar!</h3>
+           <p className="opacity-90 font-medium relative z-10 text-lg">Certificados do MEC3F 2026</p>
         </div>
         
         <div className="p-8 text-center">
           <div className="inline-flex items-center justify-center gap-2 bg-slate-100 text-slate-700 px-5 py-2.5 rounded-full mb-6 font-semibold shadow-inner">
             <CalendarIcon className="w-5 h-5 text-mec-teal" />
-            <span>Novo Prazo: 31 de Maio de 2026</span>
+            <span>Disponíveis em breve</span>
           </div>
           
           <div className="flex flex-col items-center justify-center mb-8">
             <p className="text-slate-600 text-[1.1rem] leading-relaxed">
-              Atendendo a pedidos, o prazo para envio do seu trabalho foi prorrogado. Aproveite essa nova oportunidade para submeter sua pesquisa!
+              Agradecemos a sua participação no 6º MEC3F. Os certificados serão disponibilizados nos próximos dias ou semanas. Fique atento às nossas atualizações!
             </p>
           </div>
           
@@ -140,7 +140,7 @@ export const DeadlinePopup = () => {
             onClick={handleClose}
             className="block w-full bg-slate-900 text-white font-bold py-4 px-6 rounded-xl hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 duration-200 text-lg"
           >
-            Enviar Meu Trabalho Agora
+            Continuar no site
           </a>
         </div>
       </div>

@@ -19,6 +19,7 @@ import {
   LocationSection,
   SponsorsSection, 
   Footer,
+  CertificatePopup,
 } from './components/LandingPage';
 
 import { TemplatesPage } from './components/TemplatesPage';
@@ -217,6 +218,7 @@ const App = () => {
       ) : (
         <>
           <Navbar onOpenAdmin={() => navigateTo('admin')} onGoToTemplates={() => navigateTo('templates')} onGoToWorkshop={() => navigateTo('programacao')} />
+          <CertificatePopup />
           <main>
             <Hero imageUrls={heroImages} />
             <section className="bg-gradient-to-r from-mec-teal to-mec-green text-white py-10">
