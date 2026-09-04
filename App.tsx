@@ -19,7 +19,6 @@ import {
   LocationSection,
   SponsorsSection, 
   Footer,
-  SaveTheDateFloatingButton
 } from './components/LandingPage';
 
 import { TemplatesPage } from './components/TemplatesPage';
@@ -223,12 +222,12 @@ const App = () => {
             <section className="bg-gradient-to-r from-mec-teal to-mec-green text-white py-10">
               <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
-                  <p className="text-sm font-bold uppercase tracking-widest text-white/80">Acontece hoje · 27 de agosto</p>
-                  <h2 className="text-2xl md:text-3xl font-extrabold mt-2">Workshop Estratégico Latino-Americano</h2>
-                  <p className="mt-2 text-white/90">Materiais Avançados para Eletroquímica · Da Extração de Críticos ao Armazenamento de Energia</p>
-                  <p className="mt-2 font-semibold">Quinta-feira, 27 de agosto de 2026 · 13h30 às 18h00</p>
+                  <p className="text-sm font-bold uppercase tracking-widest text-white/80">Obrigado por participar!</p>
+                  <h2 className="text-2xl md:text-3xl font-extrabold mt-2">O 6º MEC3F foi um sucesso</h2>
+                  <p className="mt-2 text-white/90">Agradecemos a presença e a contribuição de toda a comunidade científica.</p>
+                  <p className="mt-2 font-semibold">Fique atento: os certificados serão disponibilizados nos próximos dias ou semanas.</p>
                 </div>
-                <button onClick={() => navigateTo('programacao')} className="shrink-0 bg-white text-mec-teal px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition-colors shadow-lg">Ver programação</button>
+                <button onClick={() => navigateTo('templates')} className="shrink-0 bg-white text-mec-teal px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition-colors shadow-lg">Ver templates</button>
               </div>
             </section>
             <AboutSection imageUrl={aboutImage} />
@@ -251,7 +250,6 @@ const App = () => {
             <LocationSection />
             <SponsorsSection />
           </main>
-          <SaveTheDateFloatingButton dates={importantDates} />
           <Footer onOpenAdmin={() => navigateTo('admin')} />
         </>
       )}

@@ -284,7 +284,7 @@ export const Navbar = ({ onOpenAdmin, onGoToTemplates, onGoToWorkshop }: { onOpe
 const EventStatus = ({ hasImages }: { hasImages: boolean }) => (
   <div className={`inline-flex items-center gap-2 mt-8 mb-4 px-5 py-3 rounded-full border ${hasImages ? 'bg-black/40 border-white/20 text-white' : 'bg-mec-teal/10 border-mec-teal/20 text-mec-teal'}`}>
     <span className="w-2.5 h-2.5 rounded-full bg-mec-teal animate-pulse" aria-hidden="true" />
-    <span className="font-semibold tracking-wide">Evento em andamento</span>
+    <span className="font-semibold tracking-wide">Evento encerrado</span>
   </div>
 );
 
@@ -339,10 +339,10 @@ export const Hero = ({ imageUrls }: { imageUrls: string[] }) => {
 
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
           <a href="#registration" onClick={(e) => smoothScrollTo(e, '#registration')} className="inline-flex justify-center items-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-mec-salmon hover:bg-[#c4755d] md:text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
-            Realizar Inscrição
+            Informações pós-evento
           </a>
-          <a href="#schedule" onClick={(e) => smoothScrollTo(e, '#schedule')} className={`inline-flex justify-center items-center px-8 py-3 border text-base font-medium rounded-lg md:text-lg transition-all ${hasImages ? 'border-white/30 text-white bg-black/20 hover:bg-black/30 backdrop-blur-sm' : 'border-slate-200 text-slate-700 bg-white hover:bg-slate-50'}`}>
-            Ver Programação
+          <a href="#gallery" onClick={(e) => smoothScrollTo(e, '#gallery')} className={`inline-flex justify-center items-center px-8 py-3 border text-base font-medium rounded-lg md:text-lg transition-all ${hasImages ? 'border-white/30 text-white bg-black/20 hover:bg-black/30 backdrop-blur-sm' : 'border-slate-200 text-slate-700 bg-white hover:bg-slate-50'}`}>
+            Ver memórias
           </a>
         </div>
       </div>
@@ -1276,12 +1276,12 @@ export const RegistrationSection = () => {
           <div className="w-16 h-16 bg-mec-salmon/20 rounded-full flex items-center justify-center mx-auto mb-5">
             <span className="text-3xl" aria-hidden="true">✓</span>
           </div>
-          <h2 className="text-3xl font-bold mb-4">Inscrições encerradas</h2>
+          <h2 className="text-3xl font-bold mb-4">Obrigado por participar!</h2>
           <p className="text-slate-600 text-lg">
-            As inscrições para o MEC3F 2026 estão encerradas no momento.
+            As inscrições para o MEC3F 2026 estão encerradas.
           </p>
           <p className="text-slate-500 mt-3">
-            Agradecemos o seu interesse e esperamos você no evento!
+            Agradecemos a sua participação. Fique atento às próximas atualizações sobre os certificados, que serão disponibilizados nos próximos dias ou semanas.
           </p>
         </div>
       </div>
