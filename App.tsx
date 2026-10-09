@@ -237,10 +237,7 @@ const App = () => {
                   <p className="mt-2 text-white/90">Agradecemos a presença e a contribuição de toda a comunidade científica.</p>
                   <p className="mt-2 font-semibold">Fique atento: os certificados serão disponibilizados nos próximos dias ou semanas.</p>
                 </div>
-                <div className="flex shrink-0 flex-wrap gap-3">
-                  <button onClick={() => navigateTo('fotos')} className="bg-white text-mec-teal px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition-colors shadow-lg">Ver fotos do evento</button>
-                  <button onClick={() => navigateTo('templates')} className="border border-white/40 bg-white/10 text-white px-6 py-3 rounded-xl font-bold hover:bg-white/20 transition-colors">Ver templates</button>
-                </div>
+                <button onClick={() => navigateTo('fotos')} className="shrink-0 bg-white text-mec-teal px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition-colors shadow-lg">Ver fotos do evento</button>
               </div>
             </section>
             <AboutSection imageUrl={aboutImage} />
