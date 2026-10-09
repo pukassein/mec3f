@@ -25,6 +25,8 @@ import {
 import { TemplatesPage } from './components/TemplatesPage';
 import WorkshopProgramPage from './components/WorkshopProgramPage';
 
+const PhotosPage = React.lazy(() => import('./components/PhotosPage'));
+
 const ConfigWarning = () => {
   if (isSupabaseConfigured()) return null;
   return (
@@ -47,7 +49,7 @@ const ConfigWarning = () => {
 };
 
 const App = () => {
-  const [currentView, setCurrentView] = useState<'home' | 'admin' | 'posters' | 'templates' | 'programacao'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'admin' | 'posters' | 'templates' | 'programacao' | 'fotos'>('home');
   const [cards, setCards] = useState<ContentCard[]>([]);
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
@@ -66,16 +68,18 @@ const App = () => {
         else if (path.includes('/posters')) setCurrentView('posters');
         else if (path.includes('/templates')) setCurrentView('templates');
         else if (path.includes('/programacao')) setCurrentView('programacao');
+        else if (path.includes('/fotos')) setCurrentView('fotos');
         else setCurrentView('home');
       }
     };
     
     const path = window.location.pathname;
-    let initialView: 'home' | 'admin' | 'posters' | 'templates' | 'programacao' = 'home';
+    let initialView: 'home' | 'admin' | 'posters' | 'templates' | 'programacao' | 'fotos' = 'home';
     if (path.includes('/admin')) initialView = 'admin';
     else if (path.includes('/posters')) initialView = 'posters';
     else if (path.includes('/templates')) initialView = 'templates';
     else if (path.includes('/programacao')) initialView = 'programacao';
+    else if (path.includes('/fotos')) initialView = 'fotos';
 
     setCurrentView(initialView);
     // Set initial state without adding to history
@@ -84,7 +88,7 @@ const App = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  const navigateTo = (view: 'home' | 'admin' | 'posters' | 'templates' | 'programacao') => {
+  const navigateTo = (view: 'home' | 'admin' | 'posters' | 'templates' | 'programacao' | 'fotos') => {
     const newPath = view === 'home' ? '/' : `/${view}`;
     window.history.pushState({ view }, '', newPath);
     setCurrentView(view);
@@ -215,10 +219,14 @@ const App = () => {
         <TemplatesPage onBack={() => navigateTo('home')} />
       ) : currentView === 'programacao' ? (
         <WorkshopProgramPage onBack={() => navigateTo('home')} />
+      ) : currentView === 'fotos' ? (
+        <React.Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-slate-50 text-lg font-semibold text-slate-600">Carregando galeria…</div>}>
+          <PhotosPage onBack={() => navigateTo('home')} />
+        </React.Suspense>
       ) : (
         <>
-          <Navbar onOpenAdmin={() => navigateTo('admin')} onGoToTemplates={() => navigateTo('templates')} onGoToWorkshop={() => navigateTo('programacao')} />
-          <CertificatePopup />
+          <Navbar onOpenAdmin={() => navigateTo('admin')} onGoToTemplates={() => navigateTo('templates')} onGoToWorkshop={() => navigateTo('programacao')} onGoToPhotos={() => navigateTo('fotos')} />
+          <CertificatePopup onGoToPhotos={() => navigateTo('fotos')} />
           <main>
             <Hero imageUrls={heroImages} />
             <section className="bg-gradient-to-r from-mec-teal to-mec-green text-white py-10">
@@ -229,7 +237,10 @@ const App = () => {
                   <p className="mt-2 text-white/90">Agradecemos a presença e a contribuição de toda a comunidade científica.</p>
                   <p className="mt-2 font-semibold">Fique atento: os certificados serão disponibilizados nos próximos dias ou semanas.</p>
                 </div>
-                <button onClick={() => navigateTo('templates')} className="shrink-0 bg-white text-mec-teal px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition-colors shadow-lg">Ver templates</button>
+                <div className="flex shrink-0 flex-wrap gap-3">
+                  <button onClick={() => navigateTo('fotos')} className="bg-white text-mec-teal px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition-colors shadow-lg">Ver fotos do evento</button>
+                  <button onClick={() => navigateTo('templates')} className="border border-white/40 bg-white/10 text-white px-6 py-3 rounded-xl font-bold hover:bg-white/20 transition-colors">Ver templates</button>
+                </div>
               </div>
             </section>
             <AboutSection imageUrl={aboutImage} />
